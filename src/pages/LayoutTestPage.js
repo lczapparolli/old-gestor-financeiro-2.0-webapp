@@ -28,8 +28,8 @@ function LayoutTestPage() {
                 <GridCell><span>Cell 1</span></GridCell>
             </GridRow>
             <GridRow>
-                <GridCell><span>Cell 1</span></GridCell>
-                <GridCell><span>Cell 2</span></GridCell>
+                <GridCell expand><span>Cell 1</span></GridCell>
+                <GridCell expand noWrap><span>Cell 2</span></GridCell>
             </GridRow>
         </div>
     );
