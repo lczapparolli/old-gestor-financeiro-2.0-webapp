@@ -19,17 +19,17 @@ function LayoutTestPage() {
                 <GridCell><span>Cell 6</span></GridCell>
             </GridRow>
             <GridRow>
-                <GridCell><span>Cell 1</span></GridCell>
+                <GridCell shrink noWrap><span>Cell 1</span></GridCell>
                 <GridCell><span>Cell 2</span></GridCell>
-                <GridCell><span>Cell 3</span></GridCell>
-                <GridCell><span>Cell 4</span></GridCell>
+                <GridCell shrink noWrap><span>Cell 3</span></GridCell>
+                <GridCell shrink noWrap><span>Cell 4</span></GridCell>
             </GridRow>
             <GridRow>
                 <GridCell><span>Cell 1</span></GridCell>
             </GridRow>
             <GridRow>
-                <GridCell expand><span>Cell 1</span></GridCell>
-                <GridCell expand noWrap><span>Cell 2</span></GridCell>
+                <GridCell><span>Cell 1</span></GridCell>
+                <GridCell shrink noWrap><span>Cell 2</span></GridCell>
             </GridRow>
         </div>
     );

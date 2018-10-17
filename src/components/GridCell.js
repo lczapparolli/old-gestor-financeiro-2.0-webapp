@@ -6,10 +6,10 @@ import classNames from '../helpers/ClassNames';
 //Style
 import '../style/GridCell.scss';
 
-function GridCell({ children, expand, noWrap }) {
+function GridCell({ children, shrink, noWrap }) {
     const classes = {
         'GridCell': true,
-        'Expand': expand,
+        'Shrink': shrink,
         'NoWrap': noWrap
     };
     return (
@@ -21,7 +21,7 @@ function GridCell({ children, expand, noWrap }) {
 
 GridCell.propTypes = {
     children: PropTypes.any.isRequired,
-    expand: PropTypes.bool,
+    shrink: PropTypes.bool,
     noWrap: PropTypes.bool
 };
 
