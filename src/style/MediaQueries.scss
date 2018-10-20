@@ -1,0 +1,45 @@
+/*************
+ *Page widths*
+ *************/
+$screen-mini-end: 420px !default;
+$screen-small-begin: $screen-mini-end + 1px;
+$screen-small-end: 580px !default;
+$screen-medium-begin: $screen-small-end + 1px;
+$screen-medium-end: 790px !default;
+$screen-large-begin: $screen-medium-end + 1px;
+$screen-large-end: 1024px !default;
+$screen-huge-begin: $screen-large-end + 1px;
+$screen-huge-end: 2048px !default;
+$screen-extra-begin: $screen-huge-end + 1px;
+
+@mixin for-size($scr-size) {
+    @if ($scr-size == mini) {
+        @media screen { @content; }
+    } @else if ($scr-size == mini_only) {
+        @media screen and (max-width: $screen-mini-end) { @content; }
+    } @else if ($scr-size == small) {
+        @media screen and (min-width: $screen-small-begin) { @content; }
+    } @else if ($scr-size == medium) {
+        @media screen and (min-width: $screen-medium-begin) { @content; }
+    } @else if ($scr-size == large) {
+        @media screen and (min-width: $screen-large-begin) { @content; }
+    } @else if ($scr-size == huge) {
+        @media screen and (min-width: $screen-huge-begin) { @content; }
+    } @else if ($scr-size == extra) {
+        @media screen and (min-width: $screen-extra-begin) { @content; }
+    }
+}
+
+@mixin  smaller-than($scr-size) {
+    @if ($scr-size == mini) {
+        @media screen and (max-width: $screen-mini-end) { @content; }
+    } @else if ($scr-size == small) {
+        @media screen and (max-width: $screen-small-end) { @content; }
+    } @else if ($scr-size == medium) {
+        @media screen and (max-width: $screen-medium-end) { @content; }
+    } @else if ($scr-size == large) {
+        @media screen and (max-width: $screen-large-end) { @content; }
+    } @else if ($scr-size == huge) {
+        @media screen and (max-width: $screen-huge-end) { @content; }
+    }
+}
