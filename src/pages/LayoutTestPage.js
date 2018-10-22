@@ -3,6 +3,7 @@ import React from 'react';
 //Components
 import GridRow from '../components/GridRow';
 import GridCell from '../components/GridCell';
+import InputField from '../components/InputField';
 //Helpers
 import ScreenSizes from '../helpers/ScreenSizes';
 
@@ -12,85 +13,26 @@ function LayoutTestPage() {
             <GridRow>
                 <GridCell><h1>Layout test</h1></GridCell>
             </GridRow>
-            <GridRow>
-                <GridCell>Cell 1</GridCell>
-                <GridCell>Cell 2</GridCell>
-                <GridCell>Cell 3</GridCell>
-                <GridCell>Cell 4</GridCell>
-                <GridCell>Cell 5</GridCell>
-                <GridCell>Cell 6</GridCell>
-                <GridCell>Cell 7</GridCell>
-                <GridCell>Cell 8</GridCell>
-            </GridRow>
-            <GridRow>
-                <GridCell>
-                    <GridRow>
-                        <GridCell>Cell 1</GridCell>
-                        <GridCell>Cell 2</GridCell>
-                        <GridCell>Cell 3</GridCell>
-                        <GridCell>Cell 4</GridCell>
-                    </GridRow>
-                </GridCell>
-                <GridCell>
-                    <GridRow>
-                        <GridCell>Cell 5</GridCell>
-                        <GridCell>Cell 6</GridCell>
-                        <GridCell>Cell 7</GridCell>
-                        <GridCell>Cell 8</GridCell>
-                    </GridRow>
-                </GridCell>
-            </GridRow>
-            <GridRow>
-                <GridCell>
-                    <GridRow sizeBreak={ScreenSizes.SCREEN_SMALL}>
-                        <GridCell><GridRow><GridCell>Cell 1</GridCell><GridCell>Cell 2</GridCell></GridRow></GridCell>
-                        <GridCell><GridRow><GridCell>Cell 2</GridCell><GridCell>Cell 3</GridCell></GridRow></GridCell>
-                    </GridRow>
-                </GridCell>
-                <GridCell>
-                    <GridRow sizeBreak={ScreenSizes.SCREEN_SMALL}>
-                        <GridCell><GridRow><GridCell>Cell 5</GridCell><GridCell>Cell 6</GridCell></GridRow></GridCell>
-                        <GridCell><GridRow><GridCell>Cell 7</GridCell><GridCell>Cell 8</GridCell></GridRow></GridCell>
-                    </GridRow>
-                </GridCell>
-            </GridRow>
-            <GridRow>
-                <GridCell>
-                    <GridRow><GridCell>Cell 1</GridCell></GridRow>
-                    <GridRow><GridCell>Cell 2</GridCell></GridRow>
-                    <GridRow><GridCell>Cell 3</GridCell></GridRow>
-                    <GridRow><GridCell>Cell 4</GridCell></GridRow>
-                </GridCell>
-                <GridCell>
-                    <GridRow><GridCell>Cell 5</GridCell></GridRow>
-                    <GridRow><GridCell>Cell 6</GridCell></GridRow>
-                    <GridRow><GridCell>Cell 7</GridCell></GridRow>
-                    <GridRow><GridCell>Cell 8</GridCell></GridRow>
-                </GridCell>
-            </GridRow>
-            <GridRow>
-                <GridCell>Cell 1</GridCell>
-                <GridCell>
-                    <GridRow>
-                        <GridCell>Cell 2</GridCell>
-                        <GridCell>
-                            <GridRow>
-                                <GridCell>Cell 3</GridCell>
-                                <GridCell>
-                                    <GridRow>
-                                        <GridCell>Cell 4</GridCell>
-                                        <GridCell>
-                                            <GridRow>
-                                                <GridCell>Cell 5</GridCell>
-                                            </GridRow>
-                                        </GridCell>
-                                    </GridRow>
-                                </GridCell>
-                            </GridRow>
-                        </GridCell>
-                    </GridRow>
-                </GridCell>
-            </GridRow>
+            <form>
+                <GridRow sizeBreak={ScreenSizes.SCREEN_MINI}>
+                    <GridCell>
+                        <InputField name="input1" label="Input 1" placeholder="Input 1" />
+                    </GridCell>
+                    <GridCell noWrap>
+                        <InputField name="input2" label="Input 2" placeholder="Input 2" />
+                    </GridCell>
+                </GridRow>
+                <GridRow>
+                    <GridCell>
+                        <InputField name="input3" label="Input 3" placeholder="Input 3" />
+                    </GridCell>
+                </GridRow>
+                <GridRow>
+                    <GridCell>
+                        <button>Button</button>
+                    </GridCell>
+                </GridRow>
+            </form>
         </div>
     );
 }

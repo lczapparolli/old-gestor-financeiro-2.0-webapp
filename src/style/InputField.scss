@@ -1,0 +1,26 @@
+.InputField {
+    label {
+        display: block;
+    }
+
+    input {
+        display: block;
+        width: 100%;
+        line-height: 1.5;
+        font-size: 1em;
+        padding: {
+            left: 3px;
+            right: 3px;
+        }
+        border: {
+            width: 1px;
+            color: rgb(180, 180, 180);
+            style: solid;
+            radius: 3px;
+        }
+
+        :after {
+            content: "teste";
+        }
+    }
+}
