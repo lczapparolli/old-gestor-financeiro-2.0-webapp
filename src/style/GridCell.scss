@@ -12,12 +12,12 @@
         right: 5px;
     }
 
-    .Shrink {
+    &.Shrink {
         flex-grow: 0;
         flex-shrink: 1;
     }
 
-    .NoWrap {
+    &.NoWrap {
         white-space: nowrap;
     }
 }
