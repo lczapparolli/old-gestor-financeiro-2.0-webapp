@@ -3,12 +3,7 @@
 .GridRow {
     display: flex;
     flex-wrap: wrap;
-    flex-direction: row;
-    //margin: 3px 0px;
-    padding: {
-        left: 1.5px;
-        right: 1.5px;
-    }
+    flex-direction: row;    
     width: 100%;
 }
 

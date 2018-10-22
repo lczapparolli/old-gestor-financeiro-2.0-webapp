@@ -1,11 +1,10 @@
 .GridCell {
     flex-grow: 1;
     flex-basis: 0%;
+    background-color: rgba(255, 0, 0, 0.2);
     margin: {
-        right: 1.5px;
-        left: 1.5px;
-        top: 1.5px;
-        bottom: 1.5px;
+        right: 3px;
+        bottom: 3px;
     }
     padding: {
         top: 6px;
@@ -13,14 +12,18 @@
         left: 5px;
         right: 5px;
     }
-    background-color: rgba(255, 0, 0, 0.5);
 
-    &.Shrink {
+    .Shrink {
         flex-grow: 0;
         flex-shrink: 1;
     }
 
-    &.NoWrap {
+    .NoWrap {
         white-space: nowrap;
     }
+}
+
+.InnerCell {
+    padding: 0px;
+    margin: 0px;
 }

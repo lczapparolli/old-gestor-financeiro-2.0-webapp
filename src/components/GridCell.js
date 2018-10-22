@@ -1,8 +1,11 @@
 //Libs
 import React from 'react';
 import PropTypes from 'prop-types';
-//Helper
+//Helpers
 import classNames from '../helpers/ClassNames';
+import hasChild from '../helpers/HasChild';
+//Components
+import GridRow from './GridRow';
 //Style
 import '../style/GridCell.scss';
 
@@ -10,8 +13,10 @@ function GridCell({ children, shrink, noWrap }) {
     const classes = {
         'GridCell': true,
         'Shrink': shrink,
-        'NoWrap': noWrap
+        'NoWrap': noWrap,
+        'InnerCell': hasChild(children, GridRow)
     };
+
     return (
         <div className={classNames(classes)} >
             {children}
