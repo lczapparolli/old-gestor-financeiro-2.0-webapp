@@ -1,14 +1,26 @@
 //Libs
 import React from 'react';
 import PropTypes from 'prop-types';
+//Helpers
+import className from '../helpers/ClassNames';
 //Style
 import '../style/InputField.scss';
 
-function InputField({ name, placeholder, value, label }) {
+function InputField({ name, label, error, formHelper, ...props }) {
+    const classes = {
+        'InputField': true,
+        'Error': !!error
+    };
+
+    let errorMessage;
+    if (error)
+        errorMessage = <span>{error}</span>;
+
     return (
-        <div className="InputField">
-            <label>{label}</label>
-            <input name={name} placeholder={placeholder} value={value} />
+        <div className={className(classes)} >
+            <label htmlFor={name} >{label}</label>
+            <input name={name} onChange={formHelper.handleChange} onInvalid={formHelper.handleInvalid} {...props}  />
+            {errorMessage}
         </div>
     );
 }
@@ -16,8 +28,8 @@ function InputField({ name, placeholder, value, label }) {
 InputField.propTypes = {
     name: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
-    placeholder: PropTypes.string,
-    value: PropTypes.any
+    formHelper: PropTypes.shape({handleChange: PropTypes.func, handleInvalid: PropTypes.func}).isRequired,
+    error: PropTypes.string
 };
 
 export default InputField;
