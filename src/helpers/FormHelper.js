@@ -45,18 +45,21 @@ class FormHelper {
      */
     handleChange(event) {
         const inputName = event.target.name;
-        let inputData = Object.assign(this.formPage.state[inputName]);
+        let inputData;
+        if (inputName in this.formPage.state) {
+            inputData = Object.assign(this.formPage.state[inputName]);
 
-        inputData.value = event.target.value;
-        inputData.error = this.validate(inputName, inputData.value);
-        
-        if (!inputData.error)
-        {
-            event.target.reportValidity();
-            inputData.error = validationMessage(event.target.validity);
+            inputData.value = event.target.value;
+            inputData.error = this.validate(inputName, inputData.value);
+            
+            if (!inputData.error)
+            {
+                event.target.reportValidity();
+                inputData.error = validationMessage(event.target.validity);
+            }
+
+            this.formPage.setState({ [inputName]: inputData });
         }
-
-        this.formPage.setState({ [inputName]: inputData });
     }
 
     /**
