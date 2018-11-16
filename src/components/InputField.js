@@ -19,7 +19,7 @@ function InputField({ name, label, error, formHelper, ...props }) {
     return (
         <div className={className(classes)} >
             <label htmlFor={name} >{label}</label>
-            <input name={name} onChange={formHelper.handleChange} onInvalid={formHelper.handleInvalid} {...props}  />
+            <input name={name} id={name} onChange={formHelper.handleChange} onInvalid={formHelper.handleInvalid} {...props}  />
             {errorMessage}
         </div>
     );
