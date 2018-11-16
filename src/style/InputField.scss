@@ -18,9 +18,22 @@
             style: solid;
             radius: 3px;
         }
+    }
 
-        :after {
-            content: "teste";
+    &.Error {
+        input {
+            border-color: red;
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;        
+        }
+
+        span {
+            display: block;
+            background-color: red;
+            padding: 3px;
+            color: white;
+            border-bottom-left-radius: 3px;
+            border-bottom-right-radius: 3px;
         }
     }
 }
