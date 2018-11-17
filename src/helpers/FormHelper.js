@@ -50,13 +50,11 @@ class FormHelper {
             inputData = Object.assign(this.formPage.state[inputName]);
 
             inputData.value = event.target.value;
-            inputData.error = this.validate(inputName, inputData.value);
             
-            if (!inputData.error)
-            {
-                event.target.reportValidity();
+            if (event.target.validity.valid)
+                inputData.error = this.validate(inputName, inputData.value);
+            else
                 inputData.error = validationMessage(event.target.validity);
-            }
 
             this.formPage.setState({ [inputName]: inputData });
         }
@@ -67,6 +65,14 @@ class FormHelper {
      * @param {HtmlInputEvent} event The event fired by the input element
      */
     handleInvalid(event) {
+        const inputName = event.target.name;
+        let inputData;
+        if (inputName in this.formPage.state) {
+            inputData = Object.assign(this.formPage.state[inputName]);
+            inputData.error = validationMessage(event.target.validity);
+            this.formPage.setState({ [inputName]: inputData });
+        }
+
         event.preventDefault();
     }
 
