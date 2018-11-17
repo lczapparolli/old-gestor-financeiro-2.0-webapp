@@ -13,19 +13,21 @@ class LayoutTestPage extends React.Component {
         super(props);
 
         this.state = {
-            text1: { value: '', error: ''}
+            text1: { value: '', error: ''},
+            email1: { value: '', error: ''}
         };
         
         const validationCallbacks = {
             text1: this.validateText1
         };
         
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.formHelper = new FormHelper(this, validationCallbacks);
     }
 
     validateText1(value) {
-        if (value === 'Hi') 
-            return 'Can\'t be \'Hi\'';
+        if (value === 'Hello') 
+            return 'Can\'t be \'Hello\'';
         return '';
     }
     
@@ -35,20 +37,20 @@ class LayoutTestPage extends React.Component {
     }
 
     render() {
-        const { text1 } = this.state;
+        const { text1, email1 } = this.state;
 
         return (
             <div>
                 <GridRow>
                     <GridCell><h1>Layout test</h1></GridCell>
                 </GridRow>
-                <form onSubmit={this.handleSubmit} >
+                <form onSubmit={this.handleSubmit}>
                     <GridRow sizeBreak={ScreenSizes.SCREEN_MINI}>
                         <GridCell>
-                            <InputField name="text1" label="Text 1" placeholder="Text 1" type="text" required value={text1.value} error={text1.error} formHelper={this.formHelper} />
+                            <InputField name="text1" label="Text 1" placeholder="Text 1" type="text" minLength="3" required value={text1.value} error={text1.error} formHelper={this.formHelper} />
                         </GridCell>
                         <GridCell>
-                            <InputField name="email1" label="Email 1" placeholder="Email" type="email" required formHelper={this.formHelper} />
+                            <InputField name="email1" label="Email 1" placeholder="Email" type="email" required value={email1.value} error={email1.error}  formHelper={this.formHelper} />
                         </GridCell>
                     </GridRow>
                     <GridRow>
@@ -72,7 +74,7 @@ class LayoutTestPage extends React.Component {
                     </GridRow>
                     <GridRow>
                         <GridCell>
-                            <button>Button</button>
+                            <button type="sumbit">Salvar</button>
                         </GridCell>
                     </GridRow>
                 </form>
