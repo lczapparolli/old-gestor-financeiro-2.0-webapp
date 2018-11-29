@@ -1,0 +1,28 @@
+@import 'Variables';
+
+.Button {
+    font-size: 1em;
+    padding: 6px;
+    color: white;
+    border: {
+        style: solid;
+        width: 0px;
+        radius: $border-radius;
+    }
+
+    & + .Button {
+        margin-left: 6px;
+    }
+
+    &.Default {
+        background-color: #42b8dd;
+    }
+
+    &.Sucess {
+        background-color: #1cb841;
+    }
+
+    &.Danger {
+        background-color: #ca3c3c;
+    }
+}

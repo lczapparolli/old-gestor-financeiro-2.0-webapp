@@ -4,6 +4,7 @@ import React from 'react';
 import GridRow from '../components/GridRow';
 import GridCell from '../components/GridCell';
 import InputField from '../components/InputField';
+import Button, { STYLE_DEFAULT, STYLE_DANGER, ACTION_SUBMIT } from '../components/Button';
 //Helpers
 import ScreenSizes from '../helpers/ScreenSizes';
 import FormHelper from '../helpers/FormHelper';
@@ -22,6 +23,7 @@ class LayoutTestPage extends React.Component {
         };
         
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.clearForm = this.clearForm.bind(this);
         this.formHelper = new FormHelper(this, validationCallbacks);
     }
 
@@ -31,6 +33,12 @@ class LayoutTestPage extends React.Component {
         return '';
     }
     
+    clearForm() {
+        this.setState({
+            text1: { value: '', error: ''},
+            email1: { value: '', error: ''}
+        });
+    }
 
     handleSubmit(event) {
         event.preventDefault();
@@ -74,7 +82,8 @@ class LayoutTestPage extends React.Component {
                     </GridRow>
                     <GridRow>
                         <GridCell>
-                            <button type="sumbit">Salvar</button>
+                            <Button caption="Salvar" style={STYLE_DEFAULT} action={ACTION_SUBMIT} />
+                            <Button caption="Clear" style={STYLE_DANGER} onClick={this.clearForm} />
                         </GridCell>
                     </GridRow>
                 </form>

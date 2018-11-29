@@ -1,3 +1,5 @@
+@import 'Variables';
+
 .InputField {
     label {
         display: block;
@@ -16,20 +18,20 @@
             width: 1px;
             color: rgb(180, 180, 180);
             style: solid;
-            radius: 3px;
+            radius: $border-radius;
         }
     }
 
     &.Error {
         input {
-            border-color: red;
+            border-color: #ca3c3c;
             border-bottom-left-radius: 0px;
             border-bottom-right-radius: 0px;        
         }
 
         span {
             display: block;
-            background-color: red;
+            background-color: #ca3c3c;
             padding: 3px;
             color: white;
             border-bottom-left-radius: 3px;
