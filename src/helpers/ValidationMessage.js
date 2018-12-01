@@ -4,10 +4,10 @@
  * @returns {string} Returns a string containing the error message. If the input value is valid, an empty string is returned
  */
 function validationMessage(validity) {
-    if (!validity.valid) {
+    if (validity && !validity.valid) {
         if (validity.patternMismatch) return 'Invalid value';
         if (validity.rangeOverflow) return 'Value must be higher';
-        if (validity.rangeUnderflow) return 'Value mus be lower';
+        if (validity.rangeUnderflow) return 'Value must be lower';
         if (validity.stepMismatch) return 'Invalid precision';
         if (validity.tooLong) return 'Value is too long';
         if (validity.tooShort) return 'Value is too short';
