@@ -13,7 +13,8 @@
     },
     "plugins": [
         "react",
-        "jest"
+        "jest",
+        "chai-expect"
     ],
     "rules": {
         "indent": [
@@ -31,6 +32,8 @@
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "chai-expect/missing-assertion": 2,
+        "chai-expect/terminating-properties": 1
     }
 }
