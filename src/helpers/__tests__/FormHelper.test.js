@@ -71,7 +71,7 @@ describe('FormHelper helper', () => {
     it('fires `setState` when an input rises an `onInvalid` event', (done) => {
         const component = new TestComponent();
         component.setState = (value) => {
-            cExpect(value).to.have.nested.property('field1.error');
+            cExpect(value).to.have.nested.property('field1.error').not.empty;
             done();
         };
 
