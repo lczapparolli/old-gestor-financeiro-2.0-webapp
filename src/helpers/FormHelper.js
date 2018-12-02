@@ -30,7 +30,14 @@ class FormHelper {
      * The state must contain an entry for each field with a `value` and a `error` property
      * @param {Object} validationCallbacks Object containg validation functions. The keys must be the names of fields to be validated
      */
-    constructor(formPage, validationCallbacks) {
+    constructor(formPage, validationCallbacks = {}) {
+        if (formPage === undefined || formPage === null)
+        {
+            throw new TypeError('formPage must be provided');
+        } else if (!formPage.hasOwnProperty('setState') && !formPage.hasOwnProperty('state')) {
+            throw new TypeError('formPage must have a `setState` method and a `state` property');
+            
+        }
         this.formPage = formPage;
         this.validationCallbacks = validationCallbacks;
         this.handleChange = this.handleChange.bind(this);
