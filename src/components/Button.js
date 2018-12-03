@@ -15,6 +15,10 @@ const STYLE_SUCESS = 'Sucess';
 const STYLE_DANGER = 'Danger';
 const BUTTON_STYLES = [ STYLE_DEFAULT, STYLE_SUCESS, STYLE_DANGER];
 
+/**
+ * Wrapper for button.
+ * This component standardizes classNames and types of buttons.
+ */
 function Button({ caption, style, action, onClick }) {
     let classes = {
         'Button': true
@@ -29,9 +33,13 @@ function Button({ caption, style, action, onClick }) {
 }
 
 Button.propTypes = {
+    /**The caption to be showed */
     caption: PropTypes.string.isRequired,
+    /**The color of the button */
     style: PropTypes.oneOf(BUTTON_STYLES),
+    /**The type of the button */
     action: PropTypes.oneOf(BUTTON_ACTIONS),
+    /**onClick handler if the button is not a submit button */
     onClick: PropTypes.func
 };
 
