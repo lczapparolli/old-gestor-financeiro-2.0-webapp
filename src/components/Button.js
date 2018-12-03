@@ -38,7 +38,6 @@ Button.propTypes = {
 Button.defaultProps = {
     style: STYLE_DEFAULT,
     action: ACTION_BUTTON
-
 };
 
 export default Button;
