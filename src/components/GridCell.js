@@ -9,6 +9,10 @@ import GridRow from './GridRow';
 //Style
 import '../style/GridCell.scss';
 
+/**
+ * This component encapsulates a cell of a responsive grid.
+ * It is prepared to be nested with more Rows and Cells.
+ */
 function GridCell({ children, shrink, noWrap }) {
     const classes = {
         'GridCell': true,
@@ -25,8 +29,11 @@ function GridCell({ children, shrink, noWrap }) {
 }
 
 GridCell.propTypes = {
+    /** The child components */
     children: PropTypes.any.isRequired,
+    /** Indicates that the cell should occupy the minimum space */
     shrink: PropTypes.bool,
+    /** Indicates that the content should not have line breaks */
     noWrap: PropTypes.bool
 };
 
