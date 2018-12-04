@@ -3,9 +3,9 @@ import chai from 'chai';
 import chaiEnzyme from 'chai-enzyme';
 import { shallow } from 'enzyme';
 import React from 'react';
-import GridCell from '../GridCell';
 import GridRow from '../GridRow';
 //Tested module
+import GridCell from '../GridCell';
 
 chai.use(chaiEnzyme());
 const cExpect = chai.expect;

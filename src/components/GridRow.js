@@ -7,6 +7,11 @@ import classNames from '../helpers/ClassNames';
 //Style
 import '../style/GridRow.scss';
 
+/**
+ * Encapsulates the row of a responsive grid.
+ * The sizeBreak property indicates the largest screen size where cells keeps on the same row.
+ * Below this size, cells occupy the entire width of the page.
+ */
 function GridRow({ children, sizeBreak }) {
     const classes = {
         'GridRow': true,
@@ -24,7 +29,9 @@ function GridRow({ children, sizeBreak }) {
 }
 
 GridRow.propTypes = {
+    /** The children components */
     children: PropTypes.any.isRequired,
+    /** The size of the screen on which the cells occupy the entire row */
     sizeBreak: PropTypes.number
 };
 
