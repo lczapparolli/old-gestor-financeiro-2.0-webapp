@@ -12,7 +12,7 @@ const cExpect = chai.expect;
 
 describe('GridCell component', () => {
     it('renders a div with `GridCell` class', () => {
-        const component = shallow(<GridCell />);
+        const component = shallow(<GridCell><span>Test</span></GridCell>);
 
         cExpect(component).to.have.tagName('div');
         cExpect(component).to.have.className('GridCell');
@@ -29,19 +29,19 @@ describe('GridCell component', () => {
     });
 
     it('has `Shrink` class when property is set to true', () => {
-        const component = shallow(<GridCell shrink={true}/>);
+        const component = shallow(<GridCell shrink={true}><span>Test</span></GridCell>);
 
         cExpect(component).to.have.className('Shrink');
     });
 
     it('has `NoWrap` class when property is set to true', () => {
-        const component = shallow(<GridCell noWrap={true}/>);
+        const component = shallow(<GridCell noWrap={true}><span>Test</span></GridCell>);
 
         cExpect(component).to.have.className('NoWrap');
     });
 
     it('has `InnerCell` class when a GridRow is a children', () => {
-        const component = shallow(<GridCell><GridRow /></GridCell>);
+        const component = shallow(<GridCell><GridRow><span>Test</span></GridRow></GridCell>);
 
         cExpect(component).to.have.className('InnerCell');
     });

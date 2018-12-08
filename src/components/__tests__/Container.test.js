@@ -10,7 +10,7 @@ const cExpect = chai.expect;
 
 describe('Container component', () => {
     it('renders a div with `Container` class', () => {
-        const component = shallow(<Container />);
+        const component = shallow(<Container><span>Test</span></Container>);
         cExpect(component).to.have.tagName('div');
         cExpect(component).to.have.className('Container');
     });
