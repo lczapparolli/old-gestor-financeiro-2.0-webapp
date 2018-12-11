@@ -1,38 +1,33 @@
+//Libs
 import React, { Component } from 'react';
+//Helpers
+import FormHelper from '../helpers/FormHelper';
+//Components
+import LoginForm from '../forms/LoginForm';
 
 class LoginPage extends Component {
     constructor() {
         super();
-        this.state = {
-            email: '',
-            senha: ''
-        };
-        this.handleChange = this.handleChange.bind(this);
+        //Binds
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleChange(event) {
-        this.setState({ [event.target.name]: event.target.value });
+        //State
+        this.state = {
+            email: { value: '', error: '' },
+            password: { value: '', error: '' }
+        };
+        //Form Helper
+        this.formHelper = new FormHelper(this);
     }
 
     handleSubmit() {
     }
 
     render() {
+        const { email, password } = this.state;
         return (
-            <div className="content">
+            <div>
                 <h1>Log in</h1>
-                <form onSubmit={this.handleSubmit}>
-                    <div className="inputField">
-                        <label htmlFor="email">Email</label>
-                        <input name="email" id="email" type="email" value={this.state.email} onChange={this.handleChange} />
-                    </div>
-                    <div className="inputField">
-                        <label htmlFor="password">Password</label>
-                        <input name="password" id="password" type="password" value={this.state.password} onChange={this.handleChange} />
-                    </div>
-                    <input type="submit" value="Login" />
-                </form>
+                <LoginForm email={email} password={password} handleSubmit={this.handleSubmit} formHelper={this.formHelper} />
             </div>
         );
     }
