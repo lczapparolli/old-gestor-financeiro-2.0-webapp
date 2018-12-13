@@ -20,17 +20,9 @@ class LoginPage extends Component {
     }
 
     async handleSubmit(data) {
-        try {
-            this.setState({ loading: true });
-            const result = await loginController.login(data.email, data.password);
-            this.setState({ logged: result.logged, loading: false });
-        } catch (exception) {
-            this.setState({
-                logged: exception.logged,
-                error: exception.error,
-                loading: false
-            });
-        }
+        this.setState({ loading: true });
+        const result = await loginController.login(data.email, data.password);
+        this.setState({ logged: result.logged, error: result.error, loading: false });
     }
 
     render() {

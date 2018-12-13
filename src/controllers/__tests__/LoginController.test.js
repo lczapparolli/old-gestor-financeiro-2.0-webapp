@@ -5,11 +5,28 @@ import loginController from '../LoginController';
 
 const cExpect = chai.expect;
 
+//Test data
 const testData = {
     email: 'email@email.com',
     password: 'pass123'
 };
 
+//Mocked API endpoint
+const mockEndpoint = {
+    login(email, password) {
+        return new Promise((resolve, reject) => {
+            if (email === testData.email && password === testData.password)
+                resolve({ token: '' });
+            else
+                reject('Bad request');
+        });
+    }
+};
+
+beforeAll(() => {
+    //Use mocked endpoint
+    loginController.endpoint = mockEndpoint;
+});
 
 describe('LoginController', () => {
     it('is an object', () => {
@@ -28,12 +45,8 @@ describe('LoginController', () => {
         });
 
         it('rejects when invalid credentials are provided', async () => {
-            try {
-                await loginController.login('invalid@email.com', testData.password);
-                chai.assert.fail('Should throw an error');
-            } catch (error) {
-                cExpect(error).to.have.property('error').not.empty;
-            }
+            const result = await loginController.login('invalid@email.com', testData.password);
+            cExpect(result).to.have.property('error').not.empty;
         });
     });
 
