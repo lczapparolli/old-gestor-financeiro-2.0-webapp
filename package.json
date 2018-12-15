@@ -24,7 +24,8 @@
     "enzyme-adapter-react-16": "^1.7.0",
     "eslint-plugin-chai-expect": "^2.0.1",
     "eslint-plugin-jest": "^21.25.0",
-    "eslint-plugin-react": "^7.11.1"
+    "eslint-plugin-react": "^7.11.1",
+    "fake-indexeddb": "^2.0.4"
   },
   "browserslist": [
     ">0.2%",
