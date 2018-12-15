@@ -3,6 +3,7 @@ import chai from 'chai';
 //Test module
 import loginController from '../LoginController';
 import config from '../../db/Config';
+import db from '../../db';
 
 const cExpect = chai.expect;
 
@@ -54,9 +55,37 @@ describe('LoginController', () => {
     });
 
     describe('Logout action', () => {
-        it('have a logout method', () => {
+        it('have a logout method that returns a Promise', () => {
             cExpect(loginController).to.respondTo('logout');
+            cExpect(loginController.logout()).to.be.a('Promise');
         });
     });
 
+    describe('isLogged action', () => {
+        it('have a isLogged method that returns a Promise', () => {
+            cExpect(loginController).to.respondTo('isLogged');
+            cExpect(loginController.isLogged()).to.be.a('Promise');
+        });
+
+        it('returns `true` after user login', async () => {
+            await loginController.login(testData.email, testData.password);
+            const isLogged = await loginController.isLogged();
+            cExpect(isLogged).to.be.true;
+        });
+
+        it('returns `false` after user logout', async () => {
+            //Make sure the logged is true
+            await config.setLogged(true);
+            await loginController.logout();
+            const isLogged = await loginController.isLogged();
+            cExpect(isLogged).to.be.false;
+        });
+
+        it('returns `false` when no data is stored', async () => {
+            await db.config.clear();
+            const isLogged = await loginController.isLogged();
+            cExpect(isLogged).to.be.false;
+        });
+
+    });
 });

@@ -8,6 +8,11 @@ class LoginController {
         this.endpoint = loginEndpoint;
     }
 
+    /**
+     * Send user credentials to API and store if user is logged or not
+     * @param {string} email User email
+     * @param {string} password User password
+     */
     async login(email, password) {
         try {
             await this.endpoint.login(email, password);
@@ -19,8 +24,17 @@ class LoginController {
         }
     }
 
-    logout() {
+    /**
+     * Returns a Promise, the resolve function will return a boolean indicating if user is logged
+     */
+    isLogged() {
+        return config.getLogged().then(logged => {
+            return logged || false; //If value is not defined
+        });
+    }
 
+    logout() {
+        return config.setLogged(false);
     }
 }
 
