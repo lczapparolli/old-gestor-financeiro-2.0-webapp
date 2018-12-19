@@ -29,7 +29,7 @@ class LoginPage extends Component {
         const { logged, error, loading } = this.state;
 
         if (logged)
-            return <Redirect to="/" />;
+            return <Redirect to="/dashboard" />;
 
         return (
             <div>
