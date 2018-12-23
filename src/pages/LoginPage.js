@@ -1,6 +1,7 @@
 //Libs
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
 //Components
 import LoginForm from '../forms/LoginForm';
 //Controllers
@@ -23,6 +24,8 @@ class LoginPage extends Component {
         this.setState({ loading: true });
         const result = await loginController.login(data.email, data.password);
         this.setState({ logged: result.logged, error: result.error, loading: false });
+        if (result.logged && this.props.onLogin)
+            this.props.onLogin();
     }
 
     render() {
@@ -41,5 +44,9 @@ class LoginPage extends Component {
         );
     }
 }
+
+LoginPage.propTypes = {
+    onLogin: PropTypes.func
+};
 
 export default LoginPage;
