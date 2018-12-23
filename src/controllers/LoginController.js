@@ -1,5 +1,8 @@
 import loginEndpoint from '../api/LoginEndpoint';
 import config from '../db/Config';
+
+const storeLoginData = Symbol('storeLoginData');
+
 /**
  * Controls the authentication logic and state
  */
@@ -15,12 +18,13 @@ class LoginController {
      */
     async login(email, password) {
         try {
-            await this.endpoint.login(email, password);
-            await config.setLogged(true);
+            const result = await this.endpoint.login(email, password);
+            if (result.token)
+                await this[storeLoginData](true, result.token);
             return { logged: true, error: '' };
         } catch (error) {
             await config.setLogged(false);
-            return { logged: false, error: 'Invalid user name' };
+            return { logged: false, error: 'Invalid email or password' };
         }
     }
 
@@ -33,8 +37,17 @@ class LoginController {
         });
     }
 
-    logout() {
-        return config.setLogged(false);
+    async logout() {
+        await this[storeLoginData](false, null);
+        return { logged: false };
+    }
+
+    //Private methods ---------------------------------------//
+    [storeLoginData](logged, token) {
+        return Promise.all([
+            config.setLogged(logged),
+            config.setToken(token)
+        ]);
     }
 }
 

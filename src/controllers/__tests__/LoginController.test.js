@@ -10,14 +10,15 @@ const cExpect = chai.expect;
 //Test data
 const testData = {
     email: 'email@email.com',
-    password: 'pass123'
+    password: 'pass123',
+    token: 'login token'
 };
 
 //Mocked API endpoint
 const mockEndpoint = {
     login(email, password) {
         if (email === testData.email && password === testData.password)
-            return Promise.resolve({ token: '' });
+            return Promise.resolve({ token: 'login token' });
         else
             return Promise.reject('Bad request');
     }
@@ -42,8 +43,10 @@ describe('LoginController', () => {
         it('resolves when valid credentials are provided', async () => {
             const result = await loginController.login(testData.email, testData.password);
             const isLogged = await config.getLogged();
+            const token = await config.getToken();
             cExpect(result).to.have.property('logged', true);
-            cExpect(isLogged).to.be.equal(true);
+            cExpect(isLogged).to.be.true;
+            cExpect(token).to.be.equal(testData.token);
         });
 
         it('rejects when invalid credentials are provided', async () => {
