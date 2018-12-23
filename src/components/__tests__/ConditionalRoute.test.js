@@ -53,9 +53,9 @@ describe('ConditionalRoute component', () => {
     });
 
     describe('Render function', () => {
-        function getRenderedRoute(condition, redirect, component = ChildElement, layout = null) {
+        function getRenderedRoute(condition, redirect, component = ChildElement, layout = null, childProps = null) {
             //Initializing component
-            const wrapper = shallow(<Router><ConditionalRoute path="/" component={component} layout={layout} condition={condition} redirect={redirect} /></Router>);
+            const wrapper = shallow(<Router><ConditionalRoute path="/" component={component} layout={layout} condition={condition} redirect={redirect} childProps={childProps} /></Router>);
             //Wraps the ConditionalRoute
             const conditionalRoute = wrapper.find('ConditionalRoute').shallow();
             //Finds the Route element and executes the render method
@@ -95,6 +95,17 @@ describe('ConditionalRoute component', () => {
             //Test condition
             cExpect(testComponent).to.not.have.descendants(LayoutElement);
             cExpect(testComponent).to.have.descendants(ChildElement);
+        });
+
+        it('render the layout with `childProps` passed down', () => {
+            //Test values
+            const childProps = { prop1: 'value1', prop2: 'value2' };
+            //Initialize component
+            const testComponent = getRenderedRoute(true, '/', ChildElement, null, childProps);
+            //Test condition
+            cExpect(testComponent).to.have.descendants(ChildElement);
+            cExpect(testComponent.find(ChildElement)).to.have.prop('prop1', childProps.prop1);
+            cExpect(testComponent.find(ChildElement)).to.have.prop('prop2', childProps.prop2);
         });
     });
 });

@@ -10,7 +10,7 @@ import { Route, Redirect } from 'react-router-dom';
  * When a `redirect` path is provided and `condition` is false, then a redirection occours.
  * Otherwise, the Layout and Component are rendered.
  */
-function ConditionalRoute({ path, exact, layout: Layout, component: Component, condition, redirect }) {
+function ConditionalRoute({ path, exact, layout: Layout, component: Component, condition, redirect, childProps }) {
     Layout = Layout || Fragment;
     return (
         <Route path={path} exact={exact} render={(props) => {
@@ -18,7 +18,7 @@ function ConditionalRoute({ path, exact, layout: Layout, component: Component, c
                 return <Redirect to={redirect} />;
             return (
                 <Layout>
-                    <Component {...props} />
+                    <Component {...props} {...childProps} />
                 </Layout>
             );
         }} />
@@ -37,7 +37,10 @@ ConditionalRoute.propTypes = {
     /** Condition to render the route component. If false, the route is redirected */
     condition: PropTypes.bool,
     /** Path to be redirected when condition is false */
-    redirect: PropTypes.string
+    redirect: PropTypes.string,
+    /** Any props necessary to child */
+    childProps: PropTypes.any
+
 };
 
 export default ConditionalRoute;
