@@ -9,7 +9,7 @@ import loginController from './controllers/LoginController';
 //Pages
 import HomePage from './pages/HomePage.js';
 import LoginPage from './pages/LoginPage.js';
-import Dashboard from './pages/Dashboard';
+import DashboardPage from './pages/DashboardPage';
 import LayoutTestPage from './pages/LayoutTestPage';
 
 class App extends Component {
@@ -46,7 +46,7 @@ class App extends Component {
                 <Container>
                     <ConditionalRoute exact path="/" component={HomePage} condition={!logged} redirect="/dashboard" />
                     <ConditionalRoute path="/login" component={LoginPage} condition={!logged} redirect="/dashboard" childProps={{ onLogin: this.handleLogin }} />
-                    <ConditionalRoute path="/dashboard" component={Dashboard} condition={logged} redirect="/login" childProps={{ onLogout: this.handleLogout }} />
+                    <ConditionalRoute path="/dashboard" component={DashboardPage} condition={logged} redirect="/login" childProps={{ onLogout: this.handleLogout }} />
             
                     <Route path="/test" component={LayoutTestPage} />
                 </Container>
