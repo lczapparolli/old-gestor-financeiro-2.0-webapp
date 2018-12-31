@@ -81,8 +81,10 @@ class LayoutTestPage extends React.Component {
                         </GridCell>
                     </GridRow>
                     <GridRow>
-                        <GridCell>
+                        <GridCell shrink>
                             <Button caption="Salvar" style={STYLE_DEFAULT} action={ACTION_SUBMIT} />
+                        </GridCell>
+                        <GridCell>
                             <Button caption="Clear" style={STYLE_DANGER} onClick={this.clearForm} />
                         </GridCell>
                     </GridRow>
