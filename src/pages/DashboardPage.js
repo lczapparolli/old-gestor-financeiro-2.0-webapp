@@ -1,10 +1,16 @@
 //Libs
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 //Controllers
 import loginController from '../controllers/LoginController';
 //Components
 import Button from '../components/Button';
+import GridRow from '../components/GridRow';
+import GridCell from '../components/GridCell';
+//Helpers
+import ScreenSizes from '../helpers/ScreenSizes';
+//Data components
+import Accounts from '../dataComponents/Accounts';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -20,10 +26,23 @@ class Dashboard extends Component {
 
     render() {
         return (
-            <div>
-                <h1>Dashboard</h1>
-                <Button caption="Logout" onClick={this.handleLogoutClick} />
-            </div>
+            <Fragment>
+                <GridRow>
+                    <GridCell>
+                        <h1>Dashboard</h1>
+                    </GridCell>
+                </GridRow>
+                <GridRow sizeBreak={ScreenSizes.SCREEN_SMALL}>
+                    <GridCell>
+                        <Accounts />
+                    </GridCell>
+                </GridRow>
+                <GridRow>
+                    <GridCell>
+                        <Button caption="Logout" onClick={this.handleLogoutClick} />
+                    </GridCell>
+                </GridRow>
+            </Fragment>
         );
     }
 }
