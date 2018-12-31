@@ -115,9 +115,10 @@ AccountCategory.defaultProps = {
  * Show a single account
  */
 function Account({ account }) {
+    const accountLink = '/accounts/' + account.id;
     return (
         <tr className="Account">
-            <td><Link to="">{account.name}</Link></td>
+            <td><Link to={accountLink} >{account.name}</Link></td>
             <td className="NumberField">{account.balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
         </tr>
     );

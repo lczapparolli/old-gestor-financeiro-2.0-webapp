@@ -84,9 +84,10 @@ describe('Account component', () => {
         });
 
         it('Renders a Link with account name', () => {
-            cExpect(component.find('Link')).to.exist;
-            cExpect(component.find('Link')).to.contain(testData.accounts[0].name);
-
+            const linkComponent = component.find('Link');
+            cExpect(linkComponent).to.exist;
+            cExpect(linkComponent).to.contain(testData.accounts[0].name);
+            cExpect(linkComponent).to.have.prop('to', '/accounts/' + testData.accounts[0].id);
         });
     });
 });
