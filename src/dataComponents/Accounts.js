@@ -45,6 +45,9 @@ function Accounts() {
                 <GridCell>
                     <h2>Accounts</h2>
                 </GridCell>
+                <GridCell shrink>
+                    <Link to="/accounts/new">+</Link>
+                </GridCell>
             </GridRow>
             <GridRow>
                 <GridCell>

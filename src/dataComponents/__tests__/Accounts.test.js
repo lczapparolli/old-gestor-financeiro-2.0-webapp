@@ -20,20 +20,20 @@ const testData = {
 };
 
 describe('Accounts component', () => {
+    let component;
+    beforeAll(() => {
+        //Initializing component
+        component = shallow(<Accounts />);
+    });
+
     describe('Component structure', () => {
         it('Renders a title and a table with two columns', () => {
-            //Initializing component
-            const component = shallow(<Accounts />);
-            //Test conditions
             cExpect(component).to.have.descendants('h2');
             cExpect(component).to.have.descendants('table');
             cExpect(component.find('thead > tr > th')).to.have.length(2);
         });
     
         it('Renders a table with three categories', () => {
-            //Initializing component
-            const component = shallow(<Accounts />);
-            //Test conditions
             cExpect(component.find('tbody > AccountCategory')).to.have.length(3);
             cExpect(component.find('tbody > AccountCategory[title="Accounts"]')).to.have.length(1);
             cExpect(component.find('tbody > AccountCategory[title="Credit Cards"]')).to.have.length(1);
@@ -41,29 +41,29 @@ describe('Accounts component', () => {
         });
 
         it('Renders a row with a total', () => {
-            //Initializing component
-            const component = shallow(<Accounts />);
-            //Test conditions
             cExpect(component).to.have.descendants('tfoot');
+        });
+
+        it('Has a Link to add a new account', () => {
+            cExpect(component.find('Link')).to.have.prop('to', '/accounts/new');
         });
     });
 });
 
 describe('AccountCategory component', () => {
+    let component;
+    beforeAll(() => {
+        //Initializing component
+        component = shallow(<AccountCategory title={testData.title} accounts={testData.accounts} sum={testData.sum}  />);
+    });
 
     describe('Component structure', () => {
         it('Renders a header and a subtotal rows', () => {
-            //Initializing component
-            const component = shallow(<AccountCategory title={testData.title} accounts={testData.accounts} sum={testData.sum}  />);
-            //Test conditions
             cExpect(component.find('tr.AccountCategoryHeader')).to.have.length(1);
             cExpect(component.find('tr.AccountCategoryTotal')).to.have.length(1);
         });
 
         it('Renders an Account component for each account', () => {
-            //Initializing component
-            const component = shallow(<AccountCategory title={testData.title} accounts={testData.accounts} sum={testData.sum}  />);
-            //Test conditions
             cExpect(component.find('Account')).to.have.length(testData.accounts.length);
             cExpect(component.find('Account').first()).to.have.prop('account', testData.accounts[0]);
         });
@@ -71,19 +71,19 @@ describe('AccountCategory component', () => {
 });
 
 describe('Account component', () => {
+    let component;
+    beforeAll(() => {
+        //Initializing component
+        component = shallow(<Account account={testData.accounts[0]} />);
+    });
+
     describe('Component structure', () => {
         it('Renders two coluns', () =>{
-            //Initializing component
-            const component = shallow(<Account account={testData.accounts[0]} />);
-            //Test conditions
             cExpect(component).to.have.descendants('tr');
             cExpect(component.find('td')).to.have.length(2);
         });
 
         it('Renders a Link with account name', () => {
-            //Initializing component
-            const component = shallow(<Account account={testData.accounts[0]} />);
-            //Test conditions
             cExpect(component.find('Link')).to.exist;
             cExpect(component.find('Link')).to.contain(testData.accounts[0].name);
 
