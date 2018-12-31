@@ -1,0 +1,47 @@
+@import 'Variables';
+
+.Accounts {
+    text-align: left;
+    border-collapse: collapse;
+    width: 100%;
+
+    & tr.Account:nth-child(even) {
+        background-color: rgba(0,0,50,.02);
+    }
+
+    & td, & th {
+        border-width: 0px;
+        padding: {
+            top: $padding-vertical;
+            bottom: $padding-vertical;
+            left: $padding-horizontal;
+            right: $padding-horizontal;
+        }
+    }
+}
+
+.AccountCategoryHeader, .AccountCategoryTotal {
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.AccountCategoryTotal  td {
+    background-color: rgba(0,0,50,.05);
+}
+
+.AccountCategoryHeader {
+    border-bottom: {
+        width: 1px;
+        color: rgba(34,36,38,.1);
+        style: solid;
+    }
+
+    & > th {
+        padding-top: $padding-vertical * 4;
+    }
+}
+
+.NumberField {
+    text-align: right;
+    white-space: nowrap;
+}
