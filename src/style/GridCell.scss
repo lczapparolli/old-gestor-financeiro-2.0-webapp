@@ -1,3 +1,5 @@
+@import 'Variables';
+
 .GridCell {
     flex-grow: 1;
     flex-basis: 0%;
@@ -6,10 +8,10 @@
         bottom: 3px;
     }
     padding: {
-        top: 6px;
-        bottom: 6px;
-        left: 5px;
-        right: 5px;
+        top: $padding-vertical;
+        bottom: $padding-vertical;
+        left: $padding-horizontal;
+        right: $padding-horizontal;
     }
 
     &.Shrink {
