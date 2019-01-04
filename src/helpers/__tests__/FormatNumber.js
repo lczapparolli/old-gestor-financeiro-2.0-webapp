@@ -38,4 +38,10 @@ describe('Number format helper', () => {
         cExpect(formatNumber(1.111)).to.be.equal('1,11');
         cExpect(formatNumber(-1.111)).to.be.equal('-1,11');
     });
+
+    it('can include a currency symbol', () => {
+        //Thousands
+        cExpect(formatNumber(1000, 'R$')).to.be.equal('R$ 1.000,00');
+        cExpect(formatNumber(-1000, 'R$')).to.be.equal('-R$ 1.000,00');
+    });
 });

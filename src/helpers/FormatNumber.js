@@ -21,10 +21,11 @@ function validate(value) {
  * Formats a number with 2 decimal places and thousands separator.
  * This functions is adapted to brazilian format with comma ',' as decimal separator and dots '.' as thousand separator.
  * @param {Number|String} value Number or numeric string to be formated
+ * @param {String} currencySymbol Currency symbol to be included, default is blank
  * @returns {String} Formated value
  * @throws {TypeError} Throws an exception when value is not a valid number
  */
-function formatNumber(value) {
+function formatNumber(value, currencySymbol = '') {
     value = validate(value);
     const negative = value < 0;
     const parts = Math.abs(value).toFixed(2).split('.');
@@ -39,7 +40,7 @@ function formatNumber(value) {
         }
     }
 
-    let result = (negative ? '-' : '') + integer + ',' + decimal;
+    let result = (negative ? '-' : '') + (currencySymbol ? currencySymbol + ' ' : '') + integer + ',' + decimal;
     
     return result;
 }
