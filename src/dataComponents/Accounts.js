@@ -7,6 +7,8 @@ import '../style/Account.scss';
 //Components
 import GridRow from '../components/GridRow';
 import GridCell from '../components/GridCell';
+//Helpers
+import formatNumber from '../helpers/FormatNumber';
 
 /**
  * Component to list accounts with different types and sum the balance
@@ -66,7 +68,7 @@ function Accounts() {
                         <tfoot>
                             <tr>
                                 <th>Total</th>
-                                <th className="NumberField">{groups.total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</th>
+                                <th className="NumberField">{formatNumber(groups.total, 'R$')}</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -90,7 +92,7 @@ function AccountCategory({ title, accounts, sum }) {
             {list}
             <tr className="AccountCategoryTotal">
                 <td>Sub-total</td>
-                <td className="NumberField">{sum.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</td>
+                <td className="NumberField">{formatNumber(sum, 'R$')}</td>
             </tr>
         </Fragment>
     );
@@ -119,7 +121,7 @@ function Account({ account }) {
     return (
         <tr className="Account">
             <td><Link to={accountLink} >{account.name}</Link></td>
-            <td className="NumberField">{account.balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td className="NumberField">{formatNumber(account.balance, 'R$')}</td>
         </tr>
     );
 }
