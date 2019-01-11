@@ -1,6 +1,7 @@
 import loginEndpoint from '../api/LoginEndpoint';
 import config from '../db/Config';
 
+//Symbols
 const storeLoginData = Symbol('storeLoginData');
 
 /**
