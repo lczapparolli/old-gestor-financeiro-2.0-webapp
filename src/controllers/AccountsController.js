@@ -1,3 +1,4 @@
+import accounts from '../db/Accounts';
 /**
  * An account object
  * @typedef {Object} Account
@@ -36,9 +37,8 @@ class AccountsController {
      * Loads all accounts and groups items accordly the type and sums the balances.
      * @returns {Promise<GroupedAccounts>} Returns a promise that resolves with 
      */
-    findAll() {
-        const accounts = [
-        ];
+    async findAll() {
+        const accountList = await accounts.getAllAccounts();
     
         let groups = {
             total: 0,
@@ -47,7 +47,7 @@ class AccountsController {
             invest: { items: [], sum: 0 }
         };
     
-        groups = accounts.reduce((group, account) => {
+        groups = accountList.reduce((group, account) => {
             group[account.type].items.push(account);
             group[account.type].sum += account.balance;
             group.total += account.balance;
@@ -60,20 +60,21 @@ class AccountsController {
     /**
      * Inserts a new account. The method resolves when the account is inserted and is rejected when an error occours
      * @param {Account} account - The new account to be inserted
+     * @returns {Promise}
      */
-    addAccount(account) {
-        const promise = new Promise((resolve, reject)=> {
-            const validationMessage = this[validateAccount](account);
-            if (validationMessage !== '')
-                reject(validationMessage);
-        });
-        return promise;
+    async addAccount(account) {
+        const validationMessage = this[validateAccount](account);
+        if (validationMessage !== '')
+            throw validationMessage;
+        else
+            return await accounts.addAccount(account);
     }
 
     //Private methods ---------------------------------------//
     /**
      * Validates if the account object can be stored
      * @param {Account} account - Account object to be validated
+     * @returns {String} - Validation message
      */
     [validateAccount](account) {
         let message = '';
