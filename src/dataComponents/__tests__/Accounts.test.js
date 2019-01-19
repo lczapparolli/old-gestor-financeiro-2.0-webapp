@@ -21,9 +21,11 @@ const testData = {
 
 describe('Accounts component', () => {
     let component;
-    beforeAll(() => {
+    beforeAll(async () => {
         //Initializing component
         component = shallow(<Accounts />);
+        //Wait component to be fully mounted
+        await component.instance().componentDidMount();
     });
 
     describe('Component structure', () => {

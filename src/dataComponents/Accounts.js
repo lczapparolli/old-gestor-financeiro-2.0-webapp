@@ -19,18 +19,19 @@ class Accounts extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            groups: null
+            groups: {},
+            loading: true
         };
     }
 
     async componentDidMount() {
         const groups = await accountsController.findAll();
-        this.setState({groups});
+        this.setState({ groups, loading: false });
     }
 
     render() {
-        const { groups } = this.state;
-        if (!groups) return <h1>Loading</h1>;
+        const { groups, loading } = this.state;
+        if (loading) return <h1>Loading</h1>;
 
         return (
             <Fragment>
