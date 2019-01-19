@@ -13,8 +13,8 @@ const accountsData = [
     { name: 'Acc2', type: 'account', balance: 20 },
     { name: 'CC1', type: 'cc', balance: 10 },
     { name: 'CC2', type: 'cc', balance: 10 },
-    { name: 'Inv', type: 'invest', balance: 0 },
-    { name: 'Inv', type: 'invest', balance: 10 }
+    { name: 'Inv1', type: 'invest', balance: 0 },
+    { name: 'Inv2', type: 'invest', balance: 10 }
 ];
 
 describe('AccountsController', () => {
@@ -60,10 +60,11 @@ describe('AccountsController', () => {
         });
 
         it('returns a filled array when data is stored', async () => {
+            //Insert all test data
             await Promise.all(accountsData.map(async (account) => {
                 return accountsController.addAccount(account);
             }));
-
+            //Load data
             const result = await accountsController.findAll();
             //Test condition
             cExpect(result).to.have.property('total', 60);
@@ -111,6 +112,38 @@ describe('AccountsController', () => {
             cExpect(accountList[0]).to.have.property('type', accountsData[0].type);
             cExpect(accountList[0]).to.have.property('balance', accountsData[0].balance);
             cExpect(accountList[0]).to.have.property('id');
+        });
+
+        it('Cannot saves duplicated account', async () => {
+            await accountsController.addAccount(accountsData[0]);
+            await accountsController.addAccount(accountsData[0]);
+            //Check if its saved twice
+            const accountList = await accounts.getAllAccounts();
+            cExpect(accountList).to.have.length(1);
+        });
+    });
+
+    describe('Find by name Action', () => {
+        it('have a findByName', () => {
+            cExpect(accountsController).to.respondsTo('findByName');
+        });
+
+        it('Expects an account name as parameter', async () => {
+            const exception = await accountsController.findByName().catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Account name is required');
+        });
+
+        it('Returns null when the account does not exists', async () => {
+            const account = await accountsController.findByName('Account 1');
+            cExpect(account).to.be.null;
+        });
+
+        it ('Returns the account when it is found', async () => {
+            const accountName = 'Account 1';
+            await accountsController.addAccount({ name: accountName, type: 'cc' });
+            const account = await accountsController.findByName(accountName);
+            cExpect(account).to.be.not.null;
+            cExpect(account).to.have.property('id').greaterThan(0);
         });
     });
 });

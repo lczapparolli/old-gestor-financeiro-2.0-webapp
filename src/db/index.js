@@ -5,7 +5,7 @@ const db = new Dexie('GestorFinanceiro');
 
 db.version(1).stores({
     config: '',
-    accounts: '++id,name,type'
+    accounts: '++id,&name,type'
 });
 
 db.open();

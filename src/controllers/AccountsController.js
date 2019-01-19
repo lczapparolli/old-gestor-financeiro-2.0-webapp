@@ -54,7 +54,7 @@ class AccountsController {
             return group;
         }, groups);
 
-        return Promise.resolve(groups);
+        return groups;
     }
 
     /**
@@ -68,6 +68,23 @@ class AccountsController {
             throw validationMessage;
         else
             return await accounts.addAccount(account);
+    }
+
+    /**
+     * Finds an account by the name
+     * @param {String} name - Account name to be searched 
+     * @returns {Promise<Account>} If account is found the promise resolves with it otherwise resolves with null
+     */
+    async findByName(name) {
+        if (!name)
+            throw new TypeError('Account name is required');
+        const result = await accounts.getByName(name);
+        if (result.length === 0)
+            return null;
+        else if (result.length === 1)
+            return result[0];
+        else 
+            throw new Error('Duplicated account name found');
     }
 
     //Private methods ---------------------------------------//
