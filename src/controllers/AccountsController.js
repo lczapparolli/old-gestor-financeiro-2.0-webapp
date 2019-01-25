@@ -109,4 +109,4 @@ class AccountsController {
 }
 
 export default new AccountsController();
-export { ACCOUNT, CREDIT_CARD, INVESTMENT };
+export { ACCOUNT, CREDIT_CARD, INVESTMENT, ACCOUNT_TYPES };

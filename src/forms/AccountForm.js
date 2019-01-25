@@ -9,14 +9,17 @@ import Button, { ACTION_SUBMIT } from '../components/Button';
 //Helpers
 import FormHelper from '../helpers/FormHelper';
 import ScreenSizes from '../helpers/ScreenSizes';
+import {isNumeric, convertToNumber} from '../helpers/ConvertToNumber';
 //DB
-import accountsController from '../controllers/AccountsController';
+import accountsController, { ACCOUNT_TYPES } from '../controllers/AccountsController';
 
 class AccountForm extends Component {
     constructor(props) {
         super(props);
         //Bindings
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.typeValidation = this.typeValidation.bind(this);
+        this.balanceValidation = this.balanceValidation.bind(this);
         //Setting state
         this.state = {
             name: { value: '', error: '' },
@@ -24,7 +27,7 @@ class AccountForm extends Component {
             type: { value: '', error: '' }
         };
         //Initializing formHelper
-        this.formHelper = new FormHelper(this);
+        this.formHelper = new FormHelper(this, { type: this.typeValidation, balance: this.balanceValidation });
     }
 
     async nameValidation(value) {
@@ -35,12 +38,30 @@ class AccountForm extends Component {
             return '';
     }
 
+    typeValidation(value) {
+        if (!ACCOUNT_TYPES.includes(value))
+            return 'Invalid account type';
+        else
+            return '';
+    }
+
+    balanceValidation(value) {
+        if (value !== '') {
+            if (!isNumeric(value))
+                return 'Invalid value';
+        }
+        return '';
+    }
+
     async validate() {
         const name = Object.assign({}, this.state.name);
+        const type = Object.assign({}, this.state.type);
+        const balance = Object.assign({}, this.state.balance);
         name.error = await this.nameValidation(name.value);
-        if (name.error !== '')
-            this.setState({ name });
-        return name.error === '';
+        type.error = this.typeValidation(type.value);
+        balance.error = this.balanceValidation(balance.value);
+        this.setState({ name, type, balance });
+        return name.error === '' && type.error === '' && balance.error === '';
     }
 
     async handleSubmit(event) {
@@ -48,7 +69,7 @@ class AccountForm extends Component {
         if (await this.validate()) {
             const data = {
                 name: this.state.name.value,
-                balance: this.state.balance.value,
+                balance: convertToNumber(this.state.balance.value),
                 type: this.state.type.value
             };
             this.props.onSubmit(data);
