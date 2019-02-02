@@ -62,7 +62,7 @@ describe('AccountsController', () => {
         it('returns a filled array when data is stored', async () => {
             //Insert all test data
             await Promise.all(accountsData.map(async (account) => {
-                return accountsController.addAccount(account);
+                return accountsController.saveAccount(account);
             }));
             //Load data
             const result = await accountsController.findAll();
@@ -78,34 +78,34 @@ describe('AccountsController', () => {
     });
 
     describe('Add account action', () => {
-        it('have a addAccount that returns a promise', () => {
-            cExpect(accountsController).to.respondsTo('addAccount');
+        it('have a saveAccount that returns a promise', () => {
+            cExpect(accountsController).to.respondsTo('saveAccount');
         });
 
         it('expects an account object with a name', async () => {
             let exception;
 
-            exception = await accountsController.addAccount().catch(exception => exception);
+            exception = await accountsController.saveAccount().catch(exception => exception);
             cExpect(exception).to.be.equal('Account is required');
 
-            exception = await accountsController.addAccount({ }).catch(exception => exception);
+            exception = await accountsController.saveAccount({ }).catch(exception => exception);
             cExpect(exception).to.be.equal('Account name is required');
 
-            exception = await accountsController.addAccount({ name: '' }).catch(exception => exception);
+            exception = await accountsController.saveAccount({ name: '' }).catch(exception => exception);
             cExpect(exception).to.be.equal('Account name is required');
 
-            exception = await accountsController.addAccount({ name: '  ' }).catch(exception => exception);
+            exception = await accountsController.saveAccount({ name: '  ' }).catch(exception => exception);
             cExpect(exception).to.be.equal('Account name is required');
 
-            exception = await accountsController.addAccount({ name: 'Account 1' }).catch(exception => exception);
+            exception = await accountsController.saveAccount({ name: 'Account 1' }).catch(exception => exception);
             cExpect(exception).to.be.equal('Account type is required');
 
-            exception = await accountsController.addAccount({ name: 'Account 1', type: 'invalid' }).catch(exception => exception);
+            exception = await accountsController.saveAccount({ name: 'Account 1', type: 'invalid' }).catch(exception => exception);
             cExpect(exception).to.be.equal('Invalid account type');
         });
         
         it('saves the inserted account into database', async () => {
-            await accountsController.addAccount(accountsData[0]);
+            await accountsController.saveAccount(accountsData[0]);
             const accountList = await accounts.getAllAccounts();
             cExpect(accountList).to.have.length(1);
             cExpect(accountList[0]).to.have.property('name', accountsData[0].name);
@@ -115,35 +115,65 @@ describe('AccountsController', () => {
         });
 
         it('Cannot saves duplicated account', async () => {
-            await accountsController.addAccount(accountsData[0]);
-            await accountsController.addAccount(accountsData[0]);
+            await accountsController.saveAccount(accountsData[0]);
+            await accountsController.saveAccount(accountsData[0]);
             //Check if its saved twice
             const accountList = await accounts.getAllAccounts();
             cExpect(accountList).to.have.length(1);
         });
     });
 
-    describe('Find by name Action', () => {
+    describe('Get by name Action', () => {
         it('have a findByName', () => {
-            cExpect(accountsController).to.respondsTo('findByName');
+            cExpect(accountsController).to.respondsTo('getByName');
         });
 
         it('Expects an account name as parameter', async () => {
-            const exception = await accountsController.findByName().catch(exception => exception);
+            const exception = await accountsController.getByName().catch(exception => exception);
             cExpect(exception).to.have.property('message', 'Account name is required');
         });
 
         it('Returns null when the account does not exists', async () => {
-            const account = await accountsController.findByName('Account 1');
+            const account = await accountsController.getByName('Account 1');
             cExpect(account).to.be.null;
         });
 
         it ('Returns the account when it is found', async () => {
             const accountName = 'Account 1';
-            await accountsController.addAccount({ name: accountName, type: 'cc' });
-            const account = await accountsController.findByName(accountName);
+            await accountsController.saveAccount({ name: accountName, type: 'cc' });
+            const account = await accountsController.getByName(accountName);
             cExpect(account).to.be.not.null;
             cExpect(account).to.have.property('id').greaterThan(0);
+        });
+    });
+
+    describe('Get by id Action', () => {
+        it('have a getById function', () => {
+            cExpect(accountsController).to.respondsTo('getById');
+        });
+
+        it('Expects an number as parameter', async () => {
+            const exception = await accountsController.getById().catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Id is required');
+        });
+
+        it('Returns null when the account does not exists', async () => {
+            const account = await accountsController.getById(100);
+            cExpect(account).to.be.null;
+        });
+
+        it('Returns the account when it is found', async () => {
+            await accountsController.saveAccount(accountsData[0]);
+            const account = await accountsController.getById(1);
+            cExpect(account).to.be.not.null;
+            cExpect(account).to.have.property('id', 1);
+            cExpect(account).to.have.property('name', accountsData[0].name);
+        });
+
+        it('works when the id passed is a string', async () => {
+            await accountsController.saveAccount(accountsData[0]);
+            const account = await accountsController.getById('1');
+            cExpect(account).to.be.not.null;
         });
     });
 });

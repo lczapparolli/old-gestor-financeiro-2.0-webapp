@@ -12,6 +12,10 @@ class Accounts {
     getByName(name) {
         return db.accounts.where('name').equalsIgnoreCase(name).toArray();
     }
+
+    getById(id) {
+        return db.accounts.get(id);
+    }
 }
 
 export default new Accounts();

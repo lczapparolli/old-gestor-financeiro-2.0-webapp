@@ -1,4 +1,5 @@
 import accounts from '../db/Accounts';
+import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
 /**
  * An account object
  * @typedef {Object} Account
@@ -62,7 +63,7 @@ class AccountsController {
      * @param {Account} account - The new account to be inserted
      * @returns {Promise}
      */
-    async addAccount(account) {
+    async saveAccount(account) {
         const validationMessage = this[validateAccount](account);
         if (validationMessage !== '')
             throw validationMessage;
@@ -75,7 +76,7 @@ class AccountsController {
      * @param {String} name - Account name to be searched 
      * @returns {Promise<Account>} If account is found the promise resolves with it otherwise resolves with null
      */
-    async findByName(name) {
+    async getByName(name) {
         if (!name)
             throw new TypeError('Account name is required');
         const result = await accounts.getByName(name);
@@ -87,6 +88,23 @@ class AccountsController {
             throw new Error('Duplicated account name found');
     }
 
+    /**
+     * Gets an account by its primary key
+     * @param {Number} id - Account primary key 
+     * @returns {Promise<Account>} If account is found the promise resolves with it otherwise resolves with null
+     */
+    async getById(id) {
+        if (!id)
+            throw new TypeError('Id is required');
+        id = id.toString();
+        if (!isNumeric(id))
+            throw new TypeError('Id must be numeric');
+        const result = await accounts.getById(convertToNumber(id));
+        if (result)
+            return result;
+        else //Standartizing return
+            return null;
+    }
     //Private methods ---------------------------------------//
     /**
      * Validates if the account object can be stored

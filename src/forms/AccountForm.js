@@ -10,8 +10,9 @@ import Button, { ACTION_SUBMIT } from '../components/Button';
 import FormHelper from '../helpers/FormHelper';
 import ScreenSizes from '../helpers/ScreenSizes';
 import {isNumeric, convertToNumber} from '../helpers/ConvertToNumber';
+import formatNumber from '../helpers/FormatNumber';
 //DB
-import accountsController, { ACCOUNT_TYPES } from '../controllers/AccountsController';
+import { ACCOUNT_TYPES } from '../controllers/AccountsController';
 
 class AccountForm extends Component {
     constructor(props) {
@@ -21,21 +22,14 @@ class AccountForm extends Component {
         this.typeValidation = this.typeValidation.bind(this);
         this.balanceValidation = this.balanceValidation.bind(this);
         //Setting state
+        const { account } = this.props;
         this.state = {
-            name: { value: '', error: '' },
-            balance: { value: '', error: '' },
-            type: { value: '', error: '' }
+            name: { value: account.name, error: '' },
+            balance: { value: formatNumber(account.balance), error: '' },
+            type: { value: account.type, error: '' }
         };
         //Initializing formHelper
         this.formHelper = new FormHelper(this, { type: this.typeValidation, balance: this.balanceValidation });
-    }
-
-    async nameValidation(value) {
-        const account = await accountsController.findByName(value);
-        if (account)
-            return 'Account name already used';
-        else
-            return '';
     }
 
     typeValidation(value) {
@@ -57,9 +51,11 @@ class AccountForm extends Component {
         const name = Object.assign({}, this.state.name);
         const type = Object.assign({}, this.state.type);
         const balance = Object.assign({}, this.state.balance);
-        name.error = await this.nameValidation(name.value);
+        
+        name.error = await this.props.onNameValidate(name.value);
         type.error = this.typeValidation(type.value);
         balance.error = this.balanceValidation(balance.value);
+        
         this.setState({ name, type, balance });
         return name.error === '' && type.error === '' && balance.error === '';
     }
@@ -123,7 +119,14 @@ class AccountForm extends Component {
 }
 
 AccountForm.propTypes = {
-    onSubmit: PropTypes.func
+    onSubmit: PropTypes.func,
+    onNameValidate: PropTypes.func,
+    account: PropTypes.shape({ name: PropTypes.string, balance: PropTypes.number, type: PropTypes.string })
+};
+
+AccountForm.defaultProps = {
+    account: { name: '', balance: 0, type: '' },
+    onNameValidate: () => ''
 };
 
 export default AccountForm;

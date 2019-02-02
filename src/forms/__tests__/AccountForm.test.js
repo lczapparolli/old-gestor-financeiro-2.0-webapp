@@ -3,9 +3,11 @@ import chai from 'chai';
 import chaiEnzyme from 'chai-enzyme';
 import React from 'react';
 import { shallow } from 'enzyme';
+import formatNumber from '../../helpers/FormatNumber';
+import { convertToNumber } from '../../helpers/ConvertToNumber';
 //Tested module
 import AccountForm from '../AccountForm';
-import accountsController, { ACCOUNT } from '../../controllers/AccountsController';
+import { ACCOUNT } from '../../controllers/AccountsController';
 
 chai.use(chaiEnzyme());
 const cExpect = chai.expect;
@@ -13,10 +15,17 @@ const cExpect = chai.expect;
 //Mocked function
 const onSubmit = () => {};
 
+//Test data
+const testData = {
+    name: { value: 'Account 1', error: '' },
+    balance: { value: '-100,01', error: '' },
+    type: { value: 'cc', error: '' }
+};
+
 describe('AccountForm component', () => {
-    it('have inputs for account name, initial balance and account type', () => {
+    it('has inputs for account name, initial balance and account type', () => {
         //Initializing form
-        const form = shallow(<AccountForm />);
+        const form = shallow(<AccountForm onSubmit={onSubmit} />);
         //Conditions
         cExpect(form).to.have.descendants('form');
         cExpect(form.find('InputField[name="name"]')).to.be.present();
@@ -24,41 +33,48 @@ describe('AccountForm component', () => {
         cExpect(form.find('InputField[name="type"]')).to.be.present();
     });
 
+    it('fills fields with props data', () => {
+        const account = { name: 'Account 1', balance: 10, type: 'account' };
+        const form = shallow(<AccountForm account={account} onSubmit={onSubmit} />);
+
+        cExpect(form.find('InputField[name="name"]')).to.have.prop('value', account.name);
+        cExpect(form.find('InputField[name="balance"]')).to.be.prop('value', formatNumber(account.balance));
+        cExpect(form.find('InputField[name="type"]')).to.be.prop('value', account.type);
+    });
+
+    it('fills fields with empty data when no account is provided', () => {
+        const form = shallow(<AccountForm onSubmit={onSubmit} />);
+
+        cExpect(form.find('InputField[name="name"]')).to.have.prop('value', '');
+        cExpect(form.find('InputField[name="balance"]')).to.be.prop('value', formatNumber(0));
+        cExpect(form.find('InputField[name="type"]')).to.be.prop('value', '');
+    });
+
+    it('calls onNameValidate function with account name', done => {
+        const handleNameValidate = accountName => {
+            cExpect(accountName).to.be.equal(testData.name.value);
+            done();
+        };
+
+        const form = shallow(<AccountForm onNameValidate={handleNameValidate} onSubmit={onSubmit} />);
+        
+        form.setState({ name: testData.name, balance: testData.balance, type: testData.type });
+        form.find('form').simulate('submit', { preventDefault() {} });
+    });
+
     it('calls onSubmit function with account data', done => {
-        //Test data
-        const name = { value: 'Account 1', error: '' };
-        const balance = { value: '-100,01', error: '' };
-        const type = { value: 'cc', error: '' };
 
         const onSubmit = data => {
-            cExpect(data).to.have.property('name', name.value);
-            cExpect(data).to.have.property('balance', -100.01);
-            cExpect(data).to.have.property('type', type.value);
+            cExpect(data).to.have.property('name', testData.name.value);
+            cExpect(data).to.have.property('balance', convertToNumber(testData.balance.value));
+            cExpect(data).to.have.property('type', testData.type.value);
             done();
         };
         //Initializing form
         const form = shallow(<AccountForm onSubmit={onSubmit} />);
 
-        form.setState({ name, balance, type });
+        form.setState({ name: testData.name, balance: testData.balance, type: testData.type });
         form.find('form').simulate('submit', { preventDefault() {} });
-    });
-
-    it('validates name uniqueness', async () => {
-        const accountData = { name: 'Account 1', balance: 0, type: 'cc' };
-        //Setting up database
-        await accountsController.addAccount(accountData);
-
-        //Initializing form
-        const form = shallow(<AccountForm onSubmit={onSubmit} />);
-        //Set form state
-        form.setState({
-            name: { value: accountData.name, error: '' },
-            balance: { value: accountData.balance, error: '' },
-            type: { value: accountData.type, error: '' }
-        });
-        //Simulates the submit
-        await form.instance().handleSubmit({ preventDefault() {} });
-        cExpect(form.state()).to.have.nested.property('name.error').not.empty;
     });
 
     it('validates type content', () => {
