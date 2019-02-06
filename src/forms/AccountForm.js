@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 //Components
 import InputField from '../components/InputField';
+import SelectField from '../components/SelectField';
 import GridRow from '../components/GridRow';
 import GridCell from '../components/GridCell';
 import Button, { ACTION_SUBMIT } from '../components/Button';
@@ -12,7 +13,7 @@ import ScreenSizes from '../helpers/ScreenSizes';
 import {isNumeric, convertToNumber} from '../helpers/ConvertToNumber';
 import formatNumber from '../helpers/FormatNumber';
 //DB
-import { ACCOUNT_TYPES } from '../controllers/AccountsController';
+import { ACCOUNT_TYPES, ACCOUNT, CREDIT_CARD, INVESTMENT } from '../controllers/AccountsController';
 
 class AccountForm extends Component {
     constructor(props) {
@@ -30,6 +31,12 @@ class AccountForm extends Component {
         };
         //Initializing formHelper
         this.formHelper = new FormHelper(this, { type: this.typeValidation, balance: this.balanceValidation });
+        //Account types
+        this.accountTypes = [
+            { value: ACCOUNT, text: 'Account' },
+            { value: CREDIT_CARD, text: 'Credit Card' },
+            { value: INVESTMENT, text: 'Investment' },
+        ];
     }
 
     typeValidation(value) {
@@ -98,12 +105,14 @@ class AccountForm extends Component {
                         />
                     </GridCell>
                     <GridCell>
-                        <InputField
+                        <SelectField
                             name="type"
                             label="Type"
                             formHelper={this.formHelper}
                             error={type.error}
                             value={type.value}
+                            items={this.accountTypes}
+                            placeholder="< Select type >"
                             required
                         />
                     </GridCell>

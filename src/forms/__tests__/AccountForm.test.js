@@ -30,7 +30,7 @@ describe('AccountForm component', () => {
         cExpect(form).to.have.descendants('form');
         cExpect(form.find('InputField[name="name"]')).to.be.present();
         cExpect(form.find('InputField[name="balance"]')).to.be.present();
-        cExpect(form.find('InputField[name="type"]')).to.be.present();
+        cExpect(form.find('SelectField[name="type"]')).to.be.present();
     });
 
     it('fills fields with props data', () => {
@@ -39,7 +39,7 @@ describe('AccountForm component', () => {
 
         cExpect(form.find('InputField[name="name"]')).to.have.prop('value', account.name);
         cExpect(form.find('InputField[name="balance"]')).to.be.prop('value', formatNumber(account.balance));
-        cExpect(form.find('InputField[name="type"]')).to.be.prop('value', account.type);
+        cExpect(form.find('SelectField[name="type"]')).to.be.prop('value', account.type);
     });
 
     it('fills fields with empty data when no account is provided', () => {
@@ -47,7 +47,7 @@ describe('AccountForm component', () => {
 
         cExpect(form.find('InputField[name="name"]')).to.have.prop('value', '');
         cExpect(form.find('InputField[name="balance"]')).to.be.prop('value', formatNumber(0));
-        cExpect(form.find('InputField[name="type"]')).to.be.prop('value', '');
+        cExpect(form.find('SelectField[name="type"]')).to.be.prop('value', '');
     });
 
     it('calls onNameValidate function with account name', done => {
