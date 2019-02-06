@@ -7,11 +7,12 @@
         display: block;
     }
 
-    input {
+    input, select {
         display: block;
         width: 100%;
         line-height: 1.5;
         font-size: 1em;
+        background-color: white;
         padding: {
             left: 3px;
             right: 3px;
@@ -24,8 +25,14 @@
         }
     }
 
+    select {
+        padding-top: 3px;
+        padding-bottom: 4px;
+    }
+    //rgb(117, 117, 117);
+
     &.Error {
-        input {
+        input, select {
             border-color: #ca3c3c;
             border-bottom-left-radius: 0px;
             border-bottom-right-radius: 0px;        
