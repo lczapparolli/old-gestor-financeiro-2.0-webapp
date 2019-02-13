@@ -13,7 +13,7 @@ import ScreenSizes from '../helpers/ScreenSizes';
 import {isNumeric, convertToNumber} from '../helpers/ConvertToNumber';
 import formatNumber from '../helpers/FormatNumber';
 //DB
-import { ACCOUNT_TYPES, ACCOUNT, CREDIT_CARD, INVESTMENT } from '../controllers/AccountsController';
+import { ACCOUNT_TYPES, CHECKING, CREDIT, SAVINGS } from '../controllers/AccountsController';
 
 class AccountForm extends Component {
     constructor(props) {
@@ -33,9 +33,9 @@ class AccountForm extends Component {
         this.formHelper = new FormHelper(this, { type: this.typeValidation, balance: this.balanceValidation });
         //Account types
         this.accountTypes = [
-            { value: ACCOUNT, text: 'Account' },
-            { value: CREDIT_CARD, text: 'Credit Card' },
-            { value: INVESTMENT, text: 'Investment' },
+            { value: CHECKING, text: 'Account' },
+            { value: CREDIT, text: 'Credit Card' },
+            { value: SAVINGS, text: 'Investment' },
         ];
     }
 

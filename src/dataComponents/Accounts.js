@@ -53,9 +53,9 @@ class Accounts extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                <AccountCategory title="Accounts" accounts={groups.account.items} sum={groups.account.sum} />
-                                <AccountCategory title="Credit Cards" accounts={groups.cc.items} sum={groups.cc.sum} />
-                                <AccountCategory title="Investments" accounts={groups.invest.items} sum={groups.invest.sum} />
+                                <AccountCategory title="Accounts" accounts={groups.checking.items} sum={groups.checking.sum} />
+                                <AccountCategory title="Credit Cards" accounts={groups.credit.items} sum={groups.credit.sum} />
+                                <AccountCategory title="Investments" accounts={groups.savings.items} sum={groups.savings.sum} />
                             </tbody>
                             <tfoot>
                                 <tr>

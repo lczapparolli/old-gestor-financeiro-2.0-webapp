@@ -7,7 +7,7 @@ import formatNumber from '../../helpers/FormatNumber';
 import { convertToNumber } from '../../helpers/ConvertToNumber';
 //Tested module
 import AccountForm from '../AccountForm';
-import { ACCOUNT } from '../../controllers/AccountsController';
+import { CHECKING } from '../../controllers/AccountsController';
 
 chai.use(chaiEnzyme());
 const cExpect = chai.expect;
@@ -19,7 +19,7 @@ const onSubmit = () => {};
 const testData = {
     name: { value: 'Account 1', error: '' },
     balance: { value: '-100,01', error: '' },
-    type: { value: 'cc', error: '' }
+    type: { value: 'credit', error: '' }
 };
 
 describe('AccountForm component', () => {
@@ -81,7 +81,7 @@ describe('AccountForm component', () => {
         //Initializing component
         const form = shallow(<AccountForm onSubmit={onSubmit} />);
         
-        cExpect(form.instance().typeValidation(ACCOUNT)).to.be.empty;
+        cExpect(form.instance().typeValidation(CHECKING)).to.be.empty;
         cExpect(form.instance().typeValidation('Invalid type')).to.be.not.empty;
     });
 

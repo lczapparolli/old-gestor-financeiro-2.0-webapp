@@ -24,10 +24,10 @@ import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
 const validateAccount = Symbol('validateAccount');
 
 //Accounts types
-const ACCOUNT = 'account';
-const CREDIT_CARD = 'cc';
-const INVESTMENT = 'invest';
-const ACCOUNT_TYPES = [ACCOUNT, CREDIT_CARD, INVESTMENT];
+const CHECKING = 'checking';
+const CREDIT = 'credit';
+const SAVINGS = 'savings';
+const ACCOUNT_TYPES = [CHECKING, CREDIT, SAVINGS];
 
 /**
  * Controls the account data
@@ -42,11 +42,10 @@ class AccountsController {
         const accountList = await accounts.getAllAccounts();
     
         let groups = {
-            total: 0,
-            account: { items: [], sum: 0 },
-            cc: { items: [], sum: 0 },
-            invest: { items: [], sum: 0 }
+            total: 0
         };
+        for (let type of ACCOUNT_TYPES)
+            groups[type] = { items: [], sum: 0 };
     
         groups = accountList.reduce((group, account) => {
             group[account.type].items.push(account);
@@ -127,4 +126,4 @@ class AccountsController {
 }
 
 export default new AccountsController();
-export { ACCOUNT, CREDIT_CARD, INVESTMENT, ACCOUNT_TYPES };
+export { CHECKING, CREDIT, SAVINGS, ACCOUNT_TYPES };

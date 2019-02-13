@@ -9,12 +9,12 @@ const cExpect = chai.expect;
 
 //Test data
 const accountsData = [
-    { name: 'Acc1', type: 'account', balance: 10 },
-    { name: 'Acc2', type: 'account', balance: 20 },
-    { name: 'CC1', type: 'cc', balance: 10 },
-    { name: 'CC2', type: 'cc', balance: 10 },
-    { name: 'Inv1', type: 'invest', balance: 0 },
-    { name: 'Inv2', type: 'invest', balance: 10 }
+    { name: 'Acc1', type: 'checking', balance: 10 },
+    { name: 'Acc2', type: 'checking', balance: 20 },
+    { name: 'CC1', type: 'credit', balance: 10 },
+    { name: 'CC2', type: 'credit', balance: 10 },
+    { name: 'Inv1', type: 'savings', balance: 0 },
+    { name: 'Inv2', type: 'savings', balance: 10 }
 ];
 
 describe('AccountsController', () => {
@@ -35,28 +35,28 @@ describe('AccountsController', () => {
             const result = await accountsController.findAll();
             //Test conditions
             cExpect(result).to.have.property('total').and.be.a('number');
-            cExpect(result).to.have.property('account').and.be.an('object');
-            cExpect(result).to.have.property('cc').and.be.an('object');
-            cExpect(result).to.have.property('invest').and.be.an('object');
+            cExpect(result).to.have.property('checking').and.be.an('object');
+            cExpect(result).to.have.property('credit').and.be.an('object');
+            cExpect(result).to.have.property('savings').and.be.an('object');
             //Testing groups
-            cExpect(result).to.have.nested.property('account.items').and.be.an('array');
-            cExpect(result).to.have.nested.property('account.sum').and.be.a('number');
-            cExpect(result).to.have.nested.property('cc.items').and.be.an('array');
-            cExpect(result).to.have.nested.property('cc.sum').and.be.a('number');
-            cExpect(result).to.have.nested.property('invest.items').and.be.an('array');
-            cExpect(result).to.have.nested.property('invest.sum').and.be.a('number');
+            cExpect(result).to.have.nested.property('checking.items').and.be.an('array');
+            cExpect(result).to.have.nested.property('checking.sum').and.be.a('number');
+            cExpect(result).to.have.nested.property('credit.items').and.be.an('array');
+            cExpect(result).to.have.nested.property('credit.sum').and.be.a('number');
+            cExpect(result).to.have.nested.property('savings.items').and.be.an('array');
+            cExpect(result).to.have.nested.property('savings.sum').and.be.a('number');
         });
 
         it('returns empty arrays when no data is stored', async () => {
             const result = await accountsController.findAll();
             //Test condition
             cExpect(result).to.have.property('total', 0);
-            cExpect(result).to.have.nested.property('account.items.length', 0);
-            cExpect(result).to.have.nested.property('account.sum', 0);
-            cExpect(result).to.have.nested.property('cc.items.length', 0);
-            cExpect(result).to.have.nested.property('cc.sum', 0);
-            cExpect(result).to.have.nested.property('invest.items.length', 0);
-            cExpect(result).to.have.nested.property('invest.sum', 0);
+            cExpect(result).to.have.nested.property('checking.items.length', 0);
+            cExpect(result).to.have.nested.property('checking.sum', 0);
+            cExpect(result).to.have.nested.property('credit.items.length', 0);
+            cExpect(result).to.have.nested.property('credit.sum', 0);
+            cExpect(result).to.have.nested.property('savings.items.length', 0);
+            cExpect(result).to.have.nested.property('savings.sum', 0);
         });
 
         it('returns a filled array when data is stored', async () => {
@@ -68,12 +68,12 @@ describe('AccountsController', () => {
             const result = await accountsController.findAll();
             //Test condition
             cExpect(result).to.have.property('total', 60);
-            cExpect(result).to.have.nested.property('account.items.length', 2);
-            cExpect(result).to.have.nested.property('account.sum', 30);
-            cExpect(result).to.have.nested.property('cc.items.length', 2);
-            cExpect(result).to.have.nested.property('cc.sum', 20);
-            cExpect(result).to.have.nested.property('invest.items.length', 2);
-            cExpect(result).to.have.nested.property('invest.sum', 10);
+            cExpect(result).to.have.nested.property('checking.items.length', 2);
+            cExpect(result).to.have.nested.property('checking.sum', 30);
+            cExpect(result).to.have.nested.property('credit.items.length', 2);
+            cExpect(result).to.have.nested.property('credit.sum', 20);
+            cExpect(result).to.have.nested.property('savings.items.length', 2);
+            cExpect(result).to.have.nested.property('savings.sum', 10);
         });
     });
 
@@ -140,7 +140,7 @@ describe('AccountsController', () => {
 
         it ('Returns the account when it is found', async () => {
             const accountName = 'Account 1';
-            await accountsController.saveAccount({ name: accountName, type: 'cc' });
+            await accountsController.saveAccount({ name: accountName, type: 'credit' });
             const account = await accountsController.getByName(accountName);
             cExpect(account).to.be.not.null;
             cExpect(account).to.have.property('id').greaterThan(0);
