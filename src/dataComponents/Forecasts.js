@@ -62,15 +62,19 @@ class Forecasts extends Component {
 }
 
 function Category({ category }) {
+    const categoryLink = '/category/' + category.id;
+
     return (
         <tr>
-            <td colSpan="3">{category.name}</td>
+            <td colSpan="3">
+                <Link to={categoryLink}>{category.name}</Link>
+            </td>
         </tr>
     );
 }
 
 Category.propTypes = {
-    category: PropTypes.shape({ name: PropTypes.string.isRequired }).isRequired
+    category: PropTypes.shape({ id: PropTypes.number.isRequired, name: PropTypes.string.isRequired }).isRequired
 };
 
 export default Forecasts;

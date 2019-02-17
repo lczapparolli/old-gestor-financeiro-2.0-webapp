@@ -13,9 +13,9 @@ const cExpect = chai.expect;
 
 //Test data
 const testData = [
-    { name: 'New Category 1'},
-    { name: 'New Category 2'},
-    { name: 'New Category 3'},
+    { id: 1, name: 'New Category 1'},
+    { id: 2, name: 'New Category 2'},
+    { id: 3, name: 'New Category 3'},
 ];
 
 describe('Forecasts component', () => {
@@ -55,9 +55,10 @@ describe('Category component', () => {
     });
 
     describe('Component structure', () => {
-        it('renders a table row with the category name', () => {
-            cExpect(component).to.have.tagName('tr');
-            cExpect(component.find('td').first()).to.have.text(testData[0].name);
+        it('renders a table row with the category name and a link to category edition', () => {
+            cExpect(component).to.have.descendants('tr');
+            cExpect(component.find('td > Link')).to.contain(testData[0].name);
+            cExpect(component.find('Link')).to.have.prop('to', '/category/' + testData[0].id);
         });
     });
 });
