@@ -41,4 +41,5 @@ describe('GridRow component', () => {
         component = shallow(<GridRow sizeBreak={ScreenSizes.SCREEN_HUGE}><span>Test</span></GridRow>);
         cExpect(component).to.have.className('HugeBreak');
     });
+    //TODO: Add a parameter to align items to top
 }); 

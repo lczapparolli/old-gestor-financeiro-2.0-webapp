@@ -23,6 +23,8 @@ describe('ForecastsCategoriesController', () => {
         cExpect(forecastsCategoriesController).to.be.a('object');
     });
 
+    //TODO: Checks initial data
+
     describe('Save Category action', () => {
         it('has a `saveCategory` function that returns a promise', () => {
             cExpect(forecastsCategoriesController).to.respondsTo('saveCategory');
