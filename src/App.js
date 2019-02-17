@@ -12,6 +12,7 @@ import LoginPage from './pages/LoginPage.js';
 import DashboardPage from './pages/DashboardPage';
 import LayoutTestPage from './pages/LayoutTestPage';
 import AccountPage from './pages/AccountPage';
+import ForecastCategoryPage from './pages/ForecastCategoryPage';
 
 class App extends Component {
     constructor(props) {
@@ -49,6 +50,7 @@ class App extends Component {
                     <ConditionalRoute path="/login" component={LoginPage} condition={!logged} redirect="/dashboard" childProps={{ onLogin: this.handleLogin }} />
                     <ConditionalRoute path="/dashboard" component={DashboardPage} condition={logged} redirect="/login" childProps={{ onLogout: this.handleLogout }} />
                     <ConditionalRoute path="/accounts/:id" component={AccountPage} condition={logged} redirect="/login" />
+                    <ConditionalRoute path="/category/:id" component={ForecastCategoryPage} condition={logged} redirect="/login" />
             
                     <Route path="/test" component={LayoutTestPage} />
                 </Container>
