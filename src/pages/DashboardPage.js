@@ -11,6 +11,7 @@ import GridCell from '../components/GridCell';
 import ScreenSizes from '../helpers/ScreenSizes';
 //Data components
 import Accounts from '../dataComponents/Accounts';
+import Forecasts from '../dataComponents/Forecasts';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -35,6 +36,9 @@ class Dashboard extends Component {
                 <GridRow sizeBreak={ScreenSizes.SCREEN_SMALL}>
                     <GridCell>
                         <Accounts />
+                    </GridCell>
+                    <GridCell>
+                        <Forecasts />
                     </GridCell>
                 </GridRow>
                 <GridRow>
