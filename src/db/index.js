@@ -8,6 +8,10 @@ db.version(1).stores({
     accounts: '++id,&name,type'
 });
 
+db.version(2).stores({
+    forecasts_categories: '++id,&name,type'
+});
+
 db.open();
 
 export default db;
