@@ -67,11 +67,15 @@ class ForecastsCategoriesController {
      * @returns {ForecastCategory} Category object without any extra data
      */
     [extractFields](category) {
-        return {
-            id: category.id, 
+        let result = {
             name: category.name, 
             type: category.type
         };
+
+        if (category.id && category.id > 0)
+            result.id = category.id;
+
+        return result;
     }
 }
 
