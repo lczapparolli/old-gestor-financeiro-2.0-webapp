@@ -23,6 +23,10 @@ const CATEGORY_TYPES = [INCOME, PREDICTED, UNPREDICTED];
  */
 class ForecastsCategoriesController {
 
+    findAll() {
+        return forecastsCategories.getAllCategories();
+    }
+
     /**
      * Insert or updates a category
      * @param {ForecastCategory} category - Category data to be persisted
@@ -42,7 +46,7 @@ class ForecastsCategoriesController {
     }
 
     //Private methods ---------------------------------------//
-    
+
     /**
      * Validates if the objects can be persisted
      * @param {ForecastCategory} category - Category object to be validated 
