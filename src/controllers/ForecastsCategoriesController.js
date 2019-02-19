@@ -1,4 +1,5 @@
 import forecastsCategories from '../db/ForecastsCategories';
+import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
 
 /**
  * Category object
@@ -23,14 +24,36 @@ const CATEGORY_TYPES = [INCOME, PREDICTED, UNPREDICTED];
  */
 class ForecastsCategoriesController {
 
+    /**
+     * Returns all forecasts categories
+     * @returns {Promise<ForecastCategory[]} All categories
+     */
     findAll() {
         return forecastsCategories.getAllCategories();
     }
 
     /**
+     * Finds a category by its id
+     * @param {Numeric} id - Category id
+     * @returns {Promise<ForecastCategory} The found category
+     */
+    async getById(id) {
+        if (!id)
+            throw new TypeError('Id is required');
+        id = id.toString();
+        if (!isNumeric(id))
+            throw new TypeError('Id must be numeric');
+        const result = await forecastsCategories.getById(convertToNumber(id));
+        if (result)
+            return result;
+        else //Standartizing return
+            return null;
+    }
+
+    /**
      * Insert or updates a category
      * @param {ForecastCategory} category - Category data to be persisted
-     * @returns {ForecastCategory} The category object with corresponding id
+     * @returns {Promise<ForecastCategory>} The category object with corresponding id
      */
     async saveCategory(category) {
         const validationMessage = this[validateCategory](category);
@@ -38,9 +61,13 @@ class ForecastsCategoriesController {
             throw validationMessage;
         else {
             category = this[extractFields](category);
-            if (!category.id || category.id === 0) //if is a new category, type will be 'predicted'
-                category.type = PREDICTED;
-            category.id = await forecastsCategories.addCategory(category);
+            if (!category.id || category.id === 0) {
+                category.type = PREDICTED; //if is a new category, type will be 'predicted'
+                category.id = await forecastsCategories.addCategory(category);
+            } else {
+                //Updates only category name
+                await forecastsCategories.updateCategoryName(category.id, category.name);
+            }
             return category;
         }
     }

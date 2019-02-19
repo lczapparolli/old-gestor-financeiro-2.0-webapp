@@ -15,8 +15,8 @@ const testData = [
 ];
 
 describe('ForecastsCategoriesController', () => {
-    beforeEach(() => {
-        db.forecasts_categories.clear();
+    beforeEach(async () => {
+        await db.forecasts_categories.clear();
     });
 
     it('is a object', () => {
@@ -45,7 +45,6 @@ describe('ForecastsCategoriesController', () => {
             exception = await forecastsCategoriesController.saveCategory({ name: '  ' }).catch(exception => exception);
             cExpect(exception).to.be.equal('Category name is required');
 
-            //TODO: blocks type change
             //TODO: Blocks duplicate categories name
         });
 
@@ -68,7 +67,6 @@ describe('ForecastsCategoriesController', () => {
             const addedCategory = await forecastsCategoriesController.saveCategory(testData[0]);
             //Changing values
             addedCategory.name = newName;
-            addedCategory.type = INCOME;
             //Updating category
             await forecastsCategoriesController.saveCategory(addedCategory);
             //Load all categories from database
@@ -76,7 +74,19 @@ describe('ForecastsCategoriesController', () => {
             //Test conditions
             cExpect(categoryList).to.have.length(1);
             cExpect(categoryList[0]).to.have.property('name', newName);
-            cExpect(categoryList[0]).to.have.property('type', INCOME);
+        });
+
+        it('does not change type', async () => {
+            const addedCategory = await forecastsCategoriesController.saveCategory(testData[0]);
+            //Changing values
+            addedCategory.type = INCOME;
+            //Updating category
+            await forecastsCategoriesController.saveCategory(addedCategory);
+            //Load all categories from database
+            const categoryList = await forecastsCategories.getAllCategories();
+            //Test conditions
+            cExpect(categoryList).to.have.length(1);
+            cExpect(categoryList[0]).to.have.property('type', PREDICTED);
         });
     });
 
@@ -92,6 +102,36 @@ describe('ForecastsCategoriesController', () => {
             //Test conditions
             cExpect(categories).to.be.an('array');
             cExpect(categories).to.have.length(testData.length);
+        });
+    });
+
+    describe('Get by id action', () => {
+        it('has a `getById` method', () => {
+            cExpect(forecastsCategoriesController).to.respondsTo('getById');
+        });
+
+        it('Expects an number as parameter', async () => {
+            const exception = await forecastsCategoriesController.getById().catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Id is required');
+        });
+
+        it('Returns null when the category does not exists', async () => {
+            const category = await forecastsCategoriesController.getById(100);
+            cExpect(category).to.be.null;
+        });
+
+        it('Returns the category when it is found', async () => {
+            const { id: lastInsertedId } = await forecastsCategoriesController.saveCategory(testData[0]);
+            const category = await forecastsCategoriesController.getById(lastInsertedId);
+            cExpect(category).to.be.not.null;
+            cExpect(category).to.have.property('id', lastInsertedId);
+            cExpect(category).to.have.property('name', testData[0].name);
+        });
+
+        it('works when the id passed is a string', async () => {
+            const { id: lastInsertedId } = await forecastsCategoriesController.saveCategory(testData[0]);
+            const category = await forecastsCategoriesController.getById(lastInsertedId.toString());
+            cExpect(category).to.be.not.null;
         });
     });
 });
