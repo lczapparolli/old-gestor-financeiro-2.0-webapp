@@ -17,8 +17,11 @@ class ForecastCategoryPage extends Component {
         super(props);
         //Bindings
         this.onSubmit = this.onSubmit.bind(this);
+        this.getId = this.getId.bind(this);
         //State
         this.state = {
+            loading: true,
+            category: { name: '', type: '' },
             success: false
         };
     }
@@ -30,16 +33,32 @@ class ForecastCategoryPage extends Component {
             return 0;
     }
 
+    async componentDidMount() {
+        let category = { name: '', type: '' };
+        const id = this.getId();
+        if (id > 0)
+            category = await forecastsCategoriesController.getById(id);
+        this.setState({ loading: false, category });
+    }
+
+    //TODO: Add duplicated name validation
+
     async onSubmit(category) {
+        const id = this.getId();
+        if (id > 0) 
+            category.id = id;
         await forecastsCategoriesController.saveCategory(category);
         this.setState({ success: true });
     }
 
     render() {
-        const { success } = this.state;
+        const { success, loading, category } = this.state;
 
         if (success)
             return <Redirect to="/dashboard" />;
+        
+        if (loading)
+            return <h1>Loading</h1>;
 
         return (
             <Fragment>
@@ -50,7 +69,7 @@ class ForecastCategoryPage extends Component {
                 </GridRow>
                 <GridRow>
                     <GridCell>
-                        <ForecastCategoryForm onSubmit={this.onSubmit} />
+                        <ForecastCategoryForm onSubmit={this.onSubmit} category={category} />
                     </GridCell>
                 </GridRow>
                 <GridRow>

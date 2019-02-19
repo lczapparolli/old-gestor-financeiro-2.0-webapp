@@ -16,7 +16,7 @@ class ForecastCategoryForm extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         //Setting state
         this.state = {
-            name: { value: '', error: '' }
+            name: { value: props.category.name, error: '' }
         };
         //Initializing form Helper
         this.formHelper = new FormHelper(this);
@@ -70,11 +70,13 @@ class ForecastCategoryForm extends Component {
 
 ForecastCategoryForm.propTypes = {
     onSubmit: PropTypes.func.isRequired,
-    onNameValidation: PropTypes.func.isRequired
+    onNameValidation: PropTypes.func.isRequired,
+    category: PropTypes.shape({ name: PropTypes.string })
 };
 
 ForecastCategoryForm.defaultProps = {
-    onNameValidation: () => ''
+    onNameValidation: () => '',
+    category: { name: '' }
 };
 
 export default ForecastCategoryForm;

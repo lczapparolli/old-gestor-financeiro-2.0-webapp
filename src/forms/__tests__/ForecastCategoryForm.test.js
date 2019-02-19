@@ -33,6 +33,17 @@ describe('ForecastCategoryForm component', () => {
         cExpect(form.find('InputField[name="name"]')).to.have.prop('value', '');
     });
 
+    it('fills field with category name when data is provided', () => {
+        //Test data
+        const category = {
+            name: 'Category test'
+        };
+        //Initializing component
+        const form = shallow(<ForecastCategoryForm onSubmit={emptySubmit} category={category} />);
+        //Test conditions
+        cExpect(form.find('InputField[name="name"]')).to.have.prop('value', category.name);
+    });
+
     it('calls onSubmit function with category data', done => {
         //Mock function
         const handleSubmit = category => {
@@ -58,6 +69,5 @@ describe('ForecastCategoryForm component', () => {
         //Setting data
         form.setState({ name: { value: testData.name, error: '' } });
         form.find('form').simulate('submit', { preventDefault() {} });
-
     });
 });
