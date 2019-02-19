@@ -13,9 +13,9 @@ const cExpect = chai.expect;
 
 //Test data
 const testData = [
-    { id: 1, name: 'New Category 1'},
-    { id: 2, name: 'New Category 2'},
-    { id: 3, name: 'New Category 3'},
+    { name: 'New Category 1'},
+    { name: 'New Category 2'},
+    { name: 'New Category 3'},
 ];
 
 describe('Forecasts component', () => {
@@ -40,7 +40,7 @@ describe('Forecasts component', () => {
         });
 
         it('renders a table with multiple categories', async () => {
-            //Test conditions
+        //Test conditions
             cExpect(component.find('Category')).to.have.length(testData.length);
         });
         
@@ -50,8 +50,11 @@ describe('Forecasts component', () => {
 describe('Category component', () => {
     let component;
     beforeAll(() => {
+        //Setting data
+        const category = testData[0];
+        category.id = 1;
         //Initializing component
-        component = shallow(<Category category={testData[0]} />);
+        component = shallow(<Category category={category} />);
     });
 
     describe('Component structure', () => {
