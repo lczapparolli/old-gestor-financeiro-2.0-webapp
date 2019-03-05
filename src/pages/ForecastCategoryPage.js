@@ -16,7 +16,8 @@ class ForecastCategoryPage extends Component {
     constructor(props) {
         super(props);
         //Bindings
-        this.onSubmit = this.onSubmit.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleNameValidation = this.handleNameValidation.bind(this);
         this.getId = this.getId.bind(this);
         //State
         this.state = {
@@ -41,11 +42,19 @@ class ForecastCategoryPage extends Component {
         this.setState({ loading: false, category });
     }
 
-    //TODO: Add duplicated name validation
-
-    async onSubmit(category) {
+    async handleNameValidation(name) {
         const id = this.getId();
-        if (id > 0) 
+        const category = await forecastsCategoriesController.getByName(name);
+        //if category is not found or is the same
+        if (!category || category.id === id)
+            return '';
+        else
+            return 'Forecast category name must be unique';
+    }
+
+    async handleSubmit(category) {
+        const id = this.getId();
+        if (id > 0)
             category.id = id;
         await forecastsCategoriesController.saveCategory(category);
         this.setState({ success: true });
@@ -56,7 +65,7 @@ class ForecastCategoryPage extends Component {
 
         if (success)
             return <Redirect to="/dashboard" />;
-        
+
         if (loading)
             return <h1>Loading</h1>;
 
@@ -69,7 +78,7 @@ class ForecastCategoryPage extends Component {
                 </GridRow>
                 <GridRow>
                     <GridCell>
-                        <ForecastCategoryForm onSubmit={this.onSubmit} category={category} />
+                        <ForecastCategoryForm onSubmit={this.handleSubmit} onNameValidation={this.handleNameValidation} category={category} />
                     </GridCell>
                 </GridRow>
                 <GridRow>
