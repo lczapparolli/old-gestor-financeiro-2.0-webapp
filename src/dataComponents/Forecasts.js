@@ -2,10 +2,13 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+//Style
+import '../style/DataComponent.scss';
+//Controller
+import forecastsCategoriesController from '../controllers/ForecastsCategoriesController';
 //Components
 import GridRow from '../components/GridRow';
 import GridCell from '../components/GridCell';
-import forecastsCategoriesController from '../controllers/ForecastsCategoriesController';
 
 class Forecasts extends Component {
     constructor(props) {
@@ -24,10 +27,10 @@ class Forecasts extends Component {
 
     render() {
         const { loading, categories } = this.state;
-        
+
         if (loading)
             return <h1>Loading</h1>;
-        
+
         const categoriesComponents = categories.map(category => <Category key={category.id} category={category} />);
 
         return (
@@ -42,7 +45,7 @@ class Forecasts extends Component {
                 </GridRow>
                 <GridRow>
                     <GridCell>
-                        <table>
+                        <table className="DataComponent">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -63,13 +66,28 @@ class Forecasts extends Component {
 
 function Category({ category }) {
     const categoryLink = '/category/' + category.id;
+    const forecastsComponents = (
+        <tr>
+            <td>Test 1</td>
+            <td className="NumberField">R$ 0,00</td>
+            <td className="NumberField">R$ 0,00</td>
+        </tr>
+    );
 
     return (
-        <tr>
-            <td colSpan="3">
-                <Link to={categoryLink}>{category.name}</Link>
-            </td>
-        </tr>
+        <Fragment>
+            <tr className="CategoryHeader">
+                <th colSpan="3">
+                    <Link to={categoryLink}>{category.name}</Link>
+                </th>
+            </tr>
+            { forecastsComponents }
+            <tr className="CategoryTotal">
+                <td>Sub-total</td>
+                <td className="NumberField">R$ 0,00</td>
+                <td className="NumberField">R$ 0,00</td>
+            </tr>
+        </Fragment>
     );
 }
 

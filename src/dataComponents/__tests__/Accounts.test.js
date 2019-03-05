@@ -34,7 +34,7 @@ describe('Accounts component', () => {
             cExpect(component).to.have.descendants('table');
             cExpect(component.find('thead > tr > th')).to.have.length(2);
         });
-    
+
         it('Renders a table with three categories', () => {
             cExpect(component.find('tbody > AccountCategory')).to.have.length(3);
             cExpect(component.find('tbody > AccountCategory[title="Accounts"]')).to.have.length(1);
@@ -61,8 +61,8 @@ describe('AccountCategory component', () => {
 
     describe('Component structure', () => {
         it('Renders a header and a subtotal rows', () => {
-            cExpect(component.find('tr.AccountCategoryHeader')).to.have.length(1);
-            cExpect(component.find('tr.AccountCategoryTotal')).to.have.length(1);
+            cExpect(component.find('tr.CategoryHeader')).to.have.length(1);
+            cExpect(component.find('tr.CategoryTotal')).to.have.length(1);
         });
 
         it('Renders an Account component for each account', () => {

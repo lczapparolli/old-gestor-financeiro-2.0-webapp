@@ -1,11 +1,11 @@
 @import 'Variables';
 
-.Accounts {
+.DataComponent {
     text-align: left;
     border-collapse: collapse;
     width: 100%;
 
-    & tr.Account:nth-child(even) {
+    & tr.DataComponent:nth-child(even) {
         background-color: rgba(0,0,50,.02);
     }
 
@@ -20,16 +20,16 @@
     }
 }
 
-.AccountCategoryHeader, .AccountCategoryTotal {
+.CategoryHeader, .CategoryTotal {
     font-size: 0.85em;
     font-weight: bold;
 }
 
-.AccountCategoryTotal  td {
+.CategoryTotal  td {
     background-color: rgba(0,0,50,.05);
 }
 
-.AccountCategoryHeader {
+.CategoryHeader {
     border-bottom: {
         width: 1px;
         color: rgba(34,36,38,.1);

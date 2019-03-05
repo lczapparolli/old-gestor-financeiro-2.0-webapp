@@ -3,7 +3,7 @@ import React, { Fragment, Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 //Style
-import '../style/Account.scss';
+import '../style/DataComponent.scss';
 //Controller
 import accountsController from '../controllers/AccountsController';
 //Components
@@ -45,7 +45,7 @@ class Accounts extends Component {
                 </GridRow>
                 <GridRow>
                     <GridCell>
-                        <table className="Accounts" >
+                        <table className="DataComponent" >
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -79,11 +79,11 @@ function AccountCategory({ title, accounts, sum }) {
 
     return (
         <Fragment>
-            <tr className="AccountCategoryHeader">
+            <tr className="CategoryHeader">
                 <th colSpan="2">{title}</th>
             </tr>
             {list}
-            <tr className="AccountCategoryTotal">
+            <tr className="CategoryTotal">
                 <td>Sub-total</td>
                 <td className="NumberField">{formatNumber(sum, 'R$')}</td>
             </tr>

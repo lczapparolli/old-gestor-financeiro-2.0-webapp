@@ -43,7 +43,7 @@ describe('Forecasts component', () => {
         //Test conditions
             cExpect(component.find('Category')).to.have.length(testData.length);
         });
-        
+
     });
 });
 
@@ -60,7 +60,7 @@ describe('Category component', () => {
     describe('Component structure', () => {
         it('renders a table row with the category name and a link to category edition', () => {
             cExpect(component).to.have.descendants('tr');
-            cExpect(component.find('td > Link')).to.contain(testData[0].name);
+            cExpect(component.find('th > Link')).to.contain(testData[0].name);
             cExpect(component.find('Link')).to.have.prop('to', '/category/' + testData[0].id);
         });
     });
