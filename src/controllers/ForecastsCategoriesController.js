@@ -56,7 +56,7 @@ class ForecastsCategoriesController {
      * @returns {Promise<ForecastCategory>} The category object with corresponding id
      */
     async saveCategory(category) {
-        const validationMessage = this[validateCategory](category);
+        const validationMessage = await this[validateCategory](category);
         if (validationMessage !== '')
             throw validationMessage;
         else {
@@ -72,19 +72,44 @@ class ForecastsCategoriesController {
         }
     }
 
+    /**
+     * Finds a forecast category by its name.
+     * @param {String} name - Category name to be searched
+     * @returns {Promise<ForecastCategory>} Returns the category corresponding or null if no category is found
+     * @throws {TypeError} Throws an error if category name is not provided
+     * @throws {Error} Throws an error if two categories are found
+     */
+    async getByName(name) {
+        if (!name)
+            throw new TypeError('Category name is required');
+        const result = await forecastsCategories.getByName(name);
+        if (result.length === 0)
+            return null;
+        else if (result.length === 1)
+            return result[0];
+        else
+            throw new Error('Duplicated forecast category found');
+    }
+
     //Private methods ---------------------------------------//
 
     /**
      * Validates if the objects can be persisted
-     * @param {ForecastCategory} category - Category object to be validated 
+     * @param {ForecastCategory} category - Category object to be validated
      * @returns {String} Returns an empty string if object is valid, or the error message
      */
-    [validateCategory](category) {
+    async [validateCategory](category) {
         let message = '';
-        if (!category) 
+        if (!category)
             message = 'Category is required';
         else if (!category.name || category.name.trim() === '')
             message = 'Category name is required';
+        else if (!category.id || category.id === 0) {
+            const savedCategory = await this.getByName(category.name);
+            if (savedCategory && savedCategory.id !== category.id)
+                message = 'Category already exists';
+        }
+
         return message;
     }
 
@@ -95,7 +120,7 @@ class ForecastsCategoriesController {
      */
     [extractFields](category) {
         let result = {
-            name: category.name, 
+            name: category.name,
             type: category.type
         };
 

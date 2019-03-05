@@ -16,6 +16,10 @@ class ForecastsCategories {
     getById(id) {
         return db.forecasts_categories.get(id);
     }
+
+    getByName(name) {
+        return db.forecasts_categories.where('name').equalsIgnoreCase(name).toArray();
+    }
 }
 
 export default new ForecastsCategories();

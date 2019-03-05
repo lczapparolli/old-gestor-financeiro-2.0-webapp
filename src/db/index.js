@@ -5,11 +5,17 @@ const db = new Dexie('GestorFinanceiro');
 
 db.version(1).stores({
     config: '',
-    accounts: '++id,&name,type'
+    accounts: '++id,&name,type',
+    forecasts_categories: '++id,&name,type'
 });
 
-db.version(2).stores({
-    forecasts_categories: '++id,&name,type'
+db.on('populate', () => {
+    const initialCategories = [
+        { name: 'Incomes', type: 'incomes' },
+        { name: 'Predicted', type: 'predicted' },
+        { name: 'Unpredicted', type: 'unpredicted' },
+    ];
+    initialCategories.map(category => db.forecasts_categories.add(category));
 });
 
 db.open();
