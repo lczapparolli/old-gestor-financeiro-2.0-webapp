@@ -58,6 +58,7 @@ describe('ForecastsCategoriesController', () => {
             await forecastsCategoriesController.saveCategory(testData[1]);
             exception = await forecastsCategoriesController.saveCategory(testData[1]).catch(exception => exception);
             cExpect(exception).to.be.equal('Category already exists');
+            //TODO: Validates name type
         });
 
         it('saves the inserted category into database with type equals `predicted`', async () => {

@@ -63,6 +63,8 @@ class AccountsController {
      * @returns {Promise}
      */
     async saveAccount(account) {
+        //TODO: Extract only needed fields
+        //TODO: Return account object with new id
         const validationMessage = this[validateAccount](account);
         if (validationMessage !== '')
             throw validationMessage;
@@ -104,7 +106,9 @@ class AccountsController {
         else //Standartizing return
             return null;
     }
+
     //Private methods ---------------------------------------//
+    
     /**
      * Validates if the account object can be stored
      * @param {Account} account - Account object to be validated
@@ -121,6 +125,7 @@ class AccountsController {
         } else if (!ACCOUNT_TYPES.some(type => type === account.type)) {
             message = 'Invalid account type';
         }
+        //TODO: Check if name is duplicated
         return message;
     }
 }

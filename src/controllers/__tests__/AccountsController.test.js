@@ -84,7 +84,7 @@ describe('AccountsController', () => {
 
         it('expects an account object with a name', async () => {
             let exception;
-
+            //TODO: Padronize exceptions with TypeError
             exception = await accountsController.saveAccount().catch(exception => exception);
             cExpect(exception).to.be.equal('Account is required');
 
@@ -102,6 +102,9 @@ describe('AccountsController', () => {
 
             exception = await accountsController.saveAccount({ name: 'Account 1', type: 'invalid' }).catch(exception => exception);
             cExpect(exception).to.be.equal('Invalid account type');
+            //TODO: Validates balance type
+            //TODO: Validates name type
+            //TODO: Validates duplicated error
         });
         
         it('saves the inserted account into database', async () => {
