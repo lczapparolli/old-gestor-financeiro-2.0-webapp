@@ -13,6 +13,12 @@ const testData = [
 ];
 
 describe('ForecastsController', () => {
+    beforeAll(async () => {
+        //Grants that Category exists
+        await db.forecasts_categories.clear();
+        testData[0].categoryId = await db.forecasts_categories.put({ name: 'Test category'});
+    });
+
     it('is a object', () => {
         cExpect(forecastsController).to.be.an('object');
     });
@@ -26,7 +32,7 @@ describe('ForecastsController', () => {
             cExpect(forecastsController).to.respondsTo('saveForecast');
         });
 
-        it('expects a forecast with a name and a value as parameter', async () => {
+        it('expects a forecast with name, amount and category_id as parameter', async () => {
             let exception;
 
             exception = await forecastsController.saveForecast().catch(exception => exception);
@@ -55,14 +61,30 @@ describe('ForecastsController', () => {
 
             exception = await forecastsController.saveForecast({ name: 'Valid name', amount: 'invalid amount' }).catch(exception => exception);
             cExpect(exception).to.be.an('error').and.have.property('message', 'Forecast amount must be a number');
+
+            exception = await forecastsController.saveForecast({ name: 'Valid name', amount: 0 }).catch(exception => exception);
+            cExpect(exception).to.be.an('error').and.have.property('message', 'Category id is required');
+
+            exception = await forecastsController.saveForecast({ name: 'Valid name', amount: 0, categoryId: 0 }).catch(exception => exception);
+            cExpect(exception).to.be.an('error').and.have.property('message', 'Category id is required');
+
+            exception = await forecastsController.saveForecast({ name: 'Valid name', amount: 0, categoryId: 'invalid category' }).catch(exception => exception);
+            cExpect(exception).to.be.an('error').and.have.property('message', 'Category id must be a number');
+
+            exception = await forecastsController.saveForecast({ name: 'Valid name', amount: 0, categoryId: -1 }).catch(exception => exception);
+            cExpect(exception).to.be.an('error').and.have.property('message', 'Category must exists');
+
+            //TODO: Check duplicated forecasts
         });
 
         it('adds a forecast to database when no `id` is provided', async () => {
             //Save forecast
             const forecast = await forecastsController.saveForecast(testData[0]);
             //Test if it was added
-            cExpect(forecast).to.have.property('name', testData[0].name);
             cExpect(forecast).to.have.property('id').greaterThan(0);
+            cExpect(forecast).to.have.property('name', testData[0].name);
+            cExpect(forecast).to.have.property('amount', testData[0].amount);
+            cExpect(forecast).to.have.property('categoryId', testData[0].categoryId);
             //Load all forecasts from database
             const forecastList = await forecasts.getAllForecasts();
             cExpect(forecastList).to.have.lengthOf(1);
@@ -99,5 +121,9 @@ describe('ForecastsController', () => {
             //Test condition
             cExpect(forecastList[0]).to.have.property('name', newName);
         });
+    });
+
+    describe('Load all forecasts action', () => {
+
     });
 });
