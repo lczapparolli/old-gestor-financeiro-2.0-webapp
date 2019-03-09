@@ -6,16 +6,23 @@
     "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:jest/recommended"],
     "parserOptions": {
         "ecmaFeatures": {
-            "experimentalObjectRestSpread": true,
             "jsx": true
         },
+        "ecmaVersion": 2018,
         "sourceType": "module"
     },
+    "parser": "babel-eslint",
     "plugins": [
         "react",
         "jest",
         "chai-expect"
     ],
+    "settings": {
+        "react": {
+            "version": "detect",
+            "pragma": "React"
+        }
+    },
     "rules": {
         "indent": [
             "error",
