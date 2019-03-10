@@ -10,6 +10,10 @@ class Forecasts {
         return db.forecasts.toArray();
     }
 
+    getByCategory(categoryId) {
+        return db.forecasts.where({ categoryId }).toArray();
+    }
+
 }
 
 export default new Forecasts();

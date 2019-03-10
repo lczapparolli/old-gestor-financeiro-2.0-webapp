@@ -8,6 +8,22 @@ import forecastsCategoriesController from './ForecastsCategoriesController';
  * @property {String} name - Forecast name (Required for insert)
  * @property {Number} amount - Forecast amount (Required for insert)
  * @property {Number} categoryId - Id of corresponding category (Required for insert)
+ * 
+ * Import from ForecastCategory
+ * @typedef {import('./ForecastsCategoriesController').ForecastCategory} ForecastCategory
+ * 
+ * Category with list of forecasts and total
+ * @typedef {Object} CategoryList
+ * @property {Forecast[]} forecasts - List of forecasts of this category
+ * @property {Number} total - Sum of forecasts amount
+ * 
+ * Category object
+ * @typedef {ForecastCategory & CategoryList} Category
+ * 
+ * Forecast list object
+ * @typedef {Object} ForecastList
+ * @property {Category[]} categories - List of forecasts categories
+ * @property {Number} total - Sum of forecasts amount
  */
 
 
@@ -31,6 +47,28 @@ class ForecastsController {
         forecast = this[extractField](forecast);
         forecast.id = await forecasts.addForecast(forecast);
         return forecast;
+    }
+
+    /**
+     * Returns all forecasts and categories with totals
+     * @returns {Promise<ForecastList>} List of categories and forecasts with totals
+     */
+    async findAll() {
+        //Initializing object
+        let result = { total: 0 };
+        //Loading categories
+        result.categories = await forecastsCategoriesController.findAll();
+        await Promise.all(
+            result.categories.map(async category => {
+                //Loading forecasts
+                category.forecasts = await forecasts.getByCategory(category.id);
+                //Getting sum of forecasts amount
+                category.total = category.forecasts.reduce((total, forecast) => total + forecast.amount, 0);
+                //Adding to total
+                result.total += category.total;
+            })
+        );
+        return result;
     }
 
     //Private methods ---------------------------------------//

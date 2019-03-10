@@ -2,21 +2,37 @@
 import chai from 'chai';
 //Tested module
 import forecastsController from '../ForecastsController';
+import forecastsCategoriesController from '../ForecastsCategoriesController';
 import forecasts from '../../db/Forecasts';
 import db from '../../db';
 
 const cExpect = chai.expect;
 
 //Test data
-const testData = [
-    { name: 'Forecast 1', amount: 1.0 }
+const forecastTest = { name: 'Forecast 1', amount: 1.0 };
+const categoryTest = { name: 'Test category' };
+const categories = [
+    {
+        name: 'Category 1',
+        forecasts: [
+            { name: 'Forecast 1-1', amount: 1.1 },
+            { name: 'Forecast 1-2', amount: 1.2 }
+        ]
+    },
+    {
+        name: 'Category 2',
+        forecasts: [
+            { name: 'Forecast 2-1', amount: 2.1 },
+            { name: 'Forecast 2-2', amount: 2.1 }
+        ]
+    }
 ];
 
 describe('ForecastsController', () => {
     beforeAll(async () => {
         //Grants that Category exists
         await db.forecasts_categories.clear();
-        testData[0].categoryId = await db.forecasts_categories.put({ name: 'Test category'});
+        forecastTest.categoryId = await db.forecasts_categories.put(categoryTest);
     });
 
     it('is a object', () => {
@@ -79,12 +95,12 @@ describe('ForecastsController', () => {
 
         it('adds a forecast to database when no `id` is provided', async () => {
             //Save forecast
-            const forecast = await forecastsController.saveForecast(testData[0]);
+            const forecast = await forecastsController.saveForecast(forecastTest);
             //Test if it was added
             cExpect(forecast).to.have.property('id').greaterThan(0);
-            cExpect(forecast).to.have.property('name', testData[0].name);
-            cExpect(forecast).to.have.property('amount', testData[0].amount);
-            cExpect(forecast).to.have.property('categoryId', testData[0].categoryId);
+            cExpect(forecast).to.have.property('name', forecastTest.name);
+            cExpect(forecast).to.have.property('amount', forecastTest.amount);
+            cExpect(forecast).to.have.property('categoryId', forecastTest.categoryId);
             //Load all forecasts from database
             const forecastList = await forecasts.getAllForecasts();
             cExpect(forecastList).to.have.lengthOf(1);
@@ -92,11 +108,11 @@ describe('ForecastsController', () => {
 
         it('do not store more data than expected and do not change original object', async () => {
             //Save forecast
-            let forecastTest = Object.assign({ otherValue: 'Unexpected' }, testData[0]);
+            let forecast = Object.assign({ otherValue: 'Unexpected' }, forecastTest);
             await forecastsController.saveForecast(forecastTest);
             //Test if original object is changed
-            cExpect(forecastTest).to.not.have.property('id');
-            cExpect(forecastTest).to.have.property('otherValue');
+            cExpect(forecast).to.not.have.property('id');
+            cExpect(forecast).to.have.property('otherValue');
             //Load from database
             const forecastList = await forecasts.getAllForecasts();
             //Check if only one item is present
@@ -109,7 +125,7 @@ describe('ForecastsController', () => {
         it('updates a forecast when an `id` is provided', async () => {
             const newName = 'Updated name';
             //Save forecast
-            const forecast = await forecastsController.saveForecast(testData[0]);
+            const forecast = await forecastsController.saveForecast(forecastTest);
             //Change forecast name
             forecast.name = newName;
             //Update forecast
@@ -124,6 +140,66 @@ describe('ForecastsController', () => {
     });
 
     describe('Load all forecasts action', () => {
+        /** @type {import('../ForecastsController').ForecastList} */
+        let forecastList;
+        /** @type {Number} */
+        let total = 0;
 
+        /**
+         * 
+         * @param {import('../ForecastsController').Category} category 
+         * @param {Number} categoryId 
+         * @param {import('../ForecastsController').Forecast} forecast 
+         */
+        const addForecast = async (category, categoryId, forecast) => {
+            //Set categoryId for forecast
+            forecast.categoryId = categoryId;
+            //Sums total for check
+            total += forecast.amount;
+            category.total += forecast.amount;
+            //Insert forecast
+            await forecastsController.saveForecast(forecast);
+        };
+
+        /**
+         * Insert a category into database
+         * @param {import('../ForecastsController').Category} category 
+         */
+        const addCategory = async category => {
+            //Insert category and stores Id
+            const inserted = await forecastsCategoriesController.saveCategory(category);
+            //Inititalizes category total
+            category.total = 0;
+            await Promise.all(
+                category.forecasts.map(async forecast => addForecast(category, inserted.id, forecast))
+            );
+        };
+
+        beforeAll(async () => {
+            //Clear all data
+            await db.forecasts_categories.clear();
+            await db.forecasts.clear();
+            //Save test data
+            await Promise.all(
+                categories.map(async category => addCategory(category))
+            );
+            //Get forecasts
+            forecastList = await forecastsController.findAll();
+        });
+
+        it('has a `findAll` method', () => {
+            cExpect(forecastsController).to.respondsTo('findAll');
+        });
+
+        it('returns a list of categories with total sum of forecasts', () => {
+            cExpect(forecastList).to.have.property('total', total);
+            cExpect(forecastList).to.have.property('categories').with.length(categories.length);
+        });
+
+        it('returns each category with a subtotal and a list of forecasts', () => {
+            cExpect(forecastList.categories[0]).to.have.property('name', categories[0].name);
+            cExpect(forecastList.categories[0]).to.have.property('total', categories[0].total);
+            cExpect(forecastList.categories[0]).to.have.property('forecasts').with.length(categories[0].forecasts.length);
+        });
     });
 });
