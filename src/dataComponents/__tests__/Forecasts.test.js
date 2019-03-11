@@ -69,10 +69,15 @@ describe('Category component', () => {
     });
 
     describe('Component structure', () => {
-        it('renders a header row with the category name and a link to category edition', () => {
+        it('renders a header row with the category name, a link to category edition and a link to add a forecast', () => {
             cExpect(component).to.have.descendants('tr.CategoryHeader');
-            cExpect(component.find('th > Link')).to.contain(category.name);
-            cExpect(component.find('Link')).to.have.prop('to', '/category/' + category.id);
+            //First link to category edit
+            cExpect(component.find('th > Link').first()).to.contain(category.name);
+            cExpect(component.find('th > Link').first()).to.have.prop('to', '/categories/' + category.id);
+
+            //Second link to add forecast
+            cExpect(component.find('th > Link').last()).to.contain('+');
+            cExpect(component.find('th > Link').last()).to.have.prop('to', '/forecasts/new?categoryId=' + category.id);
         });
 
         it('renders a subtotal row', () => {
@@ -100,7 +105,7 @@ describe('Forecast component', () => {
         it('renders a table row with the forecast name, amount and a link to forecast edition', () => {
             cExpect(component).to.have.descendants('tr');
             cExpect(component.find('td > Link')).to.contain(forecast.name);
-            cExpect(component.find('td > Link')).to.have.prop('to', '/forecast/' + forecast.id);
+            cExpect(component.find('td > Link')).to.have.prop('to', '/forecasts/' + forecast.id);
             cExpect(component.find('td.NumberField').first()).to.contain(formatNumber(forecast.amount, 'R$'));
         });
     });

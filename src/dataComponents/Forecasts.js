@@ -75,14 +75,18 @@ class Forecasts extends Component {
 }
 
 function Category({ category }) {
-    const categoryLink = '/category/' + category.id;
+    const categoryLink = '/categories/' + category.id;
+    const newForecastLink = '/forecasts/new?categoryId=' + category.id; 
     const forecastsComponents = category.forecasts.map(forecast => <Forecast key={forecast.id} forecast={forecast} />);
 
     return (
         <Fragment>
             <tr className="CategoryHeader">
-                <th colSpan="3">
+                <th colSpan="2">
                     <Link to={categoryLink}>{category.name}</Link>
+                </th>
+                <th className="NumberField">
+                    <Link to={newForecastLink}>+</Link>
                 </th>
             </tr>
             { forecastsComponents }
@@ -110,7 +114,7 @@ Category.propTypes = {
 };
 
 function Forecast({ forecast }) {
-    const forecastLink = '/forecast/' + forecast.id;
+    const forecastLink = '/forecasts/' + forecast.id;
     return (
         <tr>
             <td>

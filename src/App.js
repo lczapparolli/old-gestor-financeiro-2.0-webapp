@@ -50,7 +50,7 @@ class App extends Component {
                     <ConditionalRoute path="/login" component={LoginPage} condition={!logged} redirect="/dashboard" childProps={{ onLogin: this.handleLogin }} />
                     <ConditionalRoute path="/dashboard" component={DashboardPage} condition={logged} redirect="/login" childProps={{ onLogout: this.handleLogout }} />
                     <ConditionalRoute path="/accounts/:id" component={AccountPage} condition={logged} redirect="/login" />
-                    <ConditionalRoute path="/category/:id" component={ForecastCategoryPage} condition={logged} redirect="/login" />
+                    <ConditionalRoute path="/categories/:id" component={ForecastCategoryPage} condition={logged} redirect="/login" />
             
                     <Route path="/test" component={LayoutTestPage} />
                 </Container>
