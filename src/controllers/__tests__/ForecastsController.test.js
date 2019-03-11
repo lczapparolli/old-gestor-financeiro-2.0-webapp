@@ -25,6 +25,10 @@ const categories = [
             { name: 'Forecast 2-1', amount: 2.1 },
             { name: 'Forecast 2-2', amount: 2.1 }
         ]
+    },
+    {
+        name: 'Category 3',
+        forecasts: []
     }
 ];
 
@@ -199,7 +203,12 @@ describe('ForecastsController', () => {
         it('returns each category with a subtotal and a list of forecasts', () => {
             cExpect(forecastList.categories[0]).to.have.property('name', categories[0].name);
             cExpect(forecastList.categories[0]).to.have.property('total', categories[0].total);
-            cExpect(forecastList.categories[0]).to.have.property('forecasts').with.length(categories[0].forecasts.length);
+            cExpect(forecastList.categories[0]).to.have.property('forecasts').with.lengthOf(categories[0].forecasts.length);
+        });
+
+        it('returns an empty list when no forecast is added', () => {
+            cExpect(forecastList.categories[2]).to.have.property('total', 0);
+            cExpect(forecastList.categories[2]).to.have.property('forecasts').with.lengthOf(0);
         });
     });
 });
