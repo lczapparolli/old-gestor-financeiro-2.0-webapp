@@ -5,33 +5,36 @@ import PropTypes from 'prop-types';
 //Style
 import '../style/DataComponent.scss';
 //Controller
-import forecastsCategoriesController from '../controllers/ForecastsCategoriesController';
+import forecastsController from '../controllers/ForecastsController';
 //Components
 import GridRow from '../components/GridRow';
 import GridCell from '../components/GridCell';
+//Helpers
+import formatNumber from '../helpers/FormatNumber';
 
 class Forecasts extends Component {
     constructor(props) {
         super(props);
         //Initial state
         this.state = {
-            categories: [],
+            /** @type {import('../controllers/ForecastsController').ForecastList} */
+            forecastList: {},
             loading: true
         };
     }
 
     async componentDidMount() {
-        const categories = await forecastsCategoriesController.findAll();
-        this.setState({ categories, loading: false });
+        const forecastList = await forecastsController.findAll();
+        this.setState({ forecastList, loading: false });
     }
 
     render() {
-        const { loading, categories } = this.state;
+        const { loading, forecastList } = this.state;
 
         if (loading)
             return <h1>Loading</h1>;
 
-        const categoriesComponents = categories.map(category => <Category key={category.id} category={category} />);
+        const categoriesComponents = forecastList.categories.map(category => <Category key={category.id} category={category} />);
 
         return (
             <Fragment>
@@ -49,13 +52,20 @@ class Forecasts extends Component {
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Forecast</th>
-                                    <th>Balance</th>
+                                    <th className="NumberField">Forecast</th>
+                                    <th className="NumberField">Balance</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {categoriesComponents}
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Total</th>
+                                    <th className="NumberField">{formatNumber(forecastList.total, 'R$')}</th>
+                                    <th className="NumberField">R$ 0,00</th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </GridCell>
                 </GridRow>
@@ -66,13 +76,7 @@ class Forecasts extends Component {
 
 function Category({ category }) {
     const categoryLink = '/category/' + category.id;
-    const forecastsComponents = (
-        <tr>
-            <td>Test 1</td>
-            <td className="NumberField">R$ 0,00</td>
-            <td className="NumberField">R$ 0,00</td>
-        </tr>
-    );
+    const forecastsComponents = category.forecasts.map(forecast => <Forecast key={forecast.id} forecast={forecast} />);
 
     return (
         <Fragment>
@@ -84,7 +88,7 @@ function Category({ category }) {
             { forecastsComponents }
             <tr className="CategoryTotal">
                 <td>Sub-total</td>
-                <td className="NumberField">R$ 0,00</td>
+                <td className="NumberField">{ formatNumber(category.total, 'R$') }</td>
                 <td className="NumberField">R$ 0,00</td>
             </tr>
         </Fragment>
@@ -92,8 +96,43 @@ function Category({ category }) {
 }
 
 Category.propTypes = {
-    category: PropTypes.shape({ id: PropTypes.number.isRequired, name: PropTypes.string.isRequired }).isRequired
+    /** Forecast category object */
+    category: PropTypes.shape({
+        /** Category id */ 
+        id: PropTypes.number.isRequired,
+        /** Category name */
+        name: PropTypes.string.isRequired,
+        /** List of forecasts */
+        forecasts: PropTypes.array.isRequired,
+        /** Sum of forecasts amount */
+        total: PropTypes.number.isRequired
+    }).isRequired,
+};
+
+function Forecast({ forecast }) {
+    const forecastLink = '/forecast/' + forecast.id;
+    return (
+        <tr>
+            <td>
+                <Link to={forecastLink} >{ forecast.name }</Link>
+            </td>
+            <td className="NumberField">{ formatNumber(forecast.amount, 'R$') }</td>
+            <td className="NumberField">R$ 0,00</td>
+        </tr>
+    );
+}
+
+Forecast.propTypes = {
+    /** Forecast object */
+    forecast: PropTypes.shape({ 
+        /** Forecast id */
+        id: PropTypes.number.isRequired,
+        /** Forecast name */
+        name: PropTypes.string.isRequired,
+        /** Forecast amount */
+        amount: PropTypes.number.isRequired
+    })
 };
 
 export default Forecasts;
-export { Category };
+export { Category, Forecast };
