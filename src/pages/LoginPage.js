@@ -20,6 +20,8 @@ class LoginPage extends Component {
         };
     }
 
+    //TODO: Change to arrow functions
+
     async handleSubmit(data) {
         this.setState({ loading: true });
         const result = await loginController.login(data.email, data.password);

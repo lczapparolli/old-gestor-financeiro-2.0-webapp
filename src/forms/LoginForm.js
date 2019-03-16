@@ -28,6 +28,8 @@ class LoginForm extends Component {
         this.formHelper = new FormHelper(this);
     }
 
+    //TODO: Change to arrow functions
+
     handleSubmit(event) {
         event.preventDefault();
         const data = {

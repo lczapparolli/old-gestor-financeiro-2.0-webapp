@@ -23,6 +23,8 @@ class AccountPage extends Component {
         };
     }
 
+    //TODO: Change to arrow functions
+
     getId() {
         if (this.props.match.params.id !== 'new')
             return convertToNumber(this.props.match.params.id);

@@ -20,6 +20,8 @@ class Dashboard extends Component {
         this.handleLogoutClick = this.handleLogoutClick.bind(this);
     }
 
+    //TODO: Change to arrow functions
+
     async handleLogoutClick() {
         await loginController.logout();
         this.props.onLogout();

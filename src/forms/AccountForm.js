@@ -39,6 +39,8 @@ class AccountForm extends Component {
         ];
     }
 
+    //TODO: Change to arrow functions
+
     typeValidation(value) {
         if (!ACCOUNT_TYPES.includes(value))
             return 'Invalid account type';

@@ -22,6 +22,8 @@ class ForecastCategoryForm extends Component {
         this.formHelper = new FormHelper(this);
     }
 
+    //TODO: Change to arrow functions
+
     async validate() {
         const name = Object.assign({}, this.state.name);
 
