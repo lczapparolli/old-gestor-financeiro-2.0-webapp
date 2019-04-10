@@ -4,6 +4,7 @@ import chaiEnzyme from 'chai-enzyme';
 import React from 'react';
 import { shallow } from 'enzyme';
 import { convertToNumber } from '../../helpers/ConvertToNumber';
+import formatNumber from '../../helpers/FormatNumber';
 //Tested module
 import ForecastForm from '../ForecastForm';
 
@@ -38,6 +39,19 @@ describe('ForecastForm component', () => {
         //Test conditions
         cExpect(form.find('InputField[name="name"]')).to.have.prop('value', '');        
         cExpect(form.find('InputField[name="amount"]')).to.have.prop('value', '0,00');
+    });
+
+    it('fills field with forecast data when a forecast is provided', () => {
+        //Test data
+        const forecast = {
+            name: 'Forecast name',
+            amount: 10.55
+        };
+        //Initializing component
+        const form = shallow(<ForecastForm onSubmit={emptySubmit} forecast={forecast} />);
+        //Test conditions
+        cExpect(form.find('InputField[name="name"]')).to.have.prop('value', forecast.name);
+        cExpect(form.find('InputField[name="amount"]')).to.have.prop('value', formatNumber(forecast.amount));
     });
 
     it('calls onSubmit function with forecast data', done => {

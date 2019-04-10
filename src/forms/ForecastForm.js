@@ -16,8 +16,8 @@ class ForecastForm extends Component {
         super(props);
         //Initial state
         this.state = {
-            name: { value: '', error: '' },
-            amount: { value: formatNumber(0), error: '' }
+            name: { value: props.forecast.name, error: '' },
+            amount: { value: formatNumber(props.forecast.amount), error: '' }
         };
         //Form helper
         this.formHelper = new FormHelper(this, { amount: this.amountValidation });
@@ -90,12 +90,13 @@ class ForecastForm extends Component {
 
 ForecastForm.propTypes = {
     onSubmit: PropTypes.func.isRequired,
-    onNameValidation: PropTypes.func
+    onNameValidation: PropTypes.func,
+    forecast: PropTypes.shape({ name: PropTypes.string, amount: PropTypes.number })
 };
 
 ForecastForm.defaultProps = {
     onNameValidation: () => '',
-    category: { name: '' }
+    forecast: { name: '', amount: 0 }
 };
 
 export default ForecastForm;
