@@ -18,6 +18,10 @@ class Forecasts {
         return db.forecasts.where('name').equalsIgnoreCase(name).toArray();
     }
 
+    getById(id) {
+        return db.forecasts.get(id);
+    }
+
 }
 
 export default new Forecasts();

@@ -1,5 +1,6 @@
 import forecasts from '../db/Forecasts';
 import forecastsCategoriesController from './ForecastsCategoriesController';
+import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
 
 /**
  * Forecast object
@@ -74,7 +75,7 @@ class ForecastsController {
     /**
      * Finds a forecast by its name.
      * @param {String} name - Forecast name to be searched
-     * @returns {Promise<ForecastCategory>} Returns the forecast corresponding or null if no forecast is found
+     * @returns {Promise<Forecast>} Returns the forecast corresponding or null if no forecast is found
      * @throws {TypeError} Throws an error if forecast name is not provided
      * @throws {Error} Throws an error if more than one forecast is found
      */
@@ -88,6 +89,24 @@ class ForecastsController {
             return result[0];
         else
             throw new Error('Duplicated forecast found');
+    }
+
+    /**
+     * Finds a forecast by its id
+     * @param {Numeric} id - Forecast id
+     * @returns {Promise<Forecast} The found forecast
+     */
+    async getById(forecastId) {
+        if (!forecastId)
+            throw new TypeError('Id is required');
+        forecastId = forecastId.toString();
+        if (!isNumeric(forecastId))
+            throw new TypeError('Id must be numeric');
+        const result = await forecasts.getById(convertToNumber(forecastId));
+        if (result)
+            return result;
+        else //Standartizing return
+            return null;
     }
 
     //Private methods ---------------------------------------//

@@ -213,7 +213,7 @@ describe('ForecastsController', () => {
     });
 
     describe('Get by name action', () => {
-        beforeEach(async () => {
+        beforeAll(async () => {
             await db.forecasts.clear();
             await db.forecasts_categories.clear();
             forecastTest.categoryId = await db.forecasts_categories.put(categoryTest);
@@ -246,6 +246,44 @@ describe('ForecastsController', () => {
         it('returns `null` when forecast is not found', async () => {
             const forecast = await forecastsController.getByName('Invalid forecast');
             cExpect(forecast).to.be.null;
+        });
+    });
+
+    describe('Get by id action', () => {
+        let lastInsertedId;
+
+        beforeAll(async () => {
+            await db.forecasts.clear();
+            await db.forecasts_categories.clear();
+            forecastTest.categoryId = await db.forecasts_categories.put(categoryTest);
+            const insertedForecast = await forecastsController.saveForecast(forecastTest);
+            lastInsertedId = insertedForecast.id;
+        });
+
+        it('has a `getById` method', () => {
+            cExpect(forecastsController).to.respondTo('getById');
+        });
+
+        it('expects an number as parameter', async () => {
+            const exception = await forecastsController.getById().catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Id is required');
+        });
+
+        it('returns null when the category does not exists', async () => {
+            const category = await forecastsController.getById(100);
+            cExpect(category).to.be.null;
+        });
+
+        it('returns the category when it is found', async () => {
+            const category = await forecastsController.getById(lastInsertedId);
+            cExpect(category).to.be.not.null;
+            cExpect(category).to.have.property('id', lastInsertedId);
+            cExpect(category).to.have.property('name', forecastTest.name);
+        });
+
+        it('works when the id passed is a string', async () => {
+            const category = await forecastsController.getById(lastInsertedId.toString());
+            cExpect(category).to.be.not.null;
         });
     });
 });
