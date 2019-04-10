@@ -14,6 +14,10 @@ class Forecasts {
         return db.forecasts.where({ categoryId }).toArray();
     }
 
+    getByName(name) {
+        return db.forecasts.where('name').equalsIgnoreCase(name).toArray();
+    }
+
 }
 
 export default new Forecasts();

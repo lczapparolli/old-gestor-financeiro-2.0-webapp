@@ -71,6 +71,25 @@ class ForecastsController {
         return result;
     }
 
+    /**
+     * Finds a forecast by its name.
+     * @param {String} name - Forecast name to be searched
+     * @returns {Promise<ForecastCategory>} Returns the forecast corresponding or null if no forecast is found
+     * @throws {TypeError} Throws an error if forecast name is not provided
+     * @throws {Error} Throws an error if more than one forecast is found
+     */
+    async getByName(forecastName) {
+        if (!forecastName || forecastName.toString().trim() === '')
+            throw new TypeError('Forecast name is required');
+        const result = await forecasts.getByName(forecastName);
+        if (result.length === 0)
+            return null;
+        else if (result.length === 1)
+            return result[0];
+        else
+            throw new Error('Duplicated forecast found');
+    }
+
     //Private methods ---------------------------------------//
     
     /**

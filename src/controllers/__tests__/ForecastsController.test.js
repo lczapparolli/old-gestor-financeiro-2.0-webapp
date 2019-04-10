@@ -211,4 +211,41 @@ describe('ForecastsController', () => {
             cExpect(forecastList.categories[2]).to.have.property('forecasts').with.lengthOf(0);
         });
     });
+
+    describe('Get by name action', () => {
+        beforeEach(async () => {
+            await db.forecasts.clear();
+            await db.forecasts_categories.clear();
+            forecastTest.categoryId = await db.forecasts_categories.put(categoryTest);
+        });
+
+        it('has a `getByName` function', () => {
+            cExpect(forecastsController).to.respondTo('getByName');
+        });
+
+        it('expects a string as a parameter', async () => {
+            let exception;
+            
+            exception = await forecastsController.getByName().catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Forecast name is required');
+            
+            exception = await forecastsController.getByName('').catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Forecast name is required');
+            
+            exception = await forecastsController.getByName(' ').catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Forecast name is required');
+        });
+
+        it('returns a forecast when name is found', async () => {
+            await forecastsController.saveForecast(forecastTest);
+            const forecast = await forecastsController.getByName(forecastTest.name);
+            cExpect(forecast).to.have.property('id').greaterThan(0);
+            cExpect(forecast).to.have.property('name', forecastTest.name);
+        });
+
+        it('returns `null` when forecast is not found', async () => {
+            const forecast = await forecastsController.getByName('Invalid forecast');
+            cExpect(forecast).to.be.null;
+        });
+    });
 });
