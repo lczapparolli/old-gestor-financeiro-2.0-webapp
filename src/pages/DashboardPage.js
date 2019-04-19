@@ -35,7 +35,7 @@ class Dashboard extends Component {
                         <h1>Dashboard</h1>
                     </GridCell>
                 </GridRow>
-                <GridRow sizeBreak={ScreenSizes.SCREEN_SMALL}>
+                <GridRow sizeBreak={ScreenSizes.SCREEN_SMALL} alignTop >
                     <GridCell>
                         <Accounts />
                     </GridCell>
