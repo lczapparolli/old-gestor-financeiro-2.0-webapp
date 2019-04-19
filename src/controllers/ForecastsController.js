@@ -47,6 +47,7 @@ class ForecastsController {
             throw new TypeError(validationMessage);
         forecast = this[extractField](forecast);
         forecast.id = await forecasts.addForecast(forecast);
+        //TODO: Update only `name` and `amount` fields
         return forecast;
     }
 
