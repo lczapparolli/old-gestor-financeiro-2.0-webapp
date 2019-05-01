@@ -7,7 +7,8 @@ db.version(1).stores({
     config: '',
     accounts: '++id,&name,type',
     forecasts_categories: '++id,&name,type',
-    forecasts: '++id,categoryId,&name'
+    forecasts: '++id,categoryId,&name',
+    movements: '++id,accountId,forecastId'
 });
 
 db.on('populate', () => {
