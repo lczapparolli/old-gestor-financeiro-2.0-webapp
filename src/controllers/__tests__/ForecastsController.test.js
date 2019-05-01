@@ -113,7 +113,7 @@ describe('ForecastsController', () => {
         it('do not store more data than expected and do not change original object', async () => {
             //Save forecast
             let forecast = Object.assign({ otherValue: 'Unexpected' }, forecastTest);
-            await forecastsController.saveForecast(forecastTest);
+            await forecastsController.saveForecast(forecast);
             //Test if original object is changed
             cExpect(forecast).to.not.have.property('id');
             cExpect(forecast).to.have.property('otherValue');
