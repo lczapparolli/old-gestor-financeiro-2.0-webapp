@@ -28,8 +28,9 @@ const extractFields = Symbol('extractFields');
 class MovementsController {
 
     /**
-     * 
+     * Adds or updates a movement into database
      * @param {Movement} movement Movement object to be persisted to database 
+     * @returns {Promise<Movement>} Returns the inserted object with current `id`
      * @throws {TypeError} Throws an error if fields are not valid
      */
     async saveMovement(movement) {
@@ -39,6 +40,14 @@ class MovementsController {
         movement = this[extractFields](movement);
         movement.id = await movements.addMovement(movement);
         return movement;
+    }
+
+    /**
+     * Load all movements
+     * @returns {Promise<Array<Movement>>} Returns an array with all movements
+     */
+    findAll() {
+        return movements.getAllMovements();
     }
 
     //Private methods ---------------------------------------//

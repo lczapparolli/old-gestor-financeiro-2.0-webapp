@@ -26,14 +26,15 @@ describe('MovementsController', () => {
         movementTest.forecastId = forecast.id;
     });
 
+    beforeEach(async () => {
+        await db.movements.clear();
+    });
+
     it('is an object', () => {
         cExpect(movementsController).to.be.an('object');
     });
 
     describe('Save movement action', () => {
-        beforeEach(async () => {
-            await db.movements.clear();
-        });
 
         it('has a `saveMovement` method', () => {
             cExpect(movementsController).to.respondsTo('saveMovement');
@@ -142,7 +143,23 @@ describe('MovementsController', () => {
 
     });
 
-    describe('Load all movements action', () => {});
+    describe('Load all movements action', () => {
+        it('has a `findAll` method', () => {
+            cExpect(movementsController).to.respondsTo('findAll');
+        });
+
+        it('returns an array with all movements', async () => {
+            await movementsController.saveMovement(movementTest);
+            const movementList = await movementsController.findAll();
+            cExpect(movementList).to.have.length(1);
+            cExpect(movementList[0]).to.have.property('description', movementTest.description);
+        });
+
+        it('returns an empty array when no movement was added', async () => {
+            const movementList = await movementsController.findAll();
+            cExpect(movementList).to.have.length(0);
+        });
+    });
 
     describe('Get by Id action', () => {});
 });
