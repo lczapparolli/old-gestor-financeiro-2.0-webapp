@@ -3,9 +3,10 @@ import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
 /**
  * An account object
  * @typedef {Object} Account
- * @property {String} name - Account name
+ * @property {Number} id - Account id
+ * @property {String} name - Account name (Required for insert)
  * @property {Number} balance - Account balance
- * @property {String} type - Account type
+ * @property {String} type - Account type (Required for insert)
  * 
  * A group of accounts
  * @typedef {Object} AccountGroup
@@ -22,6 +23,7 @@ import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
 
 //Symbols
 const validateAccount = Symbol('validateAccount');
+const extractFields = Symbol('extractFields');
 
 //Accounts types
 const CHECKING = 'checking';
@@ -60,16 +62,15 @@ class AccountsController {
     /**
      * Inserts a new account. The method resolves when the account is inserted and is rejected when an error occours
      * @param {Account} account - The new account to be inserted
-     * @returns {Promise}
+     * @returns {Promise<Account>} - The saved account with current id
      */
     async saveAccount(account) {
-        //TODO: Extract only needed fields
-        //TODO: Return account object with new id
-        const validationMessage = this[validateAccount](account);
+        const validationMessage = await this[validateAccount](account);
         if (validationMessage !== '')
             throw validationMessage;
-        else
-            return await accounts.addAccount(account);
+        account = this[extractFields](account);
+        account.id = await accounts.addAccount(account);
+        return account;
     }
 
     /**
@@ -114,7 +115,7 @@ class AccountsController {
      * @param {Account} account - Account object to be validated
      * @returns {String} - Validation message
      */
-    [validateAccount](account) {
+    async [validateAccount](account) {
         let message = '';
         if (!account) {
             message = 'Account is required';
@@ -124,9 +125,28 @@ class AccountsController {
             message = 'Account type is required';
         } else if (!ACCOUNT_TYPES.some(type => type === account.type)) {
             message = 'Invalid account type';
+        } else if (!account.id || account.id === 0) {
+            const savedAccount = await this.getByName(account.name);
+            if (savedAccount && savedAccount.id !== account.id)
+                message = 'Account already exists';
         }
-        //TODO: Check if name is duplicated
         return message;
+    }
+
+    /**
+     * Creates a new account object with only needed fields
+     * @param {Account} account - Account object to be stored
+     * @returns {Account} - Account object without extra fields
+     */
+    [extractFields](account) {
+        const result = { 
+            name: account.name,
+            type: account.type,
+            balance: account.balance || 0
+        };
+        if (account.id && account.id > 0)
+            result.id = account.id;
+        return result;
     }
 }
 

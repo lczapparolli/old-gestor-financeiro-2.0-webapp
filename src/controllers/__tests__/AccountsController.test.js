@@ -18,15 +18,16 @@ const accountsData = [
 ];
 
 describe('AccountsController', () => {
-    beforeEach(() => {
-        db.accounts.clear();
-    });
 
     it('is an object', () => {
         cExpect(accountsController).to.be.a('object');
     });
 
     describe('Load accounts action', () => {
+        beforeEach(() => {
+            db.accounts.clear();
+        });
+
         it('have a findAll that returns a promise', () => {
             cExpect(accountsController).to.respondsTo('findAll');
         });
@@ -78,6 +79,10 @@ describe('AccountsController', () => {
     });
 
     describe('Add account action', () => {
+        beforeEach(() => {
+            db.accounts.clear();
+        });
+
         it('have a saveAccount that returns a promise', () => {
             cExpect(accountsController).to.respondsTo('saveAccount');
         });
@@ -119,10 +124,25 @@ describe('AccountsController', () => {
 
         it('Cannot saves duplicated account', async () => {
             await accountsController.saveAccount(accountsData[0]);
-            await accountsController.saveAccount(accountsData[0]);
+            await accountsController.saveAccount(accountsData[0]).catch(exception => exception);
             //Check if its saved twice
             const accountList = await accounts.getAllAccounts();
             cExpect(accountList).to.have.length(1);
+        });
+
+        it('does not store more fields than expected', async () => {
+            const accountTest = accountsData[0];
+            accountTest.extraField = 'Extra value';
+            await accountsController.saveAccount(accountTest);
+            const accountList = await accounts.getAllAccounts();
+            cExpect(accountList).to.have.length(1);
+            cExpect(accountList[0]).to.not.have.property('extraField');
+        });
+
+        it('does not touch original object', async () => {
+            const accountTest = accountsData[0];
+            await accountsController.saveAccount(accountTest);
+            cExpect(accountTest).to.not.have.property('id');
         });
     });
 
@@ -151,6 +171,10 @@ describe('AccountsController', () => {
     });
 
     describe('Get by id Action', () => {
+        beforeEach(() => {
+            db.accounts.clear();
+        });
+
         it('have a getById function', () => {
             cExpect(accountsController).to.respondsTo('getById');
         });
@@ -166,16 +190,16 @@ describe('AccountsController', () => {
         });
 
         it('Returns the account when it is found', async () => {
-            await accountsController.saveAccount(accountsData[0]);
-            const account = await accountsController.getById(1);
+            const insertedAccount = await accountsController.saveAccount(accountsData[0]);
+            const account = await accountsController.getById(insertedAccount.id);
             cExpect(account).to.be.not.null;
-            cExpect(account).to.have.property('id', 1);
+            cExpect(account).to.have.property('id', insertedAccount.id);
             cExpect(account).to.have.property('name', accountsData[0].name);
         });
 
         it('works when the id passed is a string', async () => {
-            await accountsController.saveAccount(accountsData[0]);
-            const account = await accountsController.getById('1');
+            const insertedAccount = await accountsController.saveAccount(accountsData[0]);
+            const account = await accountsController.getById(insertedAccount.id.toString());
             cExpect(account).to.be.not.null;
         });
     });
