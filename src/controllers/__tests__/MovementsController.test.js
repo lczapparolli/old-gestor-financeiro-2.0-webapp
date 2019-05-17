@@ -153,6 +153,9 @@ describe('MovementsController', () => {
             const movementList = await movementsController.findAll();
             cExpect(movementList).to.have.length(1);
             cExpect(movementList[0]).to.have.property('description', movementTest.description);
+            //Returns with forecast and account data
+            cExpect(movementList[0]).to.have.nested.property('account.name', account.name);
+            cExpect(movementList[0]).to.have.nested.property('forecast.name', forecast.name);
         });
 
         it('returns an empty array when no movement was added', async () => {

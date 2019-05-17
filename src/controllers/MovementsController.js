@@ -1,4 +1,6 @@
 import movements from '../db/Movements';
+import accounts from '../db/Accounts';
+import forecasts from '../db/Forecasts';
 import accountsController from './AccountsController';
 import forecastsController from './ForecastsController';
 import { isNumeric } from '../helpers/ConvertToNumber';
@@ -12,6 +14,8 @@ import { isNumeric } from '../helpers/ConvertToNumber';
  * @property {Number} value Value of movement (Require)
  * @property {String} description Movement description and aditiona info
  * @property {Date} date Movement date (Required)
+ * @property {import('./AccountsController').Account} account Account related to movement
+ * @property {import('./ForecastsController').Forecast} forecast Forecast related to movement
  */
 
 //Symbols
@@ -46,8 +50,17 @@ class MovementsController {
      * Load all movements
      * @returns {Promise<Array<Movement>>} Returns an array with all movements
      */
-    findAll() {
-        return movements.getAllMovements();
+    async findAll() {
+        //TODO: Improve performance
+        let movementList = await movements.getAllMovements();
+
+        movementList = await Promise.all(movementList.map(async movement => {
+            movement.account = await accounts.getById(movement.accountId);
+            movement.forecast = await forecasts.getById(movement.forecastId);
+            return movement;
+        }));
+
+        return movementList;
     }
 
     //Private methods ---------------------------------------//
