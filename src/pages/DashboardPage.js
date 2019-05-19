@@ -12,6 +12,7 @@ import ScreenSizes from '../helpers/ScreenSizes';
 //Data components
 import Accounts from '../dataComponents/Accounts';
 import Forecasts from '../dataComponents/Forecasts';
+import Movements from '../dataComponents/Movements';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -41,6 +42,11 @@ class Dashboard extends Component {
                     </GridCell>
                     <GridCell>
                         <Forecasts />
+                    </GridCell>
+                </GridRow>
+                <GridRow>
+                    <GridCell>
+                        <Movements />
                     </GridCell>
                 </GridRow>
                 <GridRow>
