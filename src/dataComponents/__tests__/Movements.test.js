@@ -30,8 +30,10 @@ describe('Movements component', () => {
     });
 
     describe('Component structure', () => {
-        it('renders a title, a movements list and a form', () => {
+        it('renders a title, a movements list and a link to add new movements', () => {
             cExpect(component).to.have.descendants('h2');
+            cExpect(component).to.have.descendants('Link');
+            cExpect(component.find('Link')).to.have.prop('to', '/movements/new');
             cExpect(component).to.have.descendants('MovementsList');
         });
     });

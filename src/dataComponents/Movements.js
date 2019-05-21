@@ -1,5 +1,6 @@
 //Libs
 import React, { Fragment, Component } from 'react';
+import { Link } from 'react-router-dom';
 //Components
 import GridRow from '../components/GridRow';
 import GridCell from '../components/GridCell';
@@ -13,6 +14,9 @@ function Movements() {
             <GridRow>
                 <GridCell>
                     <h2>Movements</h2>
+                </GridCell>
+                <GridCell shrink>
+                    <Link to="/movements/new">+</Link>
                 </GridCell>
             </GridRow>
             <GridRow>
