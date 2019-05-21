@@ -43,7 +43,7 @@ class Forecasts extends Component {
                         <h2>Forecasts</h2>
                     </GridCell>
                     <GridCell shrink>
-                        <Link to="/category/new">+</Link>
+                        <Link to="/categories/new">+</Link>
                     </GridCell>
                 </GridRow>
                 <GridRow>

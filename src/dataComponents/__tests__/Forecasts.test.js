@@ -43,7 +43,7 @@ describe('Forecasts component', () => {
         it('renders a title with a link to a new category and a table with 3 columns', () => {
             cExpect(component).to.have.descendants('h2');
             cExpect(component).to.have.descendants('Link');
-            cExpect(component.find('Link')).to.have.prop('to', '/category/new');
+            cExpect(component.find('Link')).to.have.prop('to', '/categories/new');
             cExpect(component).to.have.descendants('table');
             cExpect(component.find('thead > tr > th')).to.have.length(3);
         });
