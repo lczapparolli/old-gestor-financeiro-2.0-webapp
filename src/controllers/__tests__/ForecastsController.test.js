@@ -31,6 +31,52 @@ const categories = [
         forecasts: []
     }
 ];
+/** @type {Number} */
+let total = 0;
+
+/**
+ * 
+ * @param {import('../ForecastsController').Category} category 
+ * @param {Number} categoryId 
+ * @param {import('../ForecastsController').Forecast} forecast 
+ */
+const addForecast = async (category, categoryId, forecast) => {
+    //Set categoryId for forecast
+    forecast.categoryId = categoryId;
+    //Sums total for check
+    total += forecast.amount;
+    category.total += forecast.amount;
+    //Insert forecast
+    await forecastsController.saveForecast(forecast);
+};
+
+/**
+ * Insert a category into database
+ * @param {import('../ForecastsController').Category} category 
+ */
+const addCategory = async category => {
+    //Insert category and stores Id
+    const inserted = await forecastsCategoriesController.saveCategory(category);
+    //Inititalizes category total
+    category.total = 0;
+    await Promise.all(
+        category.forecasts.map(async forecast => addForecast(category, inserted.id, forecast))
+    );
+};
+
+/**
+ * Clears database and insert test data
+ */
+const setupDatabase = async () => {
+    //Clear all data
+    await db.forecasts_categories.clear();
+    await db.forecasts.clear();
+    total = 0;
+    //Save test data
+    await Promise.all(
+        categories.map(async category => addCategory(category))
+    );
+};
 
 describe('ForecastsController', () => {
     beforeAll(async () => {
@@ -146,48 +192,9 @@ describe('ForecastsController', () => {
     describe('Load all forecasts action', () => {
         /** @type {import('../ForecastsController').ForecastList} */
         let forecastList;
-        /** @type {Number} */
-        let total = 0;
-
-        /**
-         * 
-         * @param {import('../ForecastsController').Category} category 
-         * @param {Number} categoryId 
-         * @param {import('../ForecastsController').Forecast} forecast 
-         */
-        const addForecast = async (category, categoryId, forecast) => {
-            //Set categoryId for forecast
-            forecast.categoryId = categoryId;
-            //Sums total for check
-            total += forecast.amount;
-            category.total += forecast.amount;
-            //Insert forecast
-            await forecastsController.saveForecast(forecast);
-        };
-
-        /**
-         * Insert a category into database
-         * @param {import('../ForecastsController').Category} category 
-         */
-        const addCategory = async category => {
-            //Insert category and stores Id
-            const inserted = await forecastsCategoriesController.saveCategory(category);
-            //Inititalizes category total
-            category.total = 0;
-            await Promise.all(
-                category.forecasts.map(async forecast => addForecast(category, inserted.id, forecast))
-            );
-        };
 
         beforeAll(async () => {
-            //Clear all data
-            await db.forecasts_categories.clear();
-            await db.forecasts.clear();
-            //Save test data
-            await Promise.all(
-                categories.map(async category => addCategory(category))
-            );
-            //Get forecasts
+            await setupDatabase();
             forecastList = await forecastsController.findAll();
         });
 
@@ -284,6 +291,32 @@ describe('ForecastsController', () => {
         it('works when the id passed is a string', async () => {
             const category = await forecastsController.getById(lastInsertedId.toString());
             cExpect(category).to.be.not.null;
+        });
+    });
+
+    describe('List all action', () => {
+        beforeAll(async () => {
+            await db.forecasts.clear();    
+        });
+
+        it('has a listAll method', () => {
+            cExpect(forecastsController).to.respondTo('listAll');
+        });
+
+        it('returns an array', async () => {
+            const forecasts = await forecastsController.listAll();
+            cExpect(forecasts).to.be.an('array');
+        });
+
+        it('returns an empty array when no data is stored', async () => {
+            const forecasts = await forecastsController.listAll();
+            cExpect(forecasts).to.have.length(0);
+        });
+
+        it('returns an array with all forecasts', async () => {
+            await setupDatabase();
+            const forecasts = await forecastsController.listAll();
+            cExpect(forecasts).to.have.length(4); //Total of forecasts
         });
     });
 });

@@ -74,6 +74,14 @@ class ForecastsController {
     }
 
     /**
+     * Returns all forecasts without grouping
+     * @returns {Promise<Array<Forecast>>} List of forecasts without grouping
+     */
+    listAll() {
+        return forecasts.getAllForecasts();
+    }
+
+    /**
      * Finds a forecast by its name.
      * @param {String} name - Forecast name to be searched
      * @returns {Promise<Forecast>} Returns the forecast corresponding or null if no forecast is found
