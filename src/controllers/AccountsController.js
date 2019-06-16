@@ -60,6 +60,14 @@ class AccountsController {
     }
 
     /**
+     * Loads all accounts from database without grouping
+     * @returns {Promise<Array<Account>>} List of accounts
+     */
+    listAll() {
+        return accounts.getAllAccounts();
+    }
+
+    /**
      * Inserts a new account. The method resolves when the account is inserted and is rejected when an error occours
      * @param {Account} account - The new account to be inserted
      * @returns {Promise<Account>} - The saved account with current id

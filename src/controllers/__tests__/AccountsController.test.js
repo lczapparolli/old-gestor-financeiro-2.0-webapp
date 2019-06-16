@@ -203,4 +203,34 @@ describe('AccountsController', () => {
             cExpect(account).to.be.not.null;
         });
     });
+
+    describe('List all action', () => {
+        beforeEach(() => {
+            db.accounts.clear();
+        });
+
+        it('has a listAll function', () => {
+            cExpect(accountsController).to.respondsTo('listAll');
+        });
+
+        it('returns an array', async () => {
+            const accounts = await accountsController.listAll();
+            cExpect(accounts).to.be.an('array');
+        });
+
+        it('returns an empty array when no there are no accounts in DB', async () => {
+            const accounts = await accountsController.listAll();
+            cExpect(accounts).to.have.length(0);
+        });
+
+        it('returns an array with all accounts in DB', async() => {
+            //Insert all test data
+            await Promise.all(accountsData.map(async (account) => {
+                return accountsController.saveAccount(account);
+            }));
+
+            const accounts = await accountsController.listAll();
+            cExpect(accounts).to.have.length(accountsData.length);
+        });
+    });
 });
