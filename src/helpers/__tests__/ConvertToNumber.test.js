@@ -15,7 +15,7 @@ describe('Convert to Number helper', () => {
             cExpect(isNumeric()).to.be.a('boolean');
         });
 
-        it('returns true when the value represents a number in brazilian format', () => {
+        it ('returns false when the value does not represents a number', () => {
             cExpect(isNumeric()).to.be.false;
             cExpect(isNumeric('')).to.be.false;
             cExpect(isNumeric(false)).to.be.false;
@@ -25,8 +25,9 @@ describe('Convert to Number helper', () => {
             cExpect(isNumeric('1.1.1')).to.be.false;
             cExpect(isNumeric('-1.1')).to.be.false;
             cExpect(isNumeric(' ')).to.be.false;
+        });
 
-            cExpect(isNumeric(1)).to.be.true;
+        it('returns true when the value represents a number in brazilian format', () => {
             cExpect(isNumeric('0')).to.be.true;
             cExpect(isNumeric('01')).to.be.true;
             cExpect(isNumeric('0,1')).to.be.true;
@@ -35,6 +36,14 @@ describe('Convert to Number helper', () => {
             cExpect(isNumeric('1.000,00')).to.be.true;
             cExpect(isNumeric('-1.000,00')).to.be.true;
         });
+
+        it('returns true when the value is a number', () => {
+            cExpect(isNumeric(1)).to.be.true;
+            cExpect(isNumeric(1.1)).to.be.true;
+            cExpect(isNumeric(-1.1)).to.be.true;
+            cExpect(isNumeric(-1)).to.be.true;
+            cExpect(isNumeric(10000.1)).to.be.true;
+        });
     });
 
     describe('ConvertToNumber function', () => {
@@ -42,14 +51,22 @@ describe('Convert to Number helper', () => {
             cExpect(convertToNumber).to.be.a('function');
         });
 
-        it('expects a numeric string', () => {
+        it('expects a number or a numeric string', () => {
             cExpect(() => convertToNumber()).to.throw('Value required');
             cExpect(() => convertToNumber(true)).to.throw('Value must be a string');
             cExpect(() => convertToNumber('invalid')).to.throw('Value must be a numeric string');
             cExpect(() => convertToNumber('0')).to.not.throw();
+            cExpect(() => convertToNumber(1)).to.not.throw();
+            cExpect(() => convertToNumber(1.1)).to.not.throw();
+            cExpect(() => convertToNumber(-1.1)).to.not.throw();
+            cExpect(() => convertToNumber(10000.1)).to.not.throw();
         });
 
         it('returns the string converted to a number', () => {
+            cExpect(convertToNumber(1)).to.be.equal(1);
+            cExpect(convertToNumber(-1)).to.be.equal(-1);
+            cExpect(convertToNumber(10000.1)).to.be.equal(10000.1);
+            cExpect(convertToNumber(-10000.1)).to.be.equal(-10000.1);
             cExpect(convertToNumber('1')).to.be.equal(1);
             cExpect(convertToNumber('1,0')).to.be.equal(1);
             cExpect(convertToNumber('-1,0')).to.be.equal(-1);

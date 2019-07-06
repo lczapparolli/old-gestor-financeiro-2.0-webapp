@@ -4,10 +4,13 @@ const rxDecimalValue = /^-?\d{1,3}((\.\d{3})*|\d*),?\d*$/;
 /**
  * Converts a string to a number.
  * This function considers comma as decimal separator and dots as thousands separator
- * @param {String} value String value to be converted to Number
+ * @param {String|Number} value String value to be converted to Number
  * @returns {Number} Returns converted string
  */
 function convertToNumber(value) {
+    if (typeof value === 'number')
+        return value;
+    
     validateString(value);
     let stringValue = value.toString();
     stringValue = stringValue.replace('.', '');
@@ -22,6 +25,8 @@ function convertToNumber(value) {
  * @returns {Boolean} Returns true if value represents a number
  */
 function isNumeric(value) {
+    if (typeof value === 'number')
+        return true;
     if (typeof value === 'undefined' || value === null)
         return false;
     const stringValue = value.toString();
