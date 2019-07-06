@@ -1,9 +1,17 @@
 import { isNumeric } from './ConvertToNumber';
 
-const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{1,4})$/;
-const DAY_INDEX = 1;
-const MONTH_INDEX = 2;
-const YEAR_INDEX = 3;
+const DDMMYYYY = {
+    REGEX: /^(\d{1,2})\/(\d{1,2})\/(\d{1,4})$/,
+    DAY_INDEX: 1,
+    MONTH_INDEX: 2,
+    YEAR_INDEX: 3
+};
+const YYYYMMDD = {
+    REGEX: /^(\d{1,4})-(\d{1,2})-(\d{1,2})$/,
+    DAY_INDEX: 3,
+    MONTH_INDEX: 2,
+    YEAR_INDEX: 1
+};
 
 /**
  * @typedef {Object} DateStruct
@@ -18,11 +26,20 @@ const YEAR_INDEX = 3;
  * @returns {DateStruct} Returns an object with dath fields
  */
 function extractFields(value) {
-    const match = dateRegex.exec(value);
+    let dateFormat;
+
+    if (DDMMYYYY.REGEX.test(value))
+        dateFormat = DDMMYYYY;
+    else if (YYYYMMDD.REGEX.test(value))
+        dateFormat = YYYYMMDD;
+    else
+        throw new TypeError('Date format not indentified');
+
+    const match = dateFormat.REGEX.exec(value);
     return {
-        day: match[DAY_INDEX],
-        month: match[MONTH_INDEX],
-        year: match[YEAR_INDEX],
+        day: match[dateFormat.DAY_INDEX],
+        month: match[dateFormat.MONTH_INDEX],
+        year: match[dateFormat.YEAR_INDEX]
     };
 }
 
@@ -38,7 +55,7 @@ function isDate(value) {
         return true;
     if (isNumeric(value)) //Numeric strings
         return true;
-    if (dateRegex.test(value))
+    if (DDMMYYYY.REGEX.test(value) || YYYYMMDD.REGEX.test(value))
         return true;
 
     return false;
