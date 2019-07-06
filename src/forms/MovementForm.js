@@ -76,23 +76,36 @@ class MovementForm extends Component {
         return <form onSubmit={this.handleSubmit} >
             <GridRow sizeBreak={ScreenSizes.SCREEN_SMALL}>
                 <GridCell>
-                    <SelectField
-                        name="forecastId"
-                        label="Forecast"
-                        items={forecasts}
-                        formHelper={this.formHelper}
-                        value={forecastId.value}
-                        error={forecastId.error}
-                        required
-                    />
-                </GridCell>
-                <GridCell>
                     <InputField
                         name="description"
                         label="Description"
                         formHelper={this.formHelper}
                         value={description.value}
                         error={description.error}
+                        required
+                    />
+                </GridCell>
+                <GridCell>
+                    <SelectField
+                        name="accountId"
+                        label="Account"
+                        items={accounts}
+                        formHelper={this.formHelper}
+                        value={accountId.value}
+                        error={accountId.error}
+                        placeholder="Select"
+                        required
+                    />
+                </GridCell>
+                <GridCell>
+                    <SelectField
+                        name="forecastId"
+                        label="Budget"
+                        items={forecasts}
+                        formHelper={this.formHelper}
+                        value={forecastId.value}
+                        error={forecastId.error}
+                        placeholder="Select"
                         required
                     />
                 </GridCell>
@@ -114,17 +127,6 @@ class MovementForm extends Component {
                         formHelper={this.formHelper}
                         value={value.value}
                         error={value.error}
-                        required
-                    />
-                </GridCell>
-                <GridCell>
-                    <SelectField
-                        name="accountId"
-                        label="Account"
-                        items={accounts}
-                        formHelper={this.formHelper}
-                        value={accountId.value}
-                        error={accountId.error}
                         required
                     />
                 </GridCell>

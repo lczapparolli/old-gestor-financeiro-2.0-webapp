@@ -49,11 +49,11 @@ class MovementsList extends Component {
     renderMovements(movementList) {
         return movementList.map(movement => (
             <tr key={movement.id}>
-                <td>{movement.forecast.name}</td>
                 <td>{movement.description}</td>
+                <td>{movement.account.name}</td>
+                <td>{movement.forecast.name}</td>
                 <td>{formatDate(movement.date)}</td>
                 <td>{formatNumber(movement.value, 'R$')}</td>
-                <td>{movement.account.name}</td>
             </tr>
         ));
     }
@@ -69,11 +69,11 @@ class MovementsList extends Component {
             <table className="DataComponent" >
                 <thead>
                     <tr>
-                        <th>Budget</th>
                         <th>Description</th>
+                        <th>Account</th>
+                        <th>Budget</th>
                         <th>Date</th>
                         <th>Value</th>
-                        <th>Account</th>
                     </tr>
                 </thead>
                 <tbody>

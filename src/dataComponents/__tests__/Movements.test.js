@@ -64,11 +64,11 @@ describe('MovementsList component', () => {
     it('has 5 columns into table', () => {
         const columns = component.find('thead > tr > th');
         cExpect(columns).to.have.length(5);
-        cExpect(columns.at(0)).to.have.text('Budget');
-        cExpect(columns.at(1)).to.have.text('Description');
-        cExpect(columns.at(2)).to.have.text('Date');
-        cExpect(columns.at(3)).to.have.text('Value');
-        cExpect(columns.at(4)).to.have.text('Account');
+        cExpect(columns.at(0)).to.have.text('Description');
+        cExpect(columns.at(1)).to.have.text('Account');
+        cExpect(columns.at(2)).to.have.text('Budget');
+        cExpect(columns.at(3)).to.have.text('Date');
+        cExpect(columns.at(4)).to.have.text('Value');
     });
 
     it('has one line per movement into database', () => {
@@ -76,10 +76,10 @@ describe('MovementsList component', () => {
         cExpect(rows).to.have.length(1);
         const columns = rows.at(0).find('td');
         cExpect(columns).to.have.length(5);
-        cExpect(columns.at(0)).to.have.text(forecast.name);
-        cExpect(columns.at(1)).to.have.text(movement.description);
-        cExpect(columns.at(2)).to.have.text(formatDate(movement.date));
-        cExpect(columns.at(3)).to.have.text(formatNumber(movement.value, 'R$'));
-        cExpect(columns.at(4)).to.have.text(account.name);
+        cExpect(columns.at(0)).to.have.text(movement.description);
+        cExpect(columns.at(1)).to.have.text(account.name);
+        cExpect(columns.at(2)).to.have.text(forecast.name);
+        cExpect(columns.at(3)).to.have.text(formatDate(movement.date));
+        cExpect(columns.at(4)).to.have.text(formatNumber(movement.value, 'R$'));
     });
 });
