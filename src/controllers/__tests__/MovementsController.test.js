@@ -3,6 +3,7 @@ import chai from 'chai';
 //Tested module
 import movementsController from '../MovementsController';
 import db from '../../db';
+import formatNumber from '../../helpers/FormatNumber';
 
 const cExpect = chai.expect;
 
@@ -102,7 +103,8 @@ describe('MovementsController', () => {
             cExpect(movement).to.have.property('accountId', movementTest.accountId);
             cExpect(movement).to.have.property('forecastId', movementTest.forecastId);
             cExpect(movement).to.have.property('value', movementTest.value);
-            cExpect(movement).to.have.property('date', movementTest.date);
+            cExpect(movement).to.have.property('date');
+            cExpect(movement.date.getTime()).to.be.equal(movementTest.date);
             //Should not touch original object
             cExpect(movementTest).to.not.have.property('id');
             //Check if it is in database
@@ -127,11 +129,11 @@ describe('MovementsController', () => {
 
         it('updates a movement when an `id` is provided', async () => {
             const newDescription = 'Updated name';
-            //Save forecast
+            //Save movement
             const movement = await movementsController.saveMovement(movementTest);
-            //Change forecast name
+            //Change movement name
             movement.description = newDescription;
-            //Update forecast
+            //Update movement
             await movementsController.saveMovement(movement);
             //Load from database
             const movementList = await db.movements.toArray();
@@ -140,7 +142,33 @@ describe('MovementsController', () => {
             //Test condition
             cExpect(movementList[0]).to.have.property('description', newDescription);
         });
-
+        
+        it('stores `date` field as Date object', async () => {
+            //Save movement
+            await movementsController.saveMovement(movementTest);
+            //Load directly from DB
+            const movementList = await db.movements.toArray();
+            //Test condition
+            cExpect(movementList).to.have.length(1);
+            cExpect(movementList[0].date).to.be.a('Date');
+        });
+        
+        it('stores `accountId`, `forecastId` and `value` fields as numbers', async () => {
+            //Test data
+            const numberTest = movementTest;
+            numberTest.value = formatNumber(numberTest.value);
+            numberTest.forecastId = numberTest.forecastId.toString();
+            numberTest.accountId = numberTest.accountId.toString();
+            //Save movement
+            await movementsController.saveMovement(movementTest);
+            //Load directly from DB
+            const movementList = await db.movements.toArray();
+            //Test condition
+            cExpect(movementList).to.have.length(1);
+            cExpect(movementList[0].value).to.be.a('Number');
+            cExpect(movementList[0].accountId).to.be.a('Number');
+            cExpect(movementList[0].forecastId).to.be.a('Number');
+        });
     });
 
     describe('Load all movements action', () => {

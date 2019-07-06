@@ -3,7 +3,8 @@ import accounts from '../db/Accounts';
 import forecasts from '../db/Forecasts';
 import accountsController from './AccountsController';
 import forecastsController from './ForecastsController';
-import { isNumeric } from '../helpers/ConvertToNumber';
+import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
+import { isDate, convertToDate } from '../helpers/ConvertToDate';
 
 /**
  * Movement object
@@ -140,20 +141,18 @@ class MovementsController {
     [validateDate](date) {
         if (!date)
             return 'Date is required';
-        if (typeof date === 'string' && isNaN(Date.parse(date)))
-            return 'Date must be a valid date';
-        if (!(date instanceof Date) && !isNumeric(date))
+        if (!isDate(date))
             return 'Date must be a valid date';
         return '';
     }
 
     [extractFields](movement) {
         let result = {
-            accountId: movement.accountId,
-            forecastId: movement.forecastId,
+            accountId: convertToNumber(movement.accountId),
+            forecastId: convertToNumber(movement.forecastId),
             description: movement.description,
-            value: movement.value,
-            date: movement.date
+            value: convertToNumber(movement.value),
+            date: convertToDate(movement.date)
         };
         if(movement.id && movement.id > 0)
             result.id = movement.id;
