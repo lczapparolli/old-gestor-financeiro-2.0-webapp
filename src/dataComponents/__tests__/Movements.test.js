@@ -76,7 +76,11 @@ describe('MovementsList component', () => {
         cExpect(rows).to.have.length(1);
         const columns = rows.at(0).find('td');
         cExpect(columns).to.have.length(5);
-        cExpect(columns.at(0)).to.have.text(movement.description);
+        
+        cExpect(columns.at(0)).to.have.descendants('Link');
+        cExpect(columns.at(0).find('Link')).to.have.prop('to', '/movements/' + movement.id.toString());
+        cExpect(columns.at(0).find('Link')).to.have.text(movement.text);
+        
         cExpect(columns.at(1)).to.have.text(account.name);
         cExpect(columns.at(2)).to.have.text(forecast.name);
         cExpect(columns.at(3)).to.have.text(formatDate(movement.date));

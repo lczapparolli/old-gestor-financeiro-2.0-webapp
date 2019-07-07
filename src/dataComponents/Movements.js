@@ -47,15 +47,18 @@ class MovementsList extends Component {
     }
 
     renderMovements(movementList) {
-        return movementList.map(movement => (
-            <tr key={movement.id}>
-                <td>{movement.description}</td>
-                <td>{movement.account.name}</td>
-                <td>{movement.forecast.name}</td>
-                <td>{formatDate(movement.date)}</td>
-                <td>{formatNumber(movement.value, 'R$')}</td>
-            </tr>
-        ));
+        return movementList.map(movement => {
+            const movementLink = '/movements/' + movement.id;
+            return (
+                <tr key={movement.id}>
+                    <td><Link to={movementLink}>{movement.description}</Link></td>
+                    <td>{movement.account.name}</td>
+                    <td>{movement.forecast.name}</td>
+                    <td>{formatDate(movement.date)}</td>
+                    <td>{formatNumber(movement.value, 'R$')}</td>
+                </tr>
+            );
+        });
     }
 
     render() {
