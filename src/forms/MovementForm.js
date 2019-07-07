@@ -42,8 +42,7 @@ class MovementForm extends Component {
         this.setState({ forecasts, accounts });
     }
 
-    handleSubmit = event => { 
-        //TODO: Validate
+    handleSubmit = event => {
         event.preventDefault();
         const movement = {
             description: this.state.description.value,
