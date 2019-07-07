@@ -1,7 +1,7 @@
 //Libs
 import chai from 'chai';
 //Tested component
-import formatDate from '../FormatDate';
+import formatDate, { FORMATS } from '../FormatDate';
 
 const cExpect = chai.expect;
 
@@ -25,12 +25,25 @@ describe('Date format helper', () => {
         cExpect(() => formatDate('2019-02-29')).to.not.throw();
     });
 
-    it('returns the date in format DD/MM/YYYY', () => {
-        cExpect(formatDate('2019-05-01')).to.be.equal('01/05/2019'); 
-        cExpect(formatDate(new Date(1556668800000))).to.be.equal('01/05/2019');
-        cExpect(formatDate(1556668800000)).to.be.equal('01/05/2019'); 
-        cExpect(formatDate('2020-02-29')).to.be.equal('29/02/2020');
+    it('returns the date accordding the format informed', () => {
+        //DD/MM/YYYY format
+        cExpect(formatDate('2019-05-01', FORMATS.DDMMYYYY_FORMAT)).to.be.equal('01/05/2019'); 
+        cExpect(formatDate(new Date(1556668800000), FORMATS.DDMMYYYY_FORMAT)).to.be.equal('01/05/2019');
+        cExpect(formatDate(1556668800000, FORMATS.DDMMYYYY_FORMAT)).to.be.equal('01/05/2019'); 
+        cExpect(formatDate('2020-02-29', FORMATS.DDMMYYYY_FORMAT)).to.be.equal('29/02/2020');
         //Date is invalid but is converted to next valid day
-        cExpect(formatDate('2019-02-29')).to.be.equal('01/03/2019');
+        cExpect(formatDate('2019-02-29', FORMATS.DDMMYYYY_FORMAT)).to.be.equal('01/03/2019');
+
+        //YYYY-MM-DD format
+        cExpect(formatDate('2019-05-01', FORMATS.YYYYMMDD_FORMAT)).to.be.equal('2019-05-01'); 
+        cExpect(formatDate(new Date(1556668800000), FORMATS.YYYYMMDD_FORMAT)).to.be.equal('2019-05-01');
+        cExpect(formatDate(1556668800000, FORMATS.YYYYMMDD_FORMAT)).to.be.equal('2019-05-01'); 
+        cExpect(formatDate('2020-02-29', FORMATS.YYYYMMDD_FORMAT)).to.be.equal('2020-02-29');
+        //Date is invalid but is converted to next valid day
+        cExpect(formatDate('2019-02-29', FORMATS.YYYYMMDD_FORMAT)).to.be.equal('2019-03-01');
+    });
+
+    it('returns the date in format DD/MM/YYYY by default', () => {
+        cExpect(formatDate('2019-05-01')).to.be.equal('01/05/2019'); 
     });
 });

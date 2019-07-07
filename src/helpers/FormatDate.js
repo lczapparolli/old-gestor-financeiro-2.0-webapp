@@ -1,5 +1,8 @@
 import { isNumeric } from './ConvertToNumber';
 
+const DDMMYYYY_FORMAT = 'DDMMYYYY';
+const YYYYMMDD_FORMAT = 'YYYYMMDD';
+
 /**
  * Validates if the param is a valid date and converts it to a `Date` object
  * @param {String|Number|Date} date - The value to be validated and converted
@@ -26,12 +29,14 @@ function validate(date) {
 }
 
 /**
- * Formats a Date with 'DD/MM/YYYY' format
+ * Formats a Date with 'DD/MM/YYYY' or 'YYYY-MM-DD' format, according the format informed in second parameter.
+ * Use exported contants as argument
  * @param {String|Number|Date} date - Value to be formated, can be a Date object, a timestamp or a string date.
+ * @param {String} format - One of DDMMYYYY_FORMAT or YYYYMMDD_FORMAT
  * @throws {TypeError} Throws an error when no date is provided or when param can not be converted to a date
  * @returns {String} Date formated with 'DD/MM/YYYY'
  */
-function formatDate(date) {
+function formatDate(date, format = DDMMYYYY_FORMAT) {
     const converted = validate(date);
     let day = converted.getUTCDate().toString();
     let month = (converted.getUTCMonth() + 1).toString();
@@ -40,7 +45,14 @@ function formatDate(date) {
     day = day.padStart(2, '0');
     month = month.padStart(2, '0');
     year = year.padStart(4, '0');
-    return day + '/' + month + '/' + year;
+
+    if (format === DDMMYYYY_FORMAT)
+        return day + '/' + month + '/' + year;
+    else if (format === YYYYMMDD_FORMAT)
+        return year + '-' + month + '-' + day;
+    else
+        throw new TypeError('Invalid date format');
 }
 
 export default formatDate;
+export const FORMATS = { DDMMYYYY_FORMAT, YYYYMMDD_FORMAT };
