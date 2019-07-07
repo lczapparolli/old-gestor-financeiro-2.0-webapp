@@ -192,5 +192,38 @@ describe('MovementsController', () => {
         });
     });
 
-    describe('Get by Id action', () => {});
+    describe('Get by Id action', () => {
+        it('has a `getById` method', () => {
+            cExpect(movementsController).to.respondsTo('getById');
+        });
+
+        it('expects a number as parameter', async () => {
+            let exception = await movementsController.getById().catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Id is required');
+
+            exception = await movementsController.getById('a').catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Id must be a number');
+
+            exception = await movementsController.getById('1').catch(exception => exception);
+            cExpect(exception).to.not.be.a('TypeException');
+        });
+
+        it('returns `null` when movement is not found', async () => {
+            const movement = await movementsController.getById(100);
+            cExpect(movement).to.be.null;
+        });
+
+        it('returns the movement when it is found', async () => {
+            const savedMovement = await movementsController.saveMovement(movementTest);
+            const movement = await movementsController.getById(savedMovement.id);
+            cExpect(movement).to.be.not.null;
+            cExpect(movement).to.have.property('id', savedMovement.id);
+            cExpect(movement).to.have.property('description', savedMovement.description);
+            cExpect(movement).to.have.property('accountId', savedMovement.accountId);
+            cExpect(movement).to.have.property('forecastId', savedMovement.forecastId);
+            cExpect(movement).to.have.property('value', savedMovement.value);
+            cExpect(movement).to.have.property('date');
+            cExpect(movement.date.getTime()).to.be.equal(movementTest.date);
+        });
+    });
 });

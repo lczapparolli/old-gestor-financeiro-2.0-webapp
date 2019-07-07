@@ -64,6 +64,25 @@ class MovementsController {
         return movementList;
     }
 
+    /**
+     * Finds a movement by its Id
+     * @param {Number} movementId Identification of movement to be found
+     * @returns {Promise<Movement>} Returns the movement found
+     */
+    async getById(movementId) {
+        if (!movementId)
+            throw new TypeError('Id is required');
+        if (!isNumeric(movementId)) 
+            throw new TypeError('Id must be a number');
+        
+        const movement = await movements.getById(convertToNumber(movementId));
+        
+        if (movement)
+            return movement;
+        else
+            return null;
+    }
+
     //Private methods ---------------------------------------//
 
     /**
