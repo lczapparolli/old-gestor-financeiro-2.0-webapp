@@ -6,7 +6,7 @@ import { shallow } from 'enzyme';
 //Tested module
 import db from '../../db';
 import formatNumber from '../../helpers/FormatNumber';
-import formatDate from '../../helpers/FormatDate';
+import formatDate, { FORMATS } from '../../helpers/FormatDate';
 import MovementForm from '../MovementForm';
 import forecastsCategoriesController from '../../controllers/ForecastsCategoriesController';
 import forecastsController from '../../controllers/ForecastsController';
@@ -83,7 +83,7 @@ describe('MovementForm component', () => {
         cExpect(form.find('SelectField[name="forecastId"]')).to.have.prop('value', 0);
         cExpect(form.find('InputField[name="description"]')).to.have.prop('value', '');
         cExpect(form.find('InputField[name="value"]')).to.have.prop('value', formatNumber(0));
-        cExpect(form.find('InputField[name="date"]')).to.have.prop('value', '');
+        cExpect(form.find('InputField[name="date"]')).to.have.prop('value', formatDate(Date.now(), FORMATS.YYYYMMDD_FORMAT));
     });
 
     it('fills the selects with data from DB', async () => {
@@ -113,7 +113,7 @@ describe('MovementForm component', () => {
         cExpect(form.find('SelectField[name="forecastId"]')).to.have.prop('value', testData.forecastId);
         cExpect(form.find('InputField[name="description"]')).to.have.prop('value', testData.description);
         cExpect(form.find('InputField[name="value"]')).to.have.prop('value', formatNumber(testData.value));
-        cExpect(form.find('InputField[name="date"]')).to.have.prop('value', testData.date);
+        cExpect(form.find('InputField[name="date"]')).to.have.prop('value', formatDate(testData.date, FORMATS.YYYYMMDD_FORMAT));
     });
 
     it('calls onSubmit function with movement data', done => {

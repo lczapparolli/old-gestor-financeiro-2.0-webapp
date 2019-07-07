@@ -54,7 +54,7 @@ class App extends Component {
                     <ConditionalRoute path="/accounts/:id" component={AccountPage} condition={logged} redirect="/login" />
                     <ConditionalRoute path="/categories/:id" component={ForecastCategoryPage} condition={logged} redirect="/login" />
                     <ConditionalRoute path="/forecasts/:id" component={ForecastPage} condition={logged} redirect="/login" />
-                    <ConditionalRoute path="/movements/new" component={MovementPage} condition={logged} redirect="/login" />
+                    <ConditionalRoute path="/movements/:id" component={MovementPage} condition={logged} redirect="/login" />
             
                     <Route path="/test" component={LayoutTestPage} />
                 </Container>

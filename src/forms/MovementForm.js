@@ -12,6 +12,7 @@ import FormHelper from '../helpers/FormHelper';
 import ScreenSizes from '../helpers/ScreenSizes';
 import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
 import formatNumber from '../helpers/FormatNumber';
+import formatDate, { FORMATS } from '../helpers/FormatDate';
 import { isDate, convertToDate } from '../helpers/ConvertToDate';
 //Controllers
 import forecastsController from '../controllers/ForecastsController';
@@ -28,7 +29,7 @@ class MovementForm extends Component {
             forecastId: { value: props.movement.forecastId, error: '' },
             accountId: { value: props.movement.accountId, error: '' },
             value: { value: formatNumber(props.movement.value), error: '' },
-            date: { value: props.movement.date, error: '' }
+            date: { value: formatDate(props.movement.date, FORMATS.YYYYMMDD_FORMAT), error: '' }
         };
         //Initializing formHelper
         this.formHelper = new FormHelper(this, { amount: this.amountValidation, date: this.dateValidation });
@@ -154,7 +155,7 @@ MovementForm.defaultProps = {
     movement: {
         description: '',
         value: 0,
-        date: '', //TODO: use current date without time
+        date: Date.now(),
         forecastId: 0,
         accountId: 0
     }
