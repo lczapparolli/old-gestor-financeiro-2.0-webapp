@@ -226,4 +226,35 @@ describe('MovementsController', () => {
             cExpect(movement.date.getTime()).to.be.equal(movementTest.date);
         });
     });
+
+    describe('Delete action', () => {
+        it('has a `deleteMovement` method', () => {
+            cExpect(movementsController).to.respondsTo('deleteMovement');
+        });
+
+        it('expects a number as parâmeter', async () => {
+            let exception = await movementsController.deleteMovement().catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Id is required');
+
+            exception = await movementsController.deleteMovement('invalid').catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Id must be a number');
+
+            //Accepts numeric string
+            exception = await movementsController.deleteMovement('1').catch(exception => exception);
+            cExpect(exception).to.not.be.a('TypeError');
+        });
+
+        it('deletes a movement by its Id', async () => {
+            //Inserting test movement
+            const insertedMovement = await movementsController.saveMovement(movementTest);
+            //Checking database
+            let movementList = await db.movements.toArray();
+            cExpect(movementList).to.have.length(1);
+            //Deleting movement
+            await movementsController.deleteMovement(insertedMovement.id);
+            //Checking database again
+            movementList = await db.movements.toArray();
+            cExpect(movementList).to.have.length(0);
+        });
+    });
 });

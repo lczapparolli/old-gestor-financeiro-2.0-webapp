@@ -26,6 +26,7 @@ const validateForecastId = Symbol('validateForecastId');
 const validateValue = Symbol('validateValue');
 const validateDate = Symbol('validateDate');
 const extractFields = Symbol('extractFields');
+const validateId = Symbol('validateId');
 
 /**
  * Class to control movement data, it can save and gets movements
@@ -68,12 +69,12 @@ class MovementsController {
      * Finds a movement by its Id
      * @param {Number} movementId Identification of movement to be found
      * @returns {Promise<Movement>} Returns the movement found
+     * @throws {TypeError} Throws an error when the parameter has an invalid value
      */
     async getById(movementId) {
-        if (!movementId)
-            throw new TypeError('Id is required');
-        if (!isNumeric(movementId)) 
-            throw new TypeError('Id must be a number');
+        const validationMessage = this[validateId](movementId);
+        if (validationMessage !== '')
+            throw new TypeError('Id ' + validationMessage);
         
         const movement = await movements.getById(convertToNumber(movementId));
         
@@ -83,8 +84,21 @@ class MovementsController {
             return null;
     }
 
+    /**
+     * Deletes a movement from database
+     * @param {String|Number} movementId The movement to be deleted
+     * @throws {TypeError}
+     */
+    async deleteMovement(movementId) {
+        const validationMessage = this[validateId](movementId);
+        if (validationMessage !== '')
+            throw new TypeError('Id ' + validationMessage);
+        await movements.deleteMovement(movementId);
+    }
+
     //Private methods ---------------------------------------//
 
+    //TODO: Complete documentation
     /**
      * 
      * @param {Movement} movement
@@ -113,10 +127,10 @@ class MovementsController {
      * @returns {String}
      */
     async [validateAccountId](accountId) {
-        if (!accountId)
-            return 'Account id is required';
-        if (!isNumeric(accountId))
-            return 'Account id must be a number';
+        const validationMessage = this[validateId](accountId);
+        if (validationMessage !== '')
+            return 'Account id ' + validationMessage;
+        
         const account = await accountsController.getById(accountId);
         if (!account)
             return 'Account must exists';
@@ -129,10 +143,10 @@ class MovementsController {
      * @returns {String}
      */
     async [validateForecastId](forecastId) {
-        if (!forecastId)
-            return 'Forecast id is required';
-        if (!isNumeric(forecastId))
-            return 'Forecast id must be a number';
+        const validationMessage = this[validateId](forecastId);
+        if (validationMessage !== '')
+            return 'Forecast id ' + validationMessage;
+        
         const forecast = await forecastsController.getById(forecastId);
         if (!forecast)
             return 'Forecast must exists';
@@ -177,6 +191,21 @@ class MovementsController {
             result.id = movement.id;
         return result;
     }
+
+    /**
+     * Checks if an Id is not null and if it is a numeric string
+     * @param {Number|String} id Id field to be validated
+     * @returns {String} Returns the validation message
+     */
+    [validateId](id) {
+        if (!id)
+            return 'is required';
+        if (!isNumeric(id)) 
+            return 'must be a number';
+        
+        return '';
+    }
+
 }
 
 export default new MovementsController();

@@ -12,6 +12,10 @@ class Movements {
     getById(id) {
         return db.movements.get(id);
     }
+
+    deleteMovement(id) {
+        return db.movements.delete(id);
+    }
 }
 
 export default new Movements();
