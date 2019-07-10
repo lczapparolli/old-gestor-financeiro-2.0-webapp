@@ -4,11 +4,7 @@ import chaiEnzyme from 'chai-enzyme';
 import React from 'react';
 import { shallow } from 'enzyme';
 //Tested module
-import Movements, { MovementsList } from '../Movements';
-import accountsController from '../../controllers/AccountsController';
-import forecastsCategoriesController from '../../controllers/ForecastsCategoriesController';
-import forecastsController from '../../controllers/ForecastsController';
-import movementsController from '../../controllers/MovementsController';
+import Movements, { MovementsList, Movement } from '../Movements';
 import formatNumber from '../../helpers/FormatNumber';
 import formatDate from '../../helpers/FormatDate';
 
@@ -16,10 +12,10 @@ chai.use(chaiEnzyme());
 const cExpect = chai.expect;
 
 //Test data
-let account = { id: 0, name: 'Test account', type: 'checking' };
-let forecastCategory = { id: 0, name: 'Test category' };
-let forecast = { id: 0, name: 'Test forecast', amount: 0 };
-let movement = { accountId: 0, forecastId: 0, value: 10, date: Date.now(), description: 'Test movement' };
+let movements = [
+    { id: 1, accountId: 1, forecastId: 1, value: 10, date: new Date(Date.now()), description: 'Test movement', account: { id: 1, name: 'Test account'}, forecast: { id: 1, name: 'Test forecast'} },
+    { id: 1, accountId: 1, forecastId: 1, value: 20, date: new Date(Date.now()), description: 'Test movement 2', account: { id: 1, name: 'Test account'}, forecast: { id: 1, name: 'Test forecast'} }
+];
 
 describe('Movements component', () => {
     let component;
@@ -27,6 +23,8 @@ describe('Movements component', () => {
     beforeAll(async () => {
         //Initializing component
         component = shallow(<Movements />);
+        //Wait component to be fully mounted
+        await component.instance().componentDidMount();
     });
 
     describe('Component structure', () => {
@@ -43,21 +41,11 @@ describe('MovementsList component', () => {
     let component;
     
     beforeAll(async () => {
-        //Insert test data
-        account = await accountsController.saveAccount(account);
-        forecastCategory = await forecastsCategoriesController.saveCategory(forecastCategory);
-        forecast.categoryId = forecastCategory.id;
-        forecast = await forecastsController.saveForecast(forecast);
-        movement.forecastId = forecast.id;
-        movement.accountId = account.id;
-        movement = await movementsController.saveMovement(movement);
         //Initializing component
-        component = shallow(<MovementsList />);
-        //Wait component to be fully mounted
-        await component.instance().componentDidMount();
+        component = shallow(<MovementsList movements={movements} />);
     });
 
-    it('renders a table', () => {
+    it('renders a table and a list of movements', () => {
         cExpect(component).to.have.descendants('table');
     });
         
@@ -72,17 +60,30 @@ describe('MovementsList component', () => {
     });
 
     it('has one line per movement into database', () => {
-        const rows = component.find('tbody > tr');
-        cExpect(rows).to.have.length(1);
-        const columns = rows.at(0).find('td');
+        const rows = component.find('Movement');
+        cExpect(rows).to.have.length(movements.length);
+    });
+});
+
+describe('Movement component', () => {
+    let component;
+    let movement;
+    
+    beforeAll(async () => {
+        movement = movements[0];
+        //Initializing component
+        component = shallow(<Movement movement={movement} />);
+    });
+    it('renders a table with 5 columns', () => {
+        const columns = component.find('td');
         cExpect(columns).to.have.length(5);
         
         cExpect(columns.at(0)).to.have.descendants('Link');
         cExpect(columns.at(0).find('Link')).to.have.prop('to', '/movements/' + movement.id.toString());
         cExpect(columns.at(0).find('Link')).to.have.text(movement.text);
         
-        cExpect(columns.at(1)).to.have.text(account.name);
-        cExpect(columns.at(2)).to.have.text(forecast.name);
+        cExpect(columns.at(1)).to.have.text(movement.account.name);
+        cExpect(columns.at(2)).to.have.text(movement.forecast.name);
         cExpect(columns.at(3)).to.have.text(formatDate(movement.date));
         cExpect(columns.at(4)).to.have.text(formatNumber(movement.value, 'R$'));
     });
