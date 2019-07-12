@@ -5,7 +5,10 @@ import PropTypes from 'prop-types';
 //Components
 import GridRow from '../components/GridRow';
 import GridCell from '../components/GridCell';
-import MovementsController from '../controllers/MovementsController';
+import Button from '../components/Button';
+//Controllers
+import movementsController from '../controllers/MovementsController';
+//Helpers
 import formatNumber from '../helpers/FormatNumber';
 import formatDate from '../helpers/FormatDate';
 
@@ -21,9 +24,17 @@ class Movements extends Component {
     }
 
     async componentDidMount() {
-        const movementList = await MovementsController.findAll();
+        const movementList = await movementsController.findAll();
         this.setState({ loading: false, movementList });
     }
+
+    handleDeleteClick = async movement => {
+        if (window.confirm('Delete movement "' + movement.description + '"?')) {
+            await movementsController.deleteMovement(movement.id);
+            const movementList = await movementsController.findAll();
+            this.setState({ movementList });
+        }
+    };
 
     render() {
         const { loading, movementList } = this.state;
@@ -43,7 +54,7 @@ class Movements extends Component {
                 </GridRow>
                 <GridRow>
                     <GridCell>
-                        <MovementsList movements={movementList} />
+                        <MovementsList movements={movementList} onDeleteClick={this.handleDeleteClick} />
                     </GridCell>
                 </GridRow>
             </Fragment>
@@ -51,8 +62,8 @@ class Movements extends Component {
     }
 }
 
-function MovementsList({ movements }) {
-    const movementsComponents = movements.map(movement => <Movement key={movement.id} movement={movement} />);
+function MovementsList({ movements, onDeleteClick }) {
+    const movementsComponents = movements.map(movement => <Movement key={movement.id} movement={movement} onDeleteClick={onDeleteClick} />);
 
     return (
         <table className="DataComponent" >
@@ -63,6 +74,7 @@ function MovementsList({ movements }) {
                     <th>Budget</th>
                     <th>Date</th>
                     <th>Value</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -79,10 +91,11 @@ MovementsList.propTypes = {
         forecast: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string }).isRequired,
         date: PropTypes.instanceOf(Date).isRequired,
         value: PropTypes.number.isRequired
-    })).isRequired
+    })).isRequired,
+    onDeleteClick: PropTypes.func.isRequired
 };
 
-function Movement({ movement }) {
+function Movement({ movement, onDeleteClick }) {
     const movementLink = '/movements/' + movement.id;
     return (
         <tr key={movement.id}>
@@ -91,6 +104,7 @@ function Movement({ movement }) {
             <td>{movement.forecast.name}</td>
             <td>{formatDate(movement.date)}</td>
             <td>{formatNumber(movement.value, 'R$')}</td>
+            <td><Button caption="Delete" onClick={() => onDeleteClick(movement)} /></td>
         </tr>
     );
 }
@@ -102,7 +116,8 @@ Movement.propTypes = {
         forecast: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string }).isRequired,
         date: PropTypes.instanceOf(Date).isRequired,
         value: PropTypes.number.isRequired
-    }).isRequired
+    }).isRequired,
+    onDeleteClick: PropTypes.func.isRequired
 };
 
 export default Movements;
