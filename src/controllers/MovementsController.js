@@ -98,11 +98,10 @@ class MovementsController {
 
     //Private methods ---------------------------------------//
 
-    //TODO: Complete documentation
     /**
-     * 
-     * @param {Movement} movement
-     * @returns {String}
+     * Validates the object fields, returning an error message
+     * @param {Movement} movement The object to be validated
+     * @returns {Promise<String>} Returns the error message, or an empty string if the object is valid
      */
     async [validateMovement](movement) {
         if (!movement)
@@ -123,8 +122,9 @@ class MovementsController {
     }
 
     /**
-     * @param {Number} accountId
-     * @returns {String}
+     * Validates the account id. Checks if it is a valid number and if account exists
+     * @param {Number} accountId The id to be validated
+     * @returns {Promise<String>} Returns the error message or empty if id is valid
      */
     async [validateAccountId](accountId) {
         const validationMessage = this[validateId](accountId);
@@ -138,9 +138,9 @@ class MovementsController {
     }
 
     /**
-     * 
-     * @param {Number} forecastId 
-     * @returns {String}
+     * Validates de forecast id. Checks if it is a valid number and if forecast exists
+     * @param {Number} forecastId The id to be validated
+     * @returns {Promise<String>} Returns the error message or empty if id is valid
      */
     async [validateForecastId](forecastId) {
         const validationMessage = this[validateId](forecastId);
@@ -154,9 +154,9 @@ class MovementsController {
     }
 
     /**
-     * 
-     * @param {Number} value
-     * @returns {String}
+     * Validates the movement value. Checks if it is a number or a numeric string
+     * @param {Number} value The value to be validated
+     * @returns {String} Returns the error message or empty if value is valid
      */
     [validateValue](value) {
         if (!value)
@@ -167,9 +167,9 @@ class MovementsController {
     }
 
     /**
-     * 
-     * @param {Date} date 
-     * @returns {String}
+     * Validates de movement date. Check if it is a Date object, a number or a date string.
+     * @param {Date|Number|String} date The date to be validated
+     * @returns {String} Returns the error message or empty if value is valid
      */
     [validateDate](date) {
         if (!date)
@@ -179,6 +179,11 @@ class MovementsController {
         return '';
     }
 
+    /**
+     * Extract only the needed fields from the object and grants the correct object types
+     * @param {Object|Movement} movement The source object
+     * @returns {Movement} Returns the formated object as expected
+     */
     [extractFields](movement) {
         let result = {
             accountId: convertToNumber(movement.accountId),
@@ -195,7 +200,7 @@ class MovementsController {
     /**
      * Checks if an Id is not null and if it is a numeric string
      * @param {Number|String} id Id field to be validated
-     * @returns {String} Returns the validation message
+     * @returns {String} Returns the error message or empty if id is valid
      */
     [validateId](id) {
         if (!id)
