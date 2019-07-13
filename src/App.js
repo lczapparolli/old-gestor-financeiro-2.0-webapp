@@ -17,6 +17,7 @@ import ForecastPage from './pages/ForecastPage';
 import MovementPage from './pages/MovementPage';
 
 class App extends Component {
+    _isMounted = false;
     constructor(props) {
         super(props);
         //Bindings
@@ -38,8 +39,14 @@ class App extends Component {
     }
 
     async componentDidMount() {
+        this._isMounted = true;
         const logged = await loginController.isLogged();
-        this.setState({ loading: false, logged });
+        if (this._isMounted)
+            this.setState({ loading: false, logged });
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render() {
