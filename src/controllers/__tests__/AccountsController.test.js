@@ -1,9 +1,10 @@
 //Libs
 import chai from 'chai';
-//Tested module
-import accountsController from '../AccountsController';
 import accounts from '../../db/Accounts';
 import db from '../../db';
+import { convertToNumber } from '../../helpers/ConvertToNumber';
+//Tested module
+import accountsController, { CHECKING } from '../AccountsController';
 
 const cExpect = chai.expect;
 
@@ -231,6 +232,61 @@ describe('AccountsController', () => {
 
             const accounts = await accountsController.listAll();
             cExpect(accounts).to.have.length(accountsData.length);
+        });
+    });
+
+    describe('Update balance action', () => {
+        beforeEach(async () => {
+            await db.accounts.clear();
+        });
+
+        it('has a updateBalance method', () => {
+            cExpect(accountsController).to.respondsTo('updateBalance');
+        });
+
+        it('expects an accountId and a value', async () => {
+            //Insert an account
+            const insertedAccount = await accountsController.saveAccount({ name: 'Account test', balance: 0, type: CHECKING });
+            
+            let exception = await accountsController.updateBalance().catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Id is required');
+
+            exception = await accountsController.updateBalance(-1).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Account must exists');
+
+            exception = await accountsController.updateBalance(insertedAccount.id).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Amount is required');
+
+            exception = await accountsController.updateBalance(insertedAccount.id, 0).catch(exception => exception);
+            cExpect(exception).to.not.be.a('TypeError');
+        });
+
+        it('updates the balance of given account', async () => {
+            //Data
+            const amount = 20;
+            const newAccount = { name: 'Account test', balance: 10, type: CHECKING };
+            //Insert an account
+            const { id: insertedId } = await accountsController.saveAccount(newAccount);
+            //Updates the balance
+            await accountsController.updateBalance(insertedId, amount);
+            //Loads account
+            const account = await accountsController.getById(insertedId);
+            //Checks new balance
+            cExpect(account).to.have.property('balance', newAccount.balance + amount);
+        });
+
+        it('updates the balance of given account even when value is a string', async () => {
+            //Data
+            const amount = '-20';
+            const newAccount = { name: 'Account test', balance: 10, type: CHECKING };
+            //Insert an account
+            const { id: insertedId } = await accountsController.saveAccount(newAccount);
+            //Updates the balance
+            await accountsController.updateBalance(insertedId, amount);
+            //Loads account
+            const account = await accountsController.getById(insertedId);
+            //Checks new balance
+            cExpect(account).to.have.property('balance', newAccount.balance + convertToNumber(amount));
         });
     });
 });

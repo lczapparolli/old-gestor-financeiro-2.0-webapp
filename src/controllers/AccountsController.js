@@ -116,6 +116,22 @@ class AccountsController {
             return null;
     }
 
+    /**
+     * Updates the balance of a given account, adding the `amount` to actual balance.
+     * @param {Number} id The id of account to be updated
+     * @param {*} amount The amount to be added to account balance
+     */
+    async updateBalance(id, amount) {
+        const account = await this.getById(id);
+        if (!account)
+            throw new TypeError('Account must exists');
+        if (!amount)
+            throw new TypeError('Amount is required');
+        account.balance += convertToNumber(amount);
+
+        await this.saveAccount(account);
+    }
+
     //Private methods ---------------------------------------//
     
     /**
