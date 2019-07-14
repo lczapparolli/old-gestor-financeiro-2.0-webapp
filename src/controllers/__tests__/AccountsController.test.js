@@ -288,5 +288,19 @@ describe('AccountsController', () => {
             //Checks new balance
             cExpect(account).to.have.property('balance', newAccount.balance + convertToNumber(amount));
         });
+
+        it('does not change when `0` is passed', async () => {
+            //Data
+            const amount = 0;
+            const newAccount = { name: 'Account test', balance: 10, type: CHECKING };
+            //Insert an account
+            const { id: insertedId } = await accountsController.saveAccount(newAccount);
+            //Updates the balance
+            await accountsController.updateBalance(insertedId, amount);
+            //Loads account
+            const account = await accountsController.getById(insertedId);
+            //Checks new balance
+            cExpect(account).to.have.property('balance', newAccount.balance);
+        });
     });
 });
