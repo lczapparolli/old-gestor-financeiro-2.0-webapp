@@ -5,6 +5,7 @@ import forecastsController from '../ForecastsController';
 import forecastsCategoriesController from '../ForecastsCategoriesController';
 import forecasts from '../../db/Forecasts';
 import db from '../../db';
+import { convertToNumber } from '../../helpers/ConvertToNumber';
 
 const cExpect = chai.expect;
 
@@ -82,7 +83,8 @@ describe('ForecastsController', () => {
     beforeAll(async () => {
         //Grants that Category exists
         await db.forecasts_categories.clear();
-        forecastTest.categoryId = await db.forecasts_categories.put(categoryTest);
+        categoryTest.id = await db.forecasts_categories.put(categoryTest);
+        forecastTest.categoryId = categoryTest.id;
     });
 
     it('is a object', () => {
@@ -318,5 +320,77 @@ describe('ForecastsController', () => {
             const forecasts = await forecastsController.listAll();
             cExpect(forecasts).to.have.length(4); //Total of forecasts
         });
+    });
+
+    describe('Update balance action', () => {
+        beforeEach(async () => {
+            await db.forecasts.clear();
+            await db.forecasts_categories.clear();
+            categoryTest.id = await db.forecasts_categories.put(categoryTest);
+        });
+
+        it('has a updateBalance method', () => {
+            cExpect(forecastsController).to.respondsTo('updateBalance');
+        });
+
+        it('expects a forecastId and a value', async () => {
+            //Insert a forecast
+            const insertedForecast = await forecastsController.saveForecast({ name: 'Forecast test', amount: 0, categoryId: categoryTest.id });
+            
+            let exception = await forecastsController.updateBalance().catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Id is required');
+
+            exception = await forecastsController.updateBalance(-1).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Forecast must exists');
+
+            exception = await forecastsController.updateBalance(insertedForecast.id).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Amount is required');
+
+            exception = await forecastsController.updateBalance(insertedForecast.id, 0).catch(exception => exception);
+            cExpect(exception).to.not.be.a('TypeError');
+        });
+
+        it('updates the balance of given forecast', async () => {
+            //Data
+            const amount = 20;
+            const newForecast = { name: 'Forecast test', amount: 0, categoryId: categoryTest.id, balance: 0 };
+            //Insert a forecast
+            const { id: insertedId } = await forecastsController.saveForecast(newForecast);
+            //Updates the balance
+            await forecastsController.updateBalance(insertedId, amount);
+            //Loads forecast
+            const forecast = await forecastsController.getById(insertedId);
+            //Checks new balance
+            cExpect(forecast).to.have.property('balance', newForecast.balance + amount);
+        });
+
+        it('updates the balance of given forecast even when value is a string', async () => {
+            //Data
+            const amount = '-20';
+            const newForecast = { name: 'Forecast test', amount: 0, categoryId: categoryTest.id, balance: 0 };
+            //Insert a forecast
+            const { id: insertedId } = await forecastsController.saveForecast(newForecast);
+            //Updates the balance
+            await forecastsController.updateBalance(insertedId, amount);
+            //Loads forecast
+            const forecast = await forecastsController.getById(insertedId);
+            //Checks new balance
+            cExpect(forecast).to.have.property('balance', newForecast.balance + convertToNumber(amount));
+        });
+
+        it('does not change when `0` is passed', async () => {
+            //Data
+            const amount = 0;
+            const newForecast = { name: 'Forecast test', amount: 0, categoryId: categoryTest.id, balance: 0 };
+            //Insert a forecast
+            const { id: insertedId } = await forecastsController.saveForecast(newForecast);
+            //Updates the balance
+            await forecastsController.updateBalance(insertedId, amount);
+            //Loads forecast
+            const forecast = await forecastsController.getById(insertedId);
+            //Checks new balance
+            cExpect(forecast).to.have.property('balance', newForecast.balance);
+        });
+
     });
 });

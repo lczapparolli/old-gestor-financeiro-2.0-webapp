@@ -6,6 +6,10 @@ class Forecasts {
         return db.forecasts.put(forecast);
     }
 
+    updateBalance(id, balance) {
+        return db.forecasts.update(id, { balance });
+    }
+
     getAllForecasts() {
         return db.forecasts.toArray();
     }

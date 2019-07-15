@@ -48,6 +48,7 @@ class ForecastsController {
         forecast = this[extractField](forecast);
         forecast.id = await forecasts.addForecast(forecast);
         //TODO: Update only `name` and `amount` fields
+        //TODO: Insert balance 0
         return forecast;
     }
 
@@ -118,6 +119,23 @@ class ForecastsController {
             return null;
     }
 
+    /**
+     * Updates the balance of a given forecast, adding the `amount` to actual balance.
+     * @param {Number} id The id of forecast to be updated
+     * @param {*} amount The amount to be added to forecast balance
+     */
+    async updateBalance(id, amount) {
+        const forecast = await this.getById(id);
+        if (!forecast)
+            throw new TypeError('Forecast must exists');
+        if (amount == undefined || amount == null)
+            throw new TypeError('Amount is required');
+        const oldBalance = forecast.balance ? forecast.balance : 0;
+        const newBalance = oldBalance + convertToNumber(amount);
+
+        await forecasts.updateBalance(forecast.id, newBalance);
+    }
+
     //Private methods ---------------------------------------//
     
     /**
@@ -166,7 +184,7 @@ class ForecastsController {
             amount: forecast.amount,
             categoryId: forecast.categoryId
         };
-        if (forecast.id && forecast.id > 0)
+        if (forecast.id && forecast.id > 0) 
             result.id = forecast.id;
         return result;
     }
