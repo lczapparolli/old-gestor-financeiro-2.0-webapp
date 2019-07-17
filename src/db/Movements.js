@@ -16,6 +16,14 @@ class Movements {
     deleteMovement(id) {
         return db.movements.delete(id);
     }
+
+    transaction(action) {
+        return db.transaction(
+            'rw', //mode
+            db.movements, db.accounts, db.forecasts, //tables
+            action //action
+        );
+    }
 }
 
 export default new Movements();

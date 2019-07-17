@@ -27,6 +27,7 @@ const validateValue = Symbol('validateValue');
 const validateDate = Symbol('validateDate');
 const extractFields = Symbol('extractFields');
 const validateId = Symbol('validateId');
+const updateAccountBalance = Symbol('updateAccountBalance');
 
 /**
  * Class to control movement data, it can save and gets movements
@@ -40,12 +41,15 @@ class MovementsController {
      * @throws {TypeError} Throws an error if fields are not valid
      */
     async saveMovement(movement) {
-        const validationMessage = await this[validateMovement](movement);
-        if(validationMessage !== '')
-            throw new TypeError(validationMessage);
-        movement = this[extractFields](movement);
-        movement.id = await movements.addMovement(movement);
-        return movement;
+        return movements.transaction(async () => {
+            const validationMessage = await this[validateMovement](movement);
+            if(validationMessage !== '')
+                throw new TypeError(validationMessage);
+            movement = this[extractFields](movement);
+            this[updateAccountBalance](movement);
+            movement.id = await movements.addMovement(movement);
+            return movement;
+        });
     }
 
     /**
@@ -93,6 +97,9 @@ class MovementsController {
         const validationMessage = this[validateId](movementId);
         if (validationMessage !== '')
             throw new TypeError('Id ' + validationMessage);
+        const movement = await this.getById(movementId);
+        await forecastsController.updateBalance(movement.forecastId, movement.value * -1);
+        await accountsController.updateBalance(movement.accountId, movement.value * -1);
         await movements.deleteMovement(movementId);
     }
 
@@ -209,6 +216,18 @@ class MovementsController {
             return 'must be a number';
         
         return '';
+    }
+
+    /**
+     * Updates the balance of an account adding the given amount
+     * @param {Movement} movement Movement object with `accountId` and `value` data
+     */
+    async [updateAccountBalance](movement) {
+        let oldValue = 0;
+        if (movement.id)
+            oldValue = (await this.getById(movement.id)).value;
+        accountsController.updateBalance(movement.accountId, movement.value - oldValue);
+        forecastsController.updateBalance(movement.forecastId, movement.value - oldValue);
     }
 
 }

@@ -3,6 +3,8 @@ import chai from 'chai';
 //Tested module
 import movementsController from '../MovementsController';
 import db from '../../db';
+import accounts from '../../db/Accounts';
+import forecasts from '../../db/Forecasts';
 import formatNumber from '../../helpers/FormatNumber';
 
 const cExpect = chai.expect;
@@ -21,8 +23,8 @@ describe('MovementsController', () => {
         const categories = await db.forecasts_categories.toArray();
         forecast.categoryId = categories[0].id;
 
-        account.id = await db.accounts.put(account);
-        forecast.id = await db.forecasts.put(forecast);
+        account.id = await accounts.addAccount(account);
+        forecast.id = await forecasts.addForecast(forecast);
         movementTest.accountId = account.id;
         movementTest.forecastId = forecast.id;
     });
@@ -169,6 +171,59 @@ describe('MovementsController', () => {
             cExpect(movementList[0].accountId).to.be.a('Number');
             cExpect(movementList[0].forecastId).to.be.a('Number');
         });
+
+        it('update account and forecast balance when inserted', async () => {
+            //Load inserted account
+            let savedAccount = await accounts.getById(account.id);
+            let savedForecast = await forecasts.getById(forecast.id);
+            const oldAccountBalance = savedAccount.balance;
+            const oldForecastBalance = savedForecast.balance;
+            //Test data
+            const movement = {
+                accountId: account.id,
+                forecastId: forecast.id,
+                date: new Date(),
+                description: 'Insert test',
+                value: 99.99
+            };
+            //Insert new movement
+            await movementsController.saveMovement(movement);
+            //Load account again
+            savedAccount = await accounts.getById(account.id);
+            savedForecast = await forecasts.getById(forecast.id);
+            //Check value
+            cExpect(savedAccount.balance).to.be.equal(oldAccountBalance + movement.value);
+            cExpect(savedForecast.balance).to.be.equal(oldForecastBalance + movement.value);
+        });
+
+        it('update account and forecast balance when updated', async () => {
+            //Load inserted account
+            let savedAccount = await accounts.getById(account.id);
+            let savedForecast = await forecasts.getById(forecast.id);
+            const oldAccountBalance = savedAccount.balance;
+            const oldForecastBalance = savedForecast.balance;
+            const oldValue = 99.99;
+            const newValue = 20;
+            //Test data
+            let movement = {
+                accountId: account.id,
+                forecastId: forecast.id,
+                date: new Date(),
+                description: 'Insert test',
+                value: oldValue
+            };
+            //Insert new movement
+            movement = await movementsController.saveMovement(movement);
+            //Updates movement value
+            movement.value = newValue;
+            await movementsController.saveMovement(movement);
+            //Load account again
+            savedAccount = await accounts.getById(account.id);
+            savedForecast = await forecasts.getById(forecast.id);
+            //Check value
+            cExpect(savedAccount.balance).to.be.equal(oldAccountBalance + newValue);
+            cExpect(savedForecast.balance).to.be.equal(oldForecastBalance + newValue);
+        });
     });
 
     describe('Load all movements action', () => {
@@ -255,6 +310,29 @@ describe('MovementsController', () => {
             //Checking database again
             movementList = await db.movements.toArray();
             cExpect(movementList).to.have.length(0);
+        });
+
+        it('update account and forecast balance', async () => {
+            const newMovement = {
+                description: 'Deletion test',
+                date: new Date(),
+                value: -100,
+                accountId: account.id,
+                forecastId: forecast.id
+            };
+            //Inserting test movement
+            const insertedMovement = await movementsController.saveMovement(newMovement);
+            //Loading account and forecast balance
+            const { balance: oldAccountBalance } = await accounts.getById(account.id);
+            const { balance: oldForecastBalance } = await accounts.getById(forecast.id);
+            //Deleting movement
+            await movementsController.deleteMovement(insertedMovement.id);
+            //Loading new balances
+            const { balance: newAccountBalance } = await accounts.getById(account.id);
+            const { balance: newForecastBalance } = await accounts.getById(forecast.id);
+            //Testing conditions
+            cExpect(newAccountBalance).to.be.equal(oldAccountBalance - newMovement.value);
+            cExpect(newForecastBalance).to.be.equal(oldForecastBalance - newMovement.value);
         });
     });
 });
