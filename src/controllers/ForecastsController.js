@@ -128,7 +128,7 @@ class ForecastsController {
         const forecast = await this.getById(id);
         if (!forecast)
             throw new TypeError('Forecast must exists');
-        if (amount == undefined || amount == null)
+        if (amount === undefined || amount === null)
             throw new TypeError('Amount is required');
         const oldBalance = forecast.balance ? forecast.balance : 0;
         const newBalance = oldBalance + convertToNumber(amount);

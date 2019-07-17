@@ -125,7 +125,7 @@ class AccountsController {
         const account = await this.getById(id);
         if (!account)
             throw new TypeError('Account must exists');
-        if (amount == undefined || amount == null)
+        if (amount === undefined || amount === null)
             throw new TypeError('Amount is required');
         account.balance += convertToNumber(amount);
 
