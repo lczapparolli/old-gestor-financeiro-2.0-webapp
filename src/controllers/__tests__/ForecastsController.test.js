@@ -34,6 +34,8 @@ const categories = [
 ];
 /** @type {Number} */
 let total = 0;
+/** @type {Number} */
+let totalBalance = 0;
 
 /**
  * 
@@ -46,7 +48,9 @@ const addForecast = async (category, categoryId, forecast) => {
     forecast.categoryId = categoryId;
     //Sums total for check
     total += forecast.amount;
+    totalBalance += forecast.balance ? forecast.balance : 0;
     category.total += forecast.amount;
+    category.totalBalance += forecast.balance ? forecast.balance : 0;
     //Insert forecast
     await forecastsController.saveForecast(forecast);
 };
@@ -60,6 +64,7 @@ const addCategory = async category => {
     const inserted = await forecastsCategoriesController.saveCategory(category);
     //Inititalizes category total
     category.total = 0;
+    category.totalBalance = 0;
     await Promise.all(
         category.forecasts.map(async forecast => addForecast(category, inserted.id, forecast))
     );
@@ -73,6 +78,7 @@ const setupDatabase = async () => {
     await db.forecasts_categories.clear();
     await db.forecasts.clear();
     total = 0;
+    totalBalance = 0;
     //Save test data
     await Promise.all(
         categories.map(async category => addCategory(category))
@@ -206,12 +212,14 @@ describe('ForecastsController', () => {
 
         it('returns a list of categories with total sum of forecasts', () => {
             cExpect(forecastList).to.have.property('total', total);
+            cExpect(forecastList).to.have.property('totalBalance', totalBalance);
             cExpect(forecastList).to.have.property('categories').with.length(categories.length);
         });
 
         it('returns each category with a subtotal and a list of forecasts', () => {
             cExpect(forecastList.categories[0]).to.have.property('name', categories[0].name);
             cExpect(forecastList.categories[0]).to.have.property('total', categories[0].total);
+            cExpect(forecastList.categories[0]).to.have.property('totalBalance', categories[0].totalBalance);
             cExpect(forecastList.categories[0]).to.have.property('forecasts').with.lengthOf(categories[0].forecasts.length);
         });
 

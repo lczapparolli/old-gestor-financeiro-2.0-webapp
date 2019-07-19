@@ -8,6 +8,7 @@ import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
  * @property {Number} id - Forecast id
  * @property {String} name - Forecast name (Required for insert)
  * @property {Number} amount - Forecast amount (Required for insert)
+ * @property {Number} balance - Forecast balance
  * @property {Number} categoryId - Id of corresponding category (Required for insert)
  * 
  * Import from ForecastCategory
@@ -17,6 +18,7 @@ import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
  * @typedef {Object} CategoryList
  * @property {Forecast[]} forecasts - List of forecasts of this category
  * @property {Number} total - Sum of forecasts amount
+ * @property {Number} totalBalance - Sum of forecasts balance
  * 
  * Category object
  * @typedef {ForecastCategory & CategoryList} Category
@@ -25,6 +27,7 @@ import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
  * @typedef {Object} ForecastList
  * @property {Category[]} categories - List of forecasts categories
  * @property {Number} total - Sum of forecasts amount
+ * @property {Number} totalBalance - Sum of forecasts balance
  */
 
 
@@ -58,17 +61,23 @@ class ForecastsController {
      */
     async findAll() {
         //Initializing object
-        let result = { total: 0 };
+        let result = { total: 0, totalBalance: 0 };
         //Loading categories
         result.categories = await forecastsCategoriesController.findAll();
         await Promise.all(
             result.categories.map(async category => {
                 //Loading forecasts
                 category.forecasts = await forecasts.getByCategory(category.id);
-                //Getting sum of forecasts amount
-                category.total = category.forecasts.reduce((total, forecast) => total + forecast.amount, 0);
+                category.total = 0;
+                category.totalBalance = 0;
+                //Getting sum of forecasts values
+                category.forecasts.forEach(forecast => {
+                    category.total += forecast.amount;
+                    category.totalBalance += forecast.balance;
+                });
                 //Adding to total
                 result.total += category.total;
+                result.totalBalance += category.totalBalance;
             })
         );
         return result;
@@ -182,6 +191,7 @@ class ForecastsController {
         const result = {
             name: forecast.name,
             amount: forecast.amount,
+            balance: (forecast.balance ? forecast.balance : 0),
             categoryId: forecast.categoryId
         };
         if (forecast.id && forecast.id > 0) 
