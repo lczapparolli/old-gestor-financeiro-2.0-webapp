@@ -62,8 +62,8 @@ class Forecasts extends Component {
                             <tfoot>
                                 <tr>
                                     <th>Total</th>
-                                    <th className="NumberField">{formatNumber(forecastList.total, 'R$')}</th>
-                                    <th className="NumberField">R$ 0,00</th>
+                                    <th className="NumberField">{ formatNumber(forecastList.total, 'R$') }</th>
+                                    <th className="NumberField">{ formatNumber(forecastList.totalBalance, 'R$') }</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -93,7 +93,7 @@ function Category({ category }) {
             <tr className="CategoryTotal">
                 <td>Sub-total</td>
                 <td className="NumberField">{ formatNumber(category.total, 'R$') }</td>
-                <td className="NumberField">R$ 0,00</td>
+                <td className="NumberField">{ formatNumber(category.totalBalance, 'R$') }</td>
             </tr>
         </Fragment>
     );
@@ -109,7 +109,9 @@ Category.propTypes = {
         /** List of forecasts */
         forecasts: PropTypes.array.isRequired,
         /** Sum of forecasts amount */
-        total: PropTypes.number.isRequired
+        total: PropTypes.number.isRequired,
+        /** Sum of forecasts balance */
+        totalBalance: PropTypes.number.isRequired
     }).isRequired,
 };
 
@@ -121,7 +123,7 @@ function Forecast({ forecast }) {
                 <Link to={forecastLink} >{ forecast.name }</Link>
             </td>
             <td className="NumberField">{ formatNumber(forecast.amount, 'R$') }</td>
-            <td className="NumberField">R$ 0,00</td>
+            <td className="NumberField">{ formatNumber(forecast.balance, 'R$') }</td>
         </tr>
     );
 }
@@ -134,7 +136,9 @@ Forecast.propTypes = {
         /** Forecast name */
         name: PropTypes.string.isRequired,
         /** Forecast amount */
-        amount: PropTypes.number.isRequired
+        amount: PropTypes.number.isRequired,
+        /** Forecast balance */
+        balance: PropTypes.number.isRequired
     })
 };
 

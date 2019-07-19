@@ -8,6 +8,7 @@ import formatNumber from '../../helpers/FormatNumber';
 import Forecasts, { Category, Forecast } from '../Forecasts';
 import forecastsCategoriesController from '../../controllers/ForecastsCategoriesController';
 import db from '../../db';
+import forecastsController from '../../controllers/ForecastsController';
 
 chai.use(chaiEnzyme());
 const cExpect = chai.expect;
@@ -17,22 +18,33 @@ const testData = [
     {
         name: 'New Category 1',
         forecasts: [ 
-            { id: 1, name: 'Forecast 1', amount: 10 },
-            { id: 2, name: 'Forecast 2', amount: 10 } 
+            { id: 1, name: 'Forecast 1', amount: 10, balance: 5 },
+            { id: 2, name: 'Forecast 2', amount: 10, balance: 5 } 
         ],
-        total: 20
+        total: 20,
+        totalBalance: 10
     },
-    { name: 'New Category 2'},
-    { name: 'New Category 3'},
+    { name: 'New Category 2', forecasts:[] },
+    { name: 'New Category 3', forecasts:[] },
 ];
 
 describe('Forecasts component', () => {
     let component;
+    let total = 0;
+    let totalBalance = 0;
     
     beforeAll(async () => {
         //Clear previous data and add new data
         await db.forecasts_categories.clear();
-        await Promise.all(testData.map(async (category) => forecastsCategoriesController.saveCategory(category)));
+        await Promise.all(testData.map(async (category) => {
+            const { id: categoryId } = await forecastsCategoriesController.saveCategory(category);
+            return category.forecasts.map(async (forecast) => {
+                forecast.categoryId = categoryId;
+                total += forecast.amount;
+                totalBalance += forecast.balance;
+                return forecastsController.saveForecast(forecast);
+            });
+        }));
         //Initializing component
         component = shallow(<Forecasts />);
         //Wait component to be fully mounted
@@ -51,6 +63,13 @@ describe('Forecasts component', () => {
         it('renders a table with multiple categories', async () => {
             //Test conditions
             cExpect(component.find('Category')).to.have.length(testData.length);
+        });
+
+        it('shows the sum of forecasts amount and balance', () => {
+            //First is total
+            cExpect(component.find('tfoot .NumberField').first()).to.have.text(formatNumber(total, 'R$'));
+            //Second is totalBalance
+            cExpect(component.find('tfoot .NumberField').last()).to.have.text(formatNumber(totalBalance, 'R$'));
         });
 
     });
@@ -82,6 +101,8 @@ describe('Category component', () => {
 
         it('renders a subtotal row', () => {
             cExpect(component).to.have.descendants('tr.CategoryTotal');
+            cExpect(component.find('tr.CategoryTotal > .NumberField').first()).to.have.text(formatNumber(category.total, 'R$'));
+            cExpect(component.find('tr.CategoryTotal > .NumberField').last()).to.have.text(formatNumber(category.totalBalance, 'R$'));
         });
 
         it('renders a Forecast component for each forecast in category', () => {
@@ -107,6 +128,7 @@ describe('Forecast component', () => {
             cExpect(component.find('td > Link')).to.contain(forecast.name);
             cExpect(component.find('td > Link')).to.have.prop('to', '/forecasts/' + forecast.id);
             cExpect(component.find('td.NumberField').first()).to.contain(formatNumber(forecast.amount, 'R$'));
+            cExpect(component.find('td.NumberField').last()).to.contain(formatNumber(forecast.balance, 'R$'));
         });
     });
 });
