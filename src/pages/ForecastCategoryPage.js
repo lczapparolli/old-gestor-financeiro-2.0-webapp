@@ -15,10 +15,6 @@ import ForecastCategoryForm from '../forms/ForecastCategoryForm';
 class ForecastCategoryPage extends Component {
     constructor(props) {
         super(props);
-        //Bindings
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleNameValidation = this.handleNameValidation.bind(this);
-        this.getId = this.getId.bind(this);
         //State
         this.state = {
             loading: true,
@@ -27,24 +23,14 @@ class ForecastCategoryPage extends Component {
         };
     }
 
-    //TODO: Change to arrow functions
-
-    getId() {
+    getId = () => {
         if (this.props.match.params.id !== 'new')
             return convertToNumber(this.props.match.params.id);
         else
             return 0;
     }
 
-    async componentDidMount() {
-        let category = { name: '', type: '' };
-        const id = this.getId();
-        if (id > 0)
-            category = await forecastsCategoriesController.getById(id);
-        this.setState({ loading: false, category });
-    }
-
-    async handleNameValidation(name) {
+    handleNameValidation = async (name) => {
         const id = this.getId();
         const category = await forecastsCategoriesController.getByName(name);
         //if category is not found or is the same
@@ -54,12 +40,20 @@ class ForecastCategoryPage extends Component {
             return 'Forecast category name must be unique';
     }
 
-    async handleSubmit(category) {
+    handleSubmit = async (category) => {
         const id = this.getId();
         if (id > 0)
             category.id = id;
         await forecastsCategoriesController.saveCategory(category);
         this.setState({ success: true });
+    }
+
+    async componentDidMount() {
+        let category = { name: '', type: '' };
+        const id = this.getId();
+        if (id > 0)
+            category = await forecastsCategoriesController.getById(id);
+        this.setState({ loading: false, category });
     }
 
     render() {
@@ -94,6 +88,7 @@ class ForecastCategoryPage extends Component {
 }
 
 ForecastCategoryPage.propTypes = {
+    /** Match object to get URL parameters */
     match: PropTypes.shape({ params: PropTypes.shape({ id: PropTypes.string }) })
 };
 

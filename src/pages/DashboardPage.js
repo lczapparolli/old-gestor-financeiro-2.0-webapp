@@ -15,15 +15,8 @@ import Forecasts from '../dataComponents/Forecasts';
 import Movements from '../dataComponents/Movements';
 
 class Dashboard extends Component {
-    constructor(props) {
-        super(props);
-        //Bindings
-        this.handleLogoutClick = this.handleLogoutClick.bind(this);
-    }
 
-    //TODO: Change to arrow functions
-
-    async handleLogoutClick() {
+    handleLogoutClick = async () => {
         await loginController.logout();
         this.props.onLogout();
     }
@@ -60,6 +53,7 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
+    /** Callback function that is fired when the user successfully log out */
     onLogout: PropTypes.func
 };
 

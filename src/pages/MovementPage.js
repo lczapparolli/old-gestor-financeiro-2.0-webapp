@@ -25,14 +25,6 @@ class MovementPage extends Component {
         };
     }
 
-    componentDidMount = async() => {
-        let movement = { description: '', forecastId: 0, accountId: 0, value: 0, date: Date.now() };
-        if (this.movementId > 0) {
-            movement = await movementsController.getById(this.movementId);
-        }
-        this.setState({ loading: false, movement });
-    }
-
     getId = () => {
         if (this.props.match.params.id !== 'new')
             return convertToNumber(this.props.match.params.id);
@@ -45,6 +37,14 @@ class MovementPage extends Component {
             movement.id = this.movementId;
         await movementsController.saveMovement(movement);
         this.setState({ success: true });
+    }
+
+    async componentDidMount() {
+        let movement = { description: '', forecastId: 0, accountId: 0, value: 0, date: Date.now() };
+        if (this.movementId > 0) {
+            movement = await movementsController.getById(this.movementId);
+        }
+        this.setState({ loading: false, movement });
     }
 
     render() {
@@ -78,7 +78,9 @@ class MovementPage extends Component {
 }
 
 MovementPage.propTypes = {
+    /** URL query data */
     location: PropTypes.shape({ search:PropTypes.string }),
+    /** Match object to get URL parameters */
     match: PropTypes.shape({ params: PropTypes.shape({ id: PropTypes.string }) })
 };
 

@@ -16,9 +16,6 @@ import ForecastForm from '../forms/ForecastForm';
 class ForecastPage extends Component {
     constructor(props) {
         super(props);
-        //Bindings
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleNameValidate = this.handleNameValidate.bind(this);
         //Static data
         this.forecastId = this.getId();
         this.categoryId = this.getCategoryId();
@@ -31,7 +28,7 @@ class ForecastPage extends Component {
         };
     }
 
-    getCategoryId() {
+    getCategoryId = () => {
         const params = qs.parse(this.props.location.search);
         if (params.categoryId)
             return convertToNumber(params.categoryId);
@@ -39,14 +36,14 @@ class ForecastPage extends Component {
             return 0;
     }
 
-    getId() {
+    getId = () => {
         if (this.props.match.params.id !== 'new')
             return convertToNumber(this.props.match.params.id);
         else
             return 0;
     }
 
-    async handleSubmit(forecast) {
+    handleSubmit = async (forecast) => {
         if (this.forecastId > 0) 
             forecast.id = this.forecastId;
         //TODO: Update only `name` and `amount` fields
@@ -56,7 +53,7 @@ class ForecastPage extends Component {
         this.setState({ success: true });
     }
 
-    async handleNameValidate(forecastName) {
+    handleNameValidate = async (forecastName) => {
         const forecast = await forecastsController.getByName(forecastName);
         //if forecast is not found or is the same forecast added
         if (!forecast || forecast.id === this.forecastId)
@@ -103,7 +100,9 @@ class ForecastPage extends Component {
 }
 
 ForecastPage.propTypes = {
+    /** URL query data */
     location: PropTypes.shape({ search:PropTypes.string }),
+    /** Match object to get URL parameters */
     match: PropTypes.shape({ params: PropTypes.shape({ id: PropTypes.string }) })
 };
 

@@ -10,8 +10,6 @@ import loginController from '../controllers/LoginController';
 class LoginPage extends Component {
     constructor(props) {
         super(props);
-        //Binds
-        this.handleSubmit = this.handleSubmit.bind(this);
         //State
         this.state = {
             loading: false,
@@ -20,9 +18,7 @@ class LoginPage extends Component {
         };
     }
 
-    //TODO: Change to arrow functions
-
-    async handleSubmit(data) {
+    handleSubmit = async (data) => {
         this.setState({ loading: true });
         const result = await loginController.login(data.email, data.password);
         this.setState({ logged: result.logged, error: result.error, loading: false });
@@ -48,6 +44,7 @@ class LoginPage extends Component {
 }
 
 LoginPage.propTypes = {
+    /** Callback function that is fired when the user successfully log in  */
     onLogin: PropTypes.func
 };
 

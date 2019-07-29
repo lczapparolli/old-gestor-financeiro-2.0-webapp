@@ -11,9 +11,6 @@ import { convertToNumber } from '../helpers/ConvertToNumber';
 class AccountPage extends Component {
     constructor(props) {
         super(props);
-        //Bindings
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleNameValidate = this.handleNameValidate.bind(this);
         //State
         this.state = {
             success: false,
@@ -23,16 +20,14 @@ class AccountPage extends Component {
         };
     }
 
-    //TODO: Change to arrow functions
-
-    getId() {
+    getId = () => {
         if (this.props.match.params.id !== 'new')
             return convertToNumber(this.props.match.params.id);
         else
             return 0;
     }
 
-    async handleNameValidate(accountName) {
+    handleNameValidate = async (accountName) => {
         const id = this.getId();
         const account = await accountsController.getByName(accountName);
         //if account is not found or is the same account added
@@ -42,7 +37,7 @@ class AccountPage extends Component {
             return 'Account name must be unique';
     }
 
-    async handleSubmit(account) {
+    handleSubmit = async (account) => {
         const id = this.getId();
         if (id > 0)
             account.id = id;
@@ -76,6 +71,7 @@ class AccountPage extends Component {
 }
 
 AccountPage.propTypes = {
+    /** Match object to get URL parameters */
     match: PropTypes.shape({ params: PropTypes.shape({ id: PropTypes.string }) })
 };
 

@@ -20,9 +20,6 @@ class App extends Component {
     _isMounted = false;
     constructor(props) {
         super(props);
-        //Bindings
-        this.handleLogin = this.handleLogin.bind(this);
-        this.handleLogout = this.handleLogout.bind(this);
         //State
         this.state = {
             loading: true,
@@ -30,11 +27,11 @@ class App extends Component {
         };
     }
 
-    handleLogin() {
+    handleLogin = () => {
         this.setState({ logged: true });
     }
 
-    handleLogout() {
+    handleLogout = () => {
         this.setState({ logged: false });
     }
 
