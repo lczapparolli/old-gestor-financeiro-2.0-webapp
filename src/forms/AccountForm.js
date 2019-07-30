@@ -18,10 +18,6 @@ import { ACCOUNT_TYPES, CHECKING, CREDIT, SAVINGS } from '../controllers/Account
 class AccountForm extends Component {
     constructor(props) {
         super(props);
-        //Bindings
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.typeValidation = this.typeValidation.bind(this);
-        this.balanceValidation = this.balanceValidation.bind(this);
         //Setting state
         const { account } = this.props;
         this.state = {
@@ -39,16 +35,14 @@ class AccountForm extends Component {
         ];
     }
 
-    //TODO: Change to arrow functions
-
-    typeValidation(value) {
+    typeValidation = (value) => {
         if (!ACCOUNT_TYPES.includes(value))
             return 'Invalid account type';
         else
             return '';
     }
 
-    balanceValidation(value) {
+    balanceValidation = (value) => {
         if (value !== '') {
             if (!isNumeric(value))
                 return 'Invalid value';
@@ -56,7 +50,7 @@ class AccountForm extends Component {
         return '';
     }
 
-    async validate() {
+    validate = async () => {
         const name = Object.assign({}, this.state.name);
         const type = Object.assign({}, this.state.type);
         const balance = Object.assign({}, this.state.balance);
@@ -69,7 +63,7 @@ class AccountForm extends Component {
         return name.error === '' && type.error === '' && balance.error === '';
     }
 
-    async handleSubmit(event) {
+    handleSubmit = async (event) => {
         event.preventDefault();
         if (await this.validate()) {
             const data = {
@@ -130,8 +124,11 @@ class AccountForm extends Component {
 }
 
 AccountForm.propTypes = {
+    /** Callback function fired when form is submited */
     onSubmit: PropTypes.func,
+    /** Callback function fired when account name requires extra validation */
     onNameValidate: PropTypes.func,
+    /** Account object to be edited */
     account: PropTypes.shape({ name: PropTypes.string, balance: PropTypes.number, type: PropTypes.string })
 };
 

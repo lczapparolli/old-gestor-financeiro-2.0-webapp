@@ -17,8 +17,6 @@ import Button, { ACTION_SUBMIT } from '../components/Button';
 class LoginForm extends Component {
     constructor(props) {
         super(props);
-        //Binds
-        this.handleSubmit = this.handleSubmit.bind(this);
         //State
         this.state = {
             email: { value: '', error: ''},
@@ -28,9 +26,7 @@ class LoginForm extends Component {
         this.formHelper = new FormHelper(this);
     }
 
-    //TODO: Change to arrow functions
-
-    handleSubmit(event) {
+    handleSubmit = (event) => {
         event.preventDefault();
         const data = {
             email: this.state.email.value,

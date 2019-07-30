@@ -35,15 +35,7 @@ class MovementForm extends Component {
         this.formHelper = new FormHelper(this, { amount: this.amountValidation, date: this.dateValidation });
     }
 
-    async componentDidMount() {
-        const forecastList = await forecastsController.listAll();
-        const accountList = await accountsController.listAll();
-        const forecasts = forecastList.map(forecast => { return { value: forecast.id, text: forecast.name }; });
-        const accounts = accountList.map(account => { return { value: account.id, text: account.name }; });
-        this.setState({ forecasts, accounts });
-    }
-
-    handleSubmit = event => {
+    handleSubmit = (event) => {
         event.preventDefault();
         const movement = {
             description: this.state.description.value,
@@ -55,7 +47,7 @@ class MovementForm extends Component {
         this.props.onSubmit(movement);
     }
 
-    amountValidation = value => {
+    amountValidation = (value) => {
         if (value !== '') {
             if (!isNumeric(value))
                 return 'Invalid value';
@@ -63,11 +55,19 @@ class MovementForm extends Component {
         return '';
     }
 
-    dateValidation = date => {
+    dateValidation = (date) => {
         if (!isDate(date)) {
             return 'Invalid date';
         }
         return '';
+    }
+
+    async componentDidMount() {
+        const forecastList = await forecastsController.listAll();
+        const accountList = await accountsController.listAll();
+        const forecasts = forecastList.map(forecast => { return { value: forecast.id, text: forecast.name }; });
+        const accounts = accountList.map(account => { return { value: account.id, text: account.name }; });
+        this.setState({ forecasts, accounts });
     }
 
     render() {
@@ -141,7 +141,9 @@ class MovementForm extends Component {
 }
 
 MovementForm.propTypes = {
+    /** Callback function fired when form is submited */
     onSubmit: PropTypes.func.isRequired,
+    /** Movement object to be edited */
     movement: PropTypes.shape({ 
         description: PropTypes.string.isRequired, 
         value: PropTypes.number.isRequired, 

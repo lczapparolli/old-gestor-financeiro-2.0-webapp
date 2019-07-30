@@ -12,8 +12,6 @@ import Button, { ACTION_SUBMIT } from '../components/Button';
 class ForecastCategoryForm extends Component {
     constructor(props) {
         super(props);
-        //Binding functions
-        this.handleSubmit = this.handleSubmit.bind(this);
         //Setting state
         this.state = {
             name: { value: props.category.name, error: '' }
@@ -22,9 +20,7 @@ class ForecastCategoryForm extends Component {
         this.formHelper = new FormHelper(this);
     }
 
-    //TODO: Change to arrow functions
-
-    async validate() {
+    validate = async () => {
         const name = Object.assign({}, this.state.name);
 
         name.error = await this.props.onNameValidation(name.value);
@@ -33,7 +29,7 @@ class ForecastCategoryForm extends Component {
         return name.error === '';
     }
 
-    async handleSubmit(event) {
+    handleSubmit = async (event) => {
         event.preventDefault();
         if (await this.validate()) {
             const category = {
@@ -71,8 +67,11 @@ class ForecastCategoryForm extends Component {
 }
 
 ForecastCategoryForm.propTypes = {
+    /** Callback function fired when form is submited */
     onSubmit: PropTypes.func.isRequired,
+    /** Callback function fired when category name requires extra validation */
     onNameValidation: PropTypes.func.isRequired,
+    /** Category object to be edited */
     category: PropTypes.shape({ name: PropTypes.string })
 };
 

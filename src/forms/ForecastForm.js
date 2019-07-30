@@ -23,7 +23,7 @@ class ForecastForm extends Component {
         this.formHelper = new FormHelper(this, { amount: this.amountValidation });
     }
 
-    amountValidation = amount => {
+    amountValidation = (amount) => {
         if (amount !== '') {
             if (!isNumeric(amount))
                 return 'Invalid value';
@@ -31,7 +31,7 @@ class ForecastForm extends Component {
         return '';
     }
 
-    async validate() {
+    validate = async () => {
         const name = Object.assign({}, this.state.name);
 
         name.error = await this.props.onNameValidation(name.value);
@@ -40,7 +40,7 @@ class ForecastForm extends Component {
         return name.error === '';
     }
 
-    handleSubmit = async event => {
+    handleSubmit = async (event) => {
         event.preventDefault();
         if (await this.validate()) {
             const forecast = {
@@ -89,8 +89,11 @@ class ForecastForm extends Component {
 }
 
 ForecastForm.propTypes = {
+    /** Callback function fired when form is submited */
     onSubmit: PropTypes.func.isRequired,
+    /** Callback function fired when forecast name requires extra validation */
     onNameValidation: PropTypes.func,
+    /** Forecast object to be edited */
     forecast: PropTypes.shape({ name: PropTypes.string, amount: PropTypes.number })
 };
 
