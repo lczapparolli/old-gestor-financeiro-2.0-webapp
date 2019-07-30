@@ -75,7 +75,7 @@ class AccountsController {
     async saveAccount(account) {
         const validationMessage = await this[validateAccount](account);
         if (validationMessage !== '')
-            throw validationMessage;
+            throw new TypeError(validationMessage);
         account = this[extractFields](account);
         account.id = await accounts.addAccount(account);
         return account;

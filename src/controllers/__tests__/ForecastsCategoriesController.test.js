@@ -41,23 +41,21 @@ describe('ForecastsCategoriesController', () => {
         it('expects a category with name property', async () => {
             let exception;
 
-            //TODO:Padronize exceptions
-
             exception = await forecastsCategoriesController.saveCategory().catch(exception => exception);
-            cExpect(exception).to.be.equal('Category is required');
+            cExpect(exception).to.have.property('message', 'Category is required');
 
             exception = await forecastsCategoriesController.saveCategory({ }).catch(exception => exception);
-            cExpect(exception).to.be.equal('Category name is required');
+            cExpect(exception).to.have.property('message', 'Category name is required');
 
             exception = await forecastsCategoriesController.saveCategory({ name: '' }).catch(exception => exception);
-            cExpect(exception).to.be.equal('Category name is required');
+            cExpect(exception).to.have.property('message', 'Category name is required');
 
             exception = await forecastsCategoriesController.saveCategory({ name: '  ' }).catch(exception => exception);
-            cExpect(exception).to.be.equal('Category name is required');
+            cExpect(exception).to.have.property('message', 'Category name is required');
 
             await forecastsCategoriesController.saveCategory(testData[1]);
             exception = await forecastsCategoriesController.saveCategory(testData[1]).catch(exception => exception);
-            cExpect(exception).to.be.equal('Category already exists');
+            cExpect(exception).to.have.property('message', 'Category already exists');
             //TODO: Validates name type
         });
 

@@ -90,24 +90,24 @@ describe('AccountsController', () => {
 
         it('expects an account object with a name', async () => {
             let exception;
-            //TODO: Padronize exceptions with TypeError
+            
             exception = await accountsController.saveAccount().catch(exception => exception);
-            cExpect(exception).to.be.equal('Account is required');
+            cExpect(exception).to.have.property('message', 'Account is required');
 
             exception = await accountsController.saveAccount({ }).catch(exception => exception);
-            cExpect(exception).to.be.equal('Account name is required');
+            cExpect(exception).to.have.property('message', 'Account name is required');
 
             exception = await accountsController.saveAccount({ name: '' }).catch(exception => exception);
-            cExpect(exception).to.be.equal('Account name is required');
+            cExpect(exception).to.have.property('message', 'Account name is required');
 
             exception = await accountsController.saveAccount({ name: '  ' }).catch(exception => exception);
-            cExpect(exception).to.be.equal('Account name is required');
+            cExpect(exception).to.have.property('message', 'Account name is required');
 
             exception = await accountsController.saveAccount({ name: 'Account 1' }).catch(exception => exception);
-            cExpect(exception).to.be.equal('Account type is required');
+            cExpect(exception).to.have.property('message', 'Account type is required');
 
             exception = await accountsController.saveAccount({ name: 'Account 1', type: 'invalid' }).catch(exception => exception);
-            cExpect(exception).to.be.equal('Invalid account type');
+            cExpect(exception).to.have.property('message', 'Invalid account type');
             //TODO: Validates balance type
             //TODO: Validates name type
             //TODO: Validates duplicated error

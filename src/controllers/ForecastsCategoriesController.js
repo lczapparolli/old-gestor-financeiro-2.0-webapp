@@ -58,7 +58,7 @@ class ForecastsCategoriesController {
     async saveCategory(category) {
         const validationMessage = await this[validateCategory](category);
         if (validationMessage !== '')
-            throw validationMessage;
+            throw new TypeError(validationMessage);
         else {
             category = this[extractFields](category);
             if (!category.id || category.id === 0) {
