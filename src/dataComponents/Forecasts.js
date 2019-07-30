@@ -12,6 +12,9 @@ import GridCell from '../components/GridCell';
 //Helpers
 import formatNumber from '../helpers/FormatNumber';
 
+/**
+ * Component to list categories and forecasts and provide a link to add new ones.
+ */
 class Forecasts extends Component {
     constructor(props) {
         super(props);
@@ -74,6 +77,9 @@ class Forecasts extends Component {
     }
 }
 
+/**
+ * Show a category and list their respectives forecasts with total
+ */
 function Category({ category }) {
     const categoryLink = '/categories/' + category.id;
     const newForecastLink = '/forecasts/new?categoryId=' + category.id; 
@@ -115,6 +121,9 @@ Category.propTypes = {
     }).isRequired,
 };
 
+/**
+ * Show a forecast with amount and balance values
+ */
 function Forecast({ forecast }) {
     const forecastLink = '/forecasts/' + forecast.id;
     return (

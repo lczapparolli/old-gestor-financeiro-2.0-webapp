@@ -12,6 +12,9 @@ import movementsController from '../controllers/MovementsController';
 import formatNumber from '../helpers/FormatNumber';
 import formatDate from '../helpers/FormatDate';
 
+/**
+ * Show a list of movements, provide a link to add new ones and a delete button to remove existent
+ */
 class Movements extends Component {
     constructor(props) {
         super(props);
@@ -23,18 +26,18 @@ class Movements extends Component {
         };
     }
 
-    async componentDidMount() {
-        const movementList = await movementsController.findAll();
-        this.setState({ loading: false, movementList });
-    }
-
-    handleDeleteClick = async movement => {
+    handleDeleteClick = async (movement) => {
         if (window.confirm('Delete movement "' + movement.description + '"?')) {
             await movementsController.deleteMovement(movement.id);
             const movementList = await movementsController.findAll();
             this.setState({ movementList });
         }
     };
+
+    async componentDidMount() {
+        const movementList = await movementsController.findAll();
+        this.setState({ loading: false, movementList });
+    }
 
     render() {
         const { loading, movementList } = this.state;
@@ -62,6 +65,9 @@ class Movements extends Component {
     }
 }
 
+/**
+ * Renders a list of movements
+ */
 function MovementsList({ movements, onDeleteClick }) {
     const movementsComponents = movements.map(movement => <Movement key={movement.id} movement={movement} onDeleteClick={onDeleteClick} />);
 
@@ -85,16 +91,22 @@ function MovementsList({ movements, onDeleteClick }) {
 }
 
 MovementsList.propTypes = {
+    /** List of movements to be shown */
     movements: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number.isRequired,
         account: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string }).isRequired,
         forecast: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string }).isRequired,
         date: PropTypes.instanceOf(Date).isRequired,
-        value: PropTypes.number.isRequired
+        value: PropTypes.number.isRequired,
+        description: PropTypes.string.isRequired
     })).isRequired,
+    /** Callback function to be fired when user press delete button */
     onDeleteClick: PropTypes.func.isRequired
 };
 
+/**
+ * Show a movement object with a button to delete itself
+ */
 function Movement({ movement, onDeleteClick }) {
     const movementLink = '/movements/' + movement.id;
     return (
@@ -110,13 +122,16 @@ function Movement({ movement, onDeleteClick }) {
 }
 
 Movement.propTypes = {
+    /** Movement object to be shown */
     movement: PropTypes.shape({
         id: PropTypes.number.isRequired,
         account: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string }).isRequired,
         forecast: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string }).isRequired,
         date: PropTypes.instanceOf(Date).isRequired,
-        value: PropTypes.number.isRequired
+        value: PropTypes.number.isRequired,
+        description: PropTypes.string.isRequired
     }).isRequired,
+    /** Callback function to be fired when user press delete button */
     onDeleteClick: PropTypes.func.isRequired
 };
 
