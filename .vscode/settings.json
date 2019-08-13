@@ -1,4 +1,2 @@
 {
-    "jest.pathToJest": "./node_modules/.bin/react-scripts test --env=jsdom",
-    "jest.autoEnable": false
 }
