@@ -1,35 +1,12 @@
 import accounts from '../db/Accounts';
+import Account, { ACCOUNT_TYPES } from '../models/Account';
 import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
-/**
- * An account object
- * @typedef {Object} Account
- * @property {Number} id - Account id
- * @property {String} name - Account name (Required for insert)
- * @property {Number} balance - Account balance
- * @property {String} type - Account type (Required for insert)
- * 
- * A group of accounts
- * @typedef {Object} AccountGroup
- * @property {Number} sum - Sum of the balance of all accounts in the group
- * @property {Account[]} items - List of accounts in the group
- * 
- * An object grouping accounts in three categories with sum of values
- * @typedef {Object} GroupedAccounts
- * @property {Number} total - Sum of the balance of all accounts 
- * @property {AccountGroup} account - Accounts of type 'account'
- * @property {AccountGroup} cc - Accounts of type 'credit card'
- * @property {AccountGroup} invest - Accounts of type 'investment'
- */
+import AccountGroup from '../models/AccountGroup';
+import GroupedAccounts from '../models/GroupedAccounts';
 
 //Symbols
 const validateAccount = Symbol('validateAccount');
 const extractFields = Symbol('extractFields');
-
-//Accounts types
-const CHECKING = 'checking';
-const CREDIT = 'credit';
-const SAVINGS = 'savings';
-const ACCOUNT_TYPES = [CHECKING, CREDIT, SAVINGS];
 
 /**
  * Controls the account data
@@ -43,12 +20,13 @@ class AccountsController {
     async findAll() {
         const accountList = await accounts.getAllAccounts();
     
-        let groups = {
-            total: 0
-        };
-        for (let type of ACCOUNT_TYPES)
-            groups[type] = { items: [], sum: 0 };
-    
+        let groups = new GroupedAccounts(
+            0, 
+            new AccountGroup(0, []), //checkings
+            new AccountGroup(0, []), //credit
+            new AccountGroup(0, [])  //savings
+        );
+
         groups = accountList.reduce((group, account) => {
             group[account.type].items.push(account);
             group[account.type].sum += account.balance;
@@ -163,16 +141,17 @@ class AccountsController {
      * @returns {Account} - Account object without extra fields
      */
     [extractFields](account) {
-        const result = { 
-            name: account.name,
-            type: account.type,
-            balance: account.balance || 0
-        };
+        const result = new Account(
+            account.name,
+            account.type,
+            account.balance || 0
+        );
+
         if (account.id && account.id > 0)
             result.id = account.id;
+        
         return result;
     }
 }
 
 export default new AccountsController();
-export { CHECKING, CREDIT, SAVINGS, ACCOUNT_TYPES };

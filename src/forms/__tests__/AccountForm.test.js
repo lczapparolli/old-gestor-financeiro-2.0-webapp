@@ -7,7 +7,7 @@ import formatNumber from '../../helpers/FormatNumber';
 import { convertToNumber } from '../../helpers/ConvertToNumber';
 //Tested module
 import AccountForm from '../AccountForm';
-import { CHECKING } from '../../controllers/AccountsController';
+import Account, { CHECKING } from '../../models/Account';
 
 chai.use(chaiEnzyme());
 const cExpect = chai.expect;
@@ -34,7 +34,7 @@ describe('AccountForm component', () => {
     });
 
     it('fills fields with props data', () => {
-        const account = { name: 'Account 1', balance: 10, type: 'account' };
+        const account = new Account('Account 1', 'account', 10);
         const form = shallow(<AccountForm account={account} onSubmit={onSubmit} />);
 
         cExpect(form.find('InputField[name="name"]')).to.have.prop('value', account.name);
@@ -62,9 +62,10 @@ describe('AccountForm component', () => {
         form.find('form').simulate('submit', { preventDefault() {} });
     });
 
-    it('calls onSubmit function with account data', done => {
+    it('calls onSubmit function with account object', done => {
 
         const onSubmit = data => {
+            cExpect(data).to.be.an.instanceOf(Account);
             cExpect(data).to.have.property('name', testData.name.value);
             cExpect(data).to.have.property('balance', convertToNumber(testData.balance.value));
             cExpect(data).to.have.property('type', testData.type.value);

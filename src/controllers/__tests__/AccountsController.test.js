@@ -4,7 +4,8 @@ import accounts from '../../db/Accounts';
 import db from '../../db';
 import { convertToNumber } from '../../helpers/ConvertToNumber';
 //Tested module
-import accountsController, { CHECKING } from '../AccountsController';
+import accountsController from '../AccountsController';
+import Account, { CHECKING } from '../../models/Account';
 
 const cExpect = chai.expect;
 
@@ -167,6 +168,7 @@ describe('AccountsController', () => {
             await accountsController.saveAccount({ name: accountName, type: 'credit' });
             const account = await accountsController.getByName(accountName);
             cExpect(account).to.be.not.null;
+            cExpect(account).to.be.an.instanceOf(Account);
             cExpect(account).to.have.property('id').greaterThan(0);
         });
     });
@@ -194,6 +196,7 @@ describe('AccountsController', () => {
             const insertedAccount = await accountsController.saveAccount(accountsData[0]);
             const account = await accountsController.getById(insertedAccount.id);
             cExpect(account).to.be.not.null;
+            cExpect(account).to.be.an.instanceOf(Account);
             cExpect(account).to.have.property('id', insertedAccount.id);
             cExpect(account).to.have.property('name', accountsData[0].name);
         });

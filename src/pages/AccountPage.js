@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import AccountForm from '../forms/AccountForm';
 import accountsController from '../controllers/AccountsController';
 import { convertToNumber } from '../helpers/ConvertToNumber';
+import Account from '../models/Account';
 //Controller
 
 class AccountPage extends Component {
@@ -16,7 +17,7 @@ class AccountPage extends Component {
             success: false,
             loading: true,
             error: '',
-            account: {name: '', balance: 0, type: ''}
+            account: new Account('', '', 0)
         };
     }
 
@@ -46,7 +47,7 @@ class AccountPage extends Component {
     }
 
     async componentDidMount() {
-        let account = { name: '', balance: 0, type: '' };
+        let account = new Account('', '', 0);
         const id = this.getId();
         if (id > 0) {
             account = await accountsController.getById(id);

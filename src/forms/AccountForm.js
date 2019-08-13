@@ -13,7 +13,7 @@ import ScreenSizes from '../helpers/ScreenSizes';
 import {isNumeric, convertToNumber} from '../helpers/ConvertToNumber';
 import formatNumber from '../helpers/FormatNumber';
 //DB
-import { ACCOUNT_TYPES, CHECKING, CREDIT, SAVINGS } from '../controllers/AccountsController';
+import Account, { ACCOUNT_TYPES, CHECKING, CREDIT, SAVINGS } from '../models/Account';
 
 class AccountForm extends Component {
     constructor(props) {
@@ -66,12 +66,12 @@ class AccountForm extends Component {
     handleSubmit = async (event) => {
         event.preventDefault();
         if (await this.validate()) {
-            const data = {
-                name: this.state.name.value,
-                balance: convertToNumber(this.state.balance.value),
-                type: this.state.type.value
-            };
-            this.props.onSubmit(data);
+            const account = new Account(
+                this.state.name.value,
+                this.state.type.value,
+                convertToNumber(this.state.balance.value),
+            );
+            this.props.onSubmit(account);
         }
     }
 
@@ -129,11 +129,11 @@ AccountForm.propTypes = {
     /** Callback function fired when account name requires extra validation */
     onNameValidate: PropTypes.func,
     /** Account object to be edited */
-    account: PropTypes.shape({ name: PropTypes.string, balance: PropTypes.number, type: PropTypes.string })
+    account: PropTypes.instanceOf(Account)
 };
 
 AccountForm.defaultProps = {
-    account: { name: '', balance: 0, type: '' },
+    account: new Account('', '', 0),
     onNameValidate: () => ''
 };
 
