@@ -1,23 +1,10 @@
 import forecastsCategories from '../db/ForecastsCategories';
 import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
-
-/**
- * Category object
- * @typedef {Object} ForecastCategory
- * @property {Number} id - Category id
- * @property {String} name - Category name (Required for insert)
- * @property {String} type - Category type
- */
+import ForecastCategory, { PREDICTED } from '../models/ForecastCategory';
 
 //Symbols
 const validateCategory = Symbol('validateCategory');
 const extractFields = Symbol('extractFields');
-
-//Category types
-const INCOME = 'incomes';
-const PREDICTED = 'predicted';
-const UNPREDICTED = 'unpredicted';
-const CATEGORY_TYPES = [INCOME, PREDICTED, UNPREDICTED];
 
 /**
  * Controls the forecasts categories data
@@ -109,7 +96,7 @@ class ForecastsCategoriesController {
             if (savedCategory && savedCategory.id !== category.id)
                 message = 'Category already exists';
         }
-
+        //TODO: Validate category type
         return message;
     }
 
@@ -119,10 +106,10 @@ class ForecastsCategoriesController {
      * @returns {ForecastCategory} Category object without any extra data
      */
     [extractFields](category) {
-        let result = {
-            name: category.name,
-            type: category.type
-        };
+        let result = new ForecastCategory(
+            category.name,
+            category.type
+        );
 
         if (category.id && category.id > 0)
             result.id = category.id;
@@ -132,4 +119,3 @@ class ForecastsCategoriesController {
 }
 
 export default new ForecastsCategoriesController();
-export { CATEGORY_TYPES, INCOME, PREDICTED, UNPREDICTED };

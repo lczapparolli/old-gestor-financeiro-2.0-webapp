@@ -1,8 +1,9 @@
 //Libs
 import chai from 'chai';
 //Tested module
-import forecastsCategoriesController, { PREDICTED, INCOME, UNPREDICTED } from '../ForecastsCategoriesController';
+import forecastsCategoriesController from '../ForecastsCategoriesController';
 import forecastsCategories from '../../db/ForecastsCategories';
+import ForecastCategory, { PREDICTED, INCOME, UNPREDICTED } from '../../models/ForecastCategory';
 import db from '../../db';
 
 const cExpect = chai.expect;
@@ -143,6 +144,7 @@ describe('ForecastsCategoriesController', () => {
             const { id: lastInsertedId } = await forecastsCategoriesController.saveCategory(testData[0]);
             const category = await forecastsCategoriesController.getById(lastInsertedId);
             cExpect(category).to.be.not.null;
+            cExpect(category).to.be.an.instanceOf(ForecastCategory);
             cExpect(category).to.have.property('id', lastInsertedId);
             cExpect(category).to.have.property('name', testData[0].name);
         });
@@ -172,6 +174,7 @@ describe('ForecastsCategoriesController', () => {
             await forecastsCategoriesController.saveCategory(testData[0]);
             const category = await forecastsCategoriesController.getByName(testData[0].name);
             cExpect(category).to.be.not.null;
+            cExpect(category).to.be.an.instanceOf(ForecastCategory);
             cExpect(category).to.have.property('id').greaterThan(0);
             cExpect(category).to.have.property('name', testData[0].name);
         });

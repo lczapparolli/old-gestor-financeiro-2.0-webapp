@@ -5,6 +5,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 //Tested module
 import ForecastCategoryForm from '../ForecastCategoryForm';
+import ForecastCategory, { INCOME } from '../../models/ForecastCategory';
 
 chai.use(chaiEnzyme());
 const cExpect = chai.expect;
@@ -35,9 +36,7 @@ describe('ForecastCategoryForm component', () => {
 
     it('fills field with category name when data is provided', () => {
         //Test data
-        const category = {
-            name: 'Category test'
-        };
+        const category = new ForecastCategory('Category test', INCOME);
         //Initializing component
         const form = shallow(<ForecastCategoryForm onSubmit={emptySubmit} category={category} />);
         //Test conditions
@@ -48,6 +47,7 @@ describe('ForecastCategoryForm component', () => {
         //Mock function
         const handleSubmit = category => {
             //Test conditions
+            cExpect(category).to.be.an.instanceOf(ForecastCategory);
             cExpect(category).to.have.property('name', testData.name);
             done();
         };

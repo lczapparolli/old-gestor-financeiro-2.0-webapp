@@ -11,6 +11,8 @@ import { convertToNumber } from '../helpers/ConvertToNumber';
 import forecastsCategoriesController from '../controllers/ForecastsCategoriesController';
 //Form
 import ForecastCategoryForm from '../forms/ForecastCategoryForm';
+//Models
+import ForecastCategory from '../models/ForecastCategory';
 
 class ForecastCategoryPage extends Component {
     constructor(props) {
@@ -18,7 +20,7 @@ class ForecastCategoryPage extends Component {
         //State
         this.state = {
             loading: true,
-            category: { name: '', type: '' },
+            category: new ForecastCategory('', ''),
             success: false
         };
     }
@@ -49,7 +51,7 @@ class ForecastCategoryPage extends Component {
     }
 
     async componentDidMount() {
-        let category = { name: '', type: '' };
+        let category = new ForecastCategory('', '');
         const id = this.getId();
         if (id > 0)
             category = await forecastsCategoriesController.getById(id);

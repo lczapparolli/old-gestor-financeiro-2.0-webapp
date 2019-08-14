@@ -8,6 +8,8 @@ import GridCell from '../components/GridCell';
 import GridRow from '../components/GridRow';
 import InputField from '../components/InputField';
 import Button, { ACTION_SUBMIT } from '../components/Button';
+//Models
+import ForecastCategory from '../models/ForecastCategory';
 
 class ForecastCategoryForm extends Component {
     constructor(props) {
@@ -32,9 +34,9 @@ class ForecastCategoryForm extends Component {
     handleSubmit = async (event) => {
         event.preventDefault();
         if (await this.validate()) {
-            const category = {
-                name: this.state.name.value
-            };
+            const category = new ForecastCategory(
+                this.state.name.value
+            );
             this.props.onSubmit(category);
         }
     }
@@ -72,12 +74,12 @@ ForecastCategoryForm.propTypes = {
     /** Callback function fired when category name requires extra validation */
     onNameValidation: PropTypes.func.isRequired,
     /** Category object to be edited */
-    category: PropTypes.shape({ name: PropTypes.string })
+    category: PropTypes.instanceOf(ForecastCategory)
 };
 
 ForecastCategoryForm.defaultProps = {
     onNameValidation: () => '',
-    category: { name: '' }
+    category: new ForecastCategory('', '')
 };
 
 export default ForecastCategoryForm;
