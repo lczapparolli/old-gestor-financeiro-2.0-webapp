@@ -4,10 +4,11 @@ import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 //Form
 import AccountForm from '../forms/AccountForm';
-import accountsController from '../controllers/AccountsController';
 import { convertToNumber } from '../helpers/ConvertToNumber';
-import Account from '../models/Account';
 //Controller
+import accountsController from '../controllers/AccountsController';
+//Models
+import Account from '../models/Account';
 
 class AccountPage extends Component {
     constructor(props) {

@@ -12,7 +12,7 @@ import FormHelper from '../helpers/FormHelper';
 import ScreenSizes from '../helpers/ScreenSizes';
 import {isNumeric, convertToNumber} from '../helpers/ConvertToNumber';
 import formatNumber from '../helpers/FormatNumber';
-//DB
+//Models
 import Account, { ACCOUNT_TYPES, CHECKING, CREDIT, SAVINGS } from '../models/Account';
 
 class AccountForm extends Component {
