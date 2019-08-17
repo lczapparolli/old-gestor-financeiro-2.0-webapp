@@ -17,6 +17,7 @@ import { isDate, convertToDate } from '../helpers/ConvertToDate';
 //Controllers
 import forecastsController from '../controllers/ForecastsController';
 import accountsController from '../controllers/AccountsController';
+import Movement from '../models/Movement';
 
 class MovementForm extends Component {
     constructor(props) {
@@ -37,13 +38,13 @@ class MovementForm extends Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
-        const movement = {
-            description: this.state.description.value,
-            forecastId: this.state.forecastId.value,
-            accountId: this.state.accountId.value,
-            value: convertToNumber(this.state.value.value),
-            date: convertToDate(this.state.date.value),
-        };
+        const movement = new Movement(
+            this.state.accountId.value,
+            this.state.forecastId.value,
+            this.state.description.value,
+            convertToNumber(this.state.value.value),
+            convertToDate(this.state.date.value),
+        );
         this.props.onSubmit(movement);
     }
 
@@ -144,23 +145,11 @@ MovementForm.propTypes = {
     /** Callback function fired when form is submited */
     onSubmit: PropTypes.func.isRequired,
     /** Movement object to be edited */
-    movement: PropTypes.shape({ 
-        description: PropTypes.string.isRequired, 
-        value: PropTypes.number.isRequired, 
-        date: PropTypes.oneOfType([ PropTypes.instanceOf(Date), PropTypes.string, PropTypes.number ]).isRequired, 
-        forecastId: PropTypes.number.isRequired, 
-        accountId: PropTypes.number.isRequired  
-    })
+    movement: PropTypes.instanceOf(Movement)
 };
 
 MovementForm.defaultProps = {
-    movement: {
-        description: '',
-        value: 0,
-        date: Date.now(),
-        forecastId: 0,
-        accountId: 0
-    }
+    movement: new Movement(0, 0, '', 0, new Date(Date.now()))
 };
 
 export default MovementForm;

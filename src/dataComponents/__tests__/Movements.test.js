@@ -5,20 +5,35 @@ import React from 'react';
 import { MemoryRouter } from 'react-router';
 import { shallow, mount } from 'enzyme';
 //Tested module
-import Movements, { MovementsList, Movement } from '../Movements';
+import Movements, { MovementsList, MovementItem } from '../Movements';
 import formatNumber from '../../helpers/FormatNumber';
 import formatDate from '../../helpers/FormatDate';
 import db from '../../db';
 import movementsController from '../../controllers/MovementsController';
+import Movement from '../../models/Movement';
+import Account, { CHECKING } from '../../models/Account';
+import Forecast from '../../models/Forecast';
 
 chai.use(chaiEnzyme());
 const cExpect = chai.expect;
 
+const testAccount = new Account('Account 1', CHECKING, 0);
+const testForecast = new Forecast('Forecast 1', 10, 10, 1);
+
 //Test data
 let movements = [
-    { id: 1, accountId: 1, forecastId: 1, value: 10, date: new Date(Date.now()), description: 'Test movement', account: { id: 1, name: 'Test account'}, forecast: { id: 1, name: 'Test forecast'} },
-    { id: 1, accountId: 1, forecastId: 1, value: 20, date: new Date(Date.now()), description: 'Test movement 2', account: { id: 1, name: 'Test account'}, forecast: { id: 1, name: 'Test forecast'} }
+    new Movement(1, 1, 'Test movement 1', 10, new Date(Date.now())),
+    new Movement(1, 1, 'Test movement 2', 20, new Date(Date.now()))
 ];
+
+beforeAll(async () => {
+    movements.forEach((movement, index) => {
+        movement.id = index;
+        movement.account = testAccount;
+        movement.forecast = testForecast;
+    });
+});
+
 
 describe('Movements component', () => {
     let component;
@@ -67,7 +82,7 @@ describe('MovementsList component', () => {
     });
 
     it('has one line per movement into database', () => {
-        const rows = component.find('Movement');
+        const rows = component.find('MovementItem');
         cExpect(rows).to.have.length(movements.length);
         //Pass the prop to children
         cExpect(rows.at(0)).to.have.prop('onDeleteClick', handleDeleteClick);
@@ -81,7 +96,7 @@ describe('Movement component', () => {
     beforeAll(async () => {
         movement = movements[0];
         //Initializing component
-        component = shallow(<Movement movement={movement} onDeleteClick={() => {}} />);
+        component = shallow(<MovementItem movement={movement} onDeleteClick={() => {}} />);
     });
     
     it('renders a table with 6 columns', () => {
@@ -136,7 +151,7 @@ describe('Delete action', () => {
             <MemoryRouter>
                 <table>
                     <tbody>
-                        <Movement movement={movement} onDeleteClick={mockDelete} />
+                        <MovementItem movement={movement} onDeleteClick={mockDelete} />
                     </tbody>
                 </table>
             </MemoryRouter>

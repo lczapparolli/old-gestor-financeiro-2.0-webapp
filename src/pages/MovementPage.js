@@ -11,6 +11,7 @@ import movementsController from '../controllers/MovementsController';
 import { convertToNumber } from '../helpers/ConvertToNumber';
 //Form
 import MovementForm from '../forms/MovementForm';
+import Movement from '../models/Movement';
 
 class MovementPage extends Component {
     constructor(props) {
@@ -21,7 +22,7 @@ class MovementPage extends Component {
         this.state = {
             success: false,
             loading: true,
-            movement: {}
+            movement: new Movement(0, 0, '', 0, new Date(Date.now()))
         };
     }
 
@@ -40,7 +41,7 @@ class MovementPage extends Component {
     }
 
     async componentDidMount() {
-        let movement = { description: '', forecastId: 0, accountId: 0, value: 0, date: Date.now() };
+        let movement = new Movement(0, 0, '', 0, new Date(Date.now()));
         if (this.movementId > 0) {
             movement = await movementsController.getById(this.movementId);
         }

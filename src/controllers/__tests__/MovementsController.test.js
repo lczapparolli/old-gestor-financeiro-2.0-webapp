@@ -6,6 +6,7 @@ import db from '../../db';
 import accounts from '../../db/Accounts';
 import forecasts from '../../db/Forecasts';
 import formatNumber from '../../helpers/FormatNumber';
+import Movement from '../../models/Movement';
 
 const cExpect = chai.expect;
 
@@ -272,6 +273,7 @@ describe('MovementsController', () => {
             const savedMovement = await movementsController.saveMovement(movementTest);
             const movement = await movementsController.getById(savedMovement.id);
             cExpect(movement).to.be.not.null;
+            cExpect(movement).to.be.an.instanceOf(Movement);
             cExpect(movement).to.have.property('id', savedMovement.id);
             cExpect(movement).to.have.property('description', savedMovement.description);
             cExpect(movement).to.have.property('accountId', savedMovement.accountId);

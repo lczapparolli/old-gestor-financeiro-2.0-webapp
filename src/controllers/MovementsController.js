@@ -5,19 +5,7 @@ import accountsController from './AccountsController';
 import forecastsController from './ForecastsController';
 import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
 import { isDate, convertToDate } from '../helpers/ConvertToDate';
-
-/**
- * Movement object
- * @typedef {Object} Movement
- * @property {Number} id Movement id
- * @property {Number} accountId Id of corresponding account (Required)
- * @property {Number} forecastId Id of corresponding forecast (Required)
- * @property {Number} value Value of movement (Require)
- * @property {String} description Movement description and aditiona info
- * @property {Date} date Movement date (Required)
- * @property {import('./AccountsController').Account} account Account related to movement
- * @property {import('./ForecastsController').Forecast} forecast Forecast related to movement
- */
+import Movement from '../models/Movement';
 
 //Symbols
 const validateMovement = Symbol('validateMovement');
@@ -192,13 +180,13 @@ class MovementsController {
      * @returns {Movement} Returns the formated object as expected
      */
     [extractFields](movement) {
-        let result = {
-            accountId: convertToNumber(movement.accountId),
-            forecastId: convertToNumber(movement.forecastId),
-            description: movement.description,
-            value: convertToNumber(movement.value),
-            date: convertToDate(movement.date)
-        };
+        let result = new Movement(
+            convertToNumber(movement.accountId),
+            convertToNumber(movement.forecastId),
+            movement.description,
+            convertToNumber(movement.value),
+            convertToDate(movement.date)
+        );
         if(movement.id && movement.id > 0)
             result.id = movement.id;
         return result;

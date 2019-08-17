@@ -11,6 +11,8 @@ import movementsController from '../controllers/MovementsController';
 //Helpers
 import formatNumber from '../helpers/FormatNumber';
 import formatDate from '../helpers/FormatDate';
+//Models
+import Movement from '../models/Movement';
 
 /**
  * Show a list of movements, provide a link to add new ones and a delete button to remove existent
@@ -21,7 +23,7 @@ class Movements extends Component {
         //Initial state
         this.state = {
             loading: true,
-            /** @type {Array<import('../controllers/MovementsController').Movement>} */
+            /** @type {Array<Movement>} */
             movementList: []
         };
     }
@@ -69,7 +71,7 @@ class Movements extends Component {
  * Renders a list of movements
  */
 function MovementsList({ movements, onDeleteClick }) {
-    const movementsComponents = movements.map(movement => <Movement key={movement.id} movement={movement} onDeleteClick={onDeleteClick} />);
+    const movementsComponents = movements.map(movement => <MovementItem key={movement.id} movement={movement} onDeleteClick={onDeleteClick} />);
 
     return (
         <table className="DataComponent" >
@@ -92,14 +94,7 @@ function MovementsList({ movements, onDeleteClick }) {
 
 MovementsList.propTypes = {
     /** List of movements to be shown */
-    movements: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        account: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string }).isRequired,
-        forecast: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string }).isRequired,
-        date: PropTypes.instanceOf(Date).isRequired,
-        value: PropTypes.number.isRequired,
-        description: PropTypes.string.isRequired
-    })).isRequired,
+    movements: PropTypes.arrayOf(PropTypes.instanceOf(Movement)).isRequired,
     /** Callback function to be fired when user press delete button */
     onDeleteClick: PropTypes.func.isRequired
 };
@@ -107,7 +102,7 @@ MovementsList.propTypes = {
 /**
  * Show a movement object with a button to delete itself
  */
-function Movement({ movement, onDeleteClick }) {
+function MovementItem({ movement, onDeleteClick }) {
     const movementLink = '/movements/' + movement.id;
     return (
         <tr key={movement.id}>
@@ -121,19 +116,12 @@ function Movement({ movement, onDeleteClick }) {
     );
 }
 
-Movement.propTypes = {
+MovementItem.propTypes = {
     /** Movement object to be shown */
-    movement: PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        account: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string }).isRequired,
-        forecast: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string }).isRequired,
-        date: PropTypes.instanceOf(Date).isRequired,
-        value: PropTypes.number.isRequired,
-        description: PropTypes.string.isRequired
-    }).isRequired,
+    movement: PropTypes.instanceOf(Movement).isRequired,
     /** Callback function to be fired when user press delete button */
     onDeleteClick: PropTypes.func.isRequired
 };
 
 export default Movements;
-export { MovementsList, Movement };
+export { MovementsList, MovementItem };

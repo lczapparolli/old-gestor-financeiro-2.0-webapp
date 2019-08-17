@@ -11,6 +11,7 @@ import MovementForm from '../MovementForm';
 import forecastsCategoriesController from '../../controllers/ForecastsCategoriesController';
 import forecastsController from '../../controllers/ForecastsController';
 import accountsController from '../../controllers/AccountsController';
+import Movement from '../../models/Movement';
 
 chai.use(chaiEnzyme());
 const cExpect = chai.expect;
@@ -26,13 +27,7 @@ const forecasts = [
     { name: 'Forecast 2', amount: 2.0 },
 ];
 
-const testData = {
-    description: 'Test movement',
-    value: -100,
-    date: new Date(2019, 0 , 1),
-    forecastId: 0,
-    accountId: 0
-};
+const testData = new Movement(0, 0, 'Test movement', -100, new Date(2019, 0 , 1));
 
 
 describe('MovementForm component', () => {
@@ -119,6 +114,7 @@ describe('MovementForm component', () => {
     it('calls onSubmit function with movement data', done => {
         //Mock function
         const handleSubmit = movement => {
+            cExpect(movement).to.be.an.instanceOf(Movement);
             cExpect(movement).to.have.property('description', testData.description);
             cExpect(movement).to.have.property('value', testData.value);
             cExpect(movement.date.getTime()).to.be.equal(testData.date.getTime());
