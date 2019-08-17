@@ -3,6 +3,7 @@ import chai from 'chai';
 //Tested module
 import forecastsController from '../ForecastsController';
 import forecastsCategoriesController from '../ForecastsCategoriesController';
+import Forecast from '../../models/Forecast';
 import forecasts from '../../db/Forecasts';
 import db from '../../db';
 import { convertToNumber } from '../../helpers/ConvertToNumber';
@@ -256,6 +257,8 @@ describe('ForecastsController', () => {
         it('returns a forecast when name is found', async () => {
             await forecastsController.saveForecast(forecastTest);
             const forecast = await forecastsController.getByName(forecastTest.name);
+            
+            cExpect(forecast).to.be.an.instanceOf(Forecast);
             cExpect(forecast).to.have.property('id').greaterThan(0);
             cExpect(forecast).to.have.property('name', forecastTest.name);
         });
@@ -286,21 +289,23 @@ describe('ForecastsController', () => {
             cExpect(exception).to.have.property('message', 'Id is required');
         });
 
-        it('returns null when the category does not exists', async () => {
-            const category = await forecastsController.getById(100);
-            cExpect(category).to.be.null;
+        it('returns null when the forecast does not exists', async () => {
+            const forecast = await forecastsController.getById(100);
+            cExpect(forecast).to.be.null;
         });
 
-        it('returns the category when it is found', async () => {
-            const category = await forecastsController.getById(lastInsertedId);
-            cExpect(category).to.be.not.null;
-            cExpect(category).to.have.property('id', lastInsertedId);
-            cExpect(category).to.have.property('name', forecastTest.name);
+        it('returns the forecast when it is found', async () => {
+            const forecast = await forecastsController.getById(lastInsertedId);
+            cExpect(forecast).to.be.not.null;
+
+            cExpect(forecast).to.be.an.instanceOf(Forecast);
+            cExpect(forecast).to.have.property('id', lastInsertedId);
+            cExpect(forecast).to.have.property('name', forecastTest.name);
         });
 
         it('works when the id passed is a string', async () => {
-            const category = await forecastsController.getById(lastInsertedId.toString());
-            cExpect(category).to.be.not.null;
+            const forecast = await forecastsController.getById(lastInsertedId.toString());
+            cExpect(forecast).to.be.not.null;
         });
     });
 

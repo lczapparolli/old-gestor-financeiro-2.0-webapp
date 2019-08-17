@@ -7,6 +7,7 @@ import { convertToNumber } from '../../helpers/ConvertToNumber';
 import formatNumber from '../../helpers/FormatNumber';
 //Tested module
 import ForecastForm from '../ForecastForm';
+import Forecast from '../../models/Forecast';
 
 chai.use(chaiEnzyme());
 const cExpect = chai.expect;
@@ -43,10 +44,10 @@ describe('ForecastForm component', () => {
 
     it('fills field with forecast data when a forecast is provided', () => {
         //Test data
-        const forecast = {
-            name: 'Forecast name',
-            amount: 10.55
-        };
+        const forecast = new Forecast(
+            'Forecast name',
+            10.55
+        );
         //Initializing component
         const form = shallow(<ForecastForm onSubmit={emptySubmit} forecast={forecast} />);
         //Test conditions
@@ -57,6 +58,7 @@ describe('ForecastForm component', () => {
     it('calls onSubmit function with forecast data', done => {
         //Mock function
         const handleSubmit = forecast => {
+            cExpect(forecast).to.be.an.instanceOf(Forecast);
             cExpect(forecast).to.have.property('name', testData.name);
             cExpect(forecast).to.have.property('amount', convertToNumber(testData.amount));
             done();

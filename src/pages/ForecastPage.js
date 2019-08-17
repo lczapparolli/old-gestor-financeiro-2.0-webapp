@@ -12,6 +12,7 @@ import forecastsController from '../controllers/ForecastsController';
 import { convertToNumber } from '../helpers/ConvertToNumber';
 //Form
 import ForecastForm from '../forms/ForecastForm';
+import Forecast from '../models/Forecast';
 
 class ForecastPage extends Component {
     constructor(props) {
@@ -24,7 +25,7 @@ class ForecastPage extends Component {
             success: false,
             loading: true,
             error: '',
-            forecast: { name: '', amount: 0, categoryId: 0 }
+            forecast: new Forecast('', 0, 0, 0)
         };
     }
 
@@ -63,7 +64,7 @@ class ForecastPage extends Component {
     }
 
     async componentDidMount() {
-        let forecast = { name: '', amount: 0 };
+        let forecast = new Forecast('', 0, 0, 0);
         if (this.forecastId > 0) {
             forecast = await forecastsController.getById(this.forecastId);
             this.categoryId = forecast.categoryId;

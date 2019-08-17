@@ -1,35 +1,9 @@
 import forecasts from '../db/Forecasts';
 import forecastsCategoriesController from './ForecastsCategoriesController';
 import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
-
-/**
- * Forecast object
- * @typedef {Object} Forecast
- * @property {Number} id - Forecast id
- * @property {String} name - Forecast name (Required for insert)
- * @property {Number} amount - Forecast amount (Required for insert)
- * @property {Number} balance - Forecast balance
- * @property {Number} categoryId - Id of corresponding category (Required for insert)
- * 
- * Import from ForecastCategory
- * @typedef {import('./ForecastsCategoriesController').ForecastCategory} ForecastCategory
- * 
- * Category with list of forecasts and total
- * @typedef {Object} CategoryList
- * @property {Forecast[]} forecasts - List of forecasts of this category
- * @property {Number} total - Sum of forecasts amount
- * @property {Number} totalBalance - Sum of forecasts balance
- * 
- * Category object
- * @typedef {ForecastCategory & CategoryList} Category
- * 
- * Forecast list object
- * @typedef {Object} ForecastList
- * @property {Category[]} categories - List of forecasts categories
- * @property {Number} total - Sum of forecasts amount
- * @property {Number} totalBalance - Sum of forecasts balance
- */
-
+import Forecast from '../models/Forecast';
+import ForecastList from '../models/ForecastList';
+import ForecastCategoryList from '../models/ForecastCategoryList';
 
 //Symbols
 const validateForecast = Symbol('validateForecast');
@@ -57,19 +31,25 @@ class ForecastsController {
 
     /**
      * Returns all forecasts and categories with totals
-     * @returns {Promise<ForecastList>} List of categories and forecasts with totals
+     * @returns {Promise<ForecastCategoryList>} List of categories and forecasts with totals
      */
     async findAll() {
         //Initializing object
-        let result = { total: 0, totalBalance: 0 };
+        let result = new ForecastCategoryList();
         //Loading categories
-        result.categories = await forecastsCategoriesController.findAll();
-        await Promise.all(
-            result.categories.map(async category => {
-                //Loading forecasts
-                category.forecasts = await forecasts.getByCategory(category.id);
-                category.total = 0;
-                category.totalBalance = 0;
+        let categories = await forecastsCategoriesController.findAll();
+        //Adding categories to result list
+        result.categories = await Promise.all(
+            categories.map(async c => {
+                //Getting the list of forecasts
+                const forecastList = await forecasts.getByCategory(c.id);
+                //Building category
+                let category = new ForecastList(
+                    c.id,
+                    c.name,
+                    c.type,
+                    forecastList
+                );
                 //Getting sum of forecasts values
                 category.forecasts.forEach(forecast => {
                     category.total += forecast.amount;
@@ -78,6 +58,7 @@ class ForecastsController {
                 //Adding to total
                 result.total += category.total;
                 result.totalBalance += category.totalBalance;
+                return category;
             })
         );
         return result;
@@ -113,7 +94,7 @@ class ForecastsController {
     /**
      * Finds a forecast by its id
      * @param {Numeric} id - Forecast id
-     * @returns {Promise<Forecast} The found forecast
+     * @returns {Promise<Forecast>} The found forecast
      */
     async getById(forecastId) {
         if (!forecastId)
@@ -188,12 +169,13 @@ class ForecastsController {
      * @returns {Forecast} Return a forecast object without extra properties
      */
     [extractField](forecast) {
-        const result = {
-            name: forecast.name,
-            amount: forecast.amount,
-            balance: (forecast.balance ? forecast.balance : 0),
-            categoryId: forecast.categoryId
-        };
+        const result = new Forecast(
+            forecast.name,
+            forecast.amount,
+            (forecast.balance ? forecast.balance : 0),
+            forecast.categoryId
+        );
+
         if (forecast.id && forecast.id > 0) 
             result.id = forecast.id;
         return result;

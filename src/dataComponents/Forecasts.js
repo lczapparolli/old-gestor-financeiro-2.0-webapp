@@ -11,6 +11,10 @@ import GridRow from '../components/GridRow';
 import GridCell from '../components/GridCell';
 //Helpers
 import formatNumber from '../helpers/FormatNumber';
+//Models
+import Forecast from '../models/Forecast';
+import ForecastCategoryList from '../models/ForecastCategoryList';
+import ForecastList from '../models/ForecastList';
 
 /**
  * Component to list categories and forecasts and provide a link to add new ones.
@@ -20,8 +24,7 @@ class Forecasts extends Component {
         super(props);
         //Initial state
         this.state = {
-            /** @type {import('../controllers/ForecastsController').ForecastList} */
-            forecastList: {},
+            forecastList: new ForecastCategoryList(),
             loading: true
         };
     }
@@ -83,7 +86,7 @@ class Forecasts extends Component {
 function Category({ category }) {
     const categoryLink = '/categories/' + category.id;
     const newForecastLink = '/forecasts/new?categoryId=' + category.id; 
-    const forecastsComponents = category.forecasts.map(forecast => <Forecast key={forecast.id} forecast={forecast} />);
+    const forecastsComponents = category.forecasts.map(forecast => <ForecastItem key={forecast.id} forecast={forecast} />);
 
     return (
         <Fragment>
@@ -107,24 +110,13 @@ function Category({ category }) {
 
 Category.propTypes = {
     /** Forecast category object */
-    category: PropTypes.shape({
-        /** Category id */ 
-        id: PropTypes.number.isRequired,
-        /** Category name */
-        name: PropTypes.string.isRequired,
-        /** List of forecasts */
-        forecasts: PropTypes.array.isRequired,
-        /** Sum of forecasts amount */
-        total: PropTypes.number.isRequired,
-        /** Sum of forecasts balance */
-        totalBalance: PropTypes.number.isRequired
-    }).isRequired,
+    category: PropTypes.instanceOf(ForecastList).isRequired,
 };
 
 /**
  * Show a forecast with amount and balance values
  */
-function Forecast({ forecast }) {
+function ForecastItem({ forecast }) {
     const forecastLink = '/forecasts/' + forecast.id;
     return (
         <tr>
@@ -137,19 +129,10 @@ function Forecast({ forecast }) {
     );
 }
 
-Forecast.propTypes = {
+ForecastItem.propTypes = {
     /** Forecast object */
-    forecast: PropTypes.shape({ 
-        /** Forecast id */
-        id: PropTypes.number.isRequired,
-        /** Forecast name */
-        name: PropTypes.string.isRequired,
-        /** Forecast amount */
-        amount: PropTypes.number.isRequired,
-        /** Forecast balance */
-        balance: PropTypes.number.isRequired
-    })
+    forecast: PropTypes.instanceOf(Forecast)
 };
 
 export default Forecasts;
-export { Category, Forecast };
+export { Category, ForecastItem };

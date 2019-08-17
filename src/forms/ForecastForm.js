@@ -10,6 +10,8 @@ import Button, { ACTION_SUBMIT } from '../components/Button';
 import FormHelper from '../helpers/FormHelper';
 import formatNumber from '../helpers/FormatNumber';
 import { convertToNumber, isNumeric } from '../helpers/ConvertToNumber';
+//Models
+import Forecast from '../models/Forecast';
 
 class ForecastForm extends Component {
     constructor(props) {
@@ -43,10 +45,10 @@ class ForecastForm extends Component {
     handleSubmit = async (event) => {
         event.preventDefault();
         if (await this.validate()) {
-            const forecast = {
-                name: this.state.name.value,
-                amount: convertToNumber(this.state.amount.value)
-            };
+            const forecast = new Forecast(
+                this.state.name.value,
+                convertToNumber(this.state.amount.value)
+            );
             this.props.onSubmit(forecast);
         }
     }
@@ -94,12 +96,12 @@ ForecastForm.propTypes = {
     /** Callback function fired when forecast name requires extra validation */
     onNameValidation: PropTypes.func,
     /** Forecast object to be edited */
-    forecast: PropTypes.shape({ name: PropTypes.string, amount: PropTypes.number })
+    forecast: PropTypes.instanceOf(Forecast)
 };
 
 ForecastForm.defaultProps = {
     onNameValidation: () => '',
-    forecast: { name: '', amount: 0 }
+    forecast: new Forecast('', 0)
 };
 
 export default ForecastForm;

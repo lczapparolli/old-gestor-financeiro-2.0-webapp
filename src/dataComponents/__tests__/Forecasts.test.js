@@ -5,10 +5,12 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import formatNumber from '../../helpers/FormatNumber';
 //Tested module
-import Forecasts, { Category, Forecast } from '../Forecasts';
+import Forecasts, { Category, ForecastItem } from '../Forecasts';
 import forecastsCategoriesController from '../../controllers/ForecastsCategoriesController';
 import db from '../../db';
 import forecastsController from '../../controllers/ForecastsController';
+import ForecastList from '../../models/ForecastList';
+import Forecast from '../../models/Forecast';
 
 chai.use(chaiEnzyme());
 const cExpect = chai.expect;
@@ -81,8 +83,20 @@ describe('Category component', () => {
 
     beforeAll(() => {
         //Setting data
-        category = testData[0];
-        category.id = 1;
+        let forecasts = testData[0].forecasts.map(f => {
+            let forecast = new Forecast(f.name, f.amount, f.balance, f.categoryId);
+            forecast.id = f.id;
+            return forecast;
+        });
+        
+        category = new ForecastList(
+            1,
+            testData[0].name,
+            testData[0].type,
+            forecasts
+        );
+        category.total = testData[0].total;
+        category.totalBalance = testData[0].totalBalance;
         //Initializing component
         component = shallow(<Category category={category} />);
     });
@@ -106,8 +120,8 @@ describe('Category component', () => {
         });
 
         it('renders a Forecast component for each forecast in category', () => {
-            cExpect(component.find('Forecast')).to.have.length(category.forecasts.length);
-            cExpect(component.find('Forecast').first()).to.have.prop('forecast', category.forecasts[0]);
+            cExpect(component.find('ForecastItem')).to.have.length(category.forecasts.length);
+            cExpect(component.find('ForecastItem').first()).to.have.prop('forecast', category.forecasts[0]);
         });
     });
 });
@@ -118,8 +132,14 @@ describe('Forecast component', () => {
 
     beforeAll(() => {
         //setting data
-        forecast = testData[0].forecasts[0];
-        component = shallow(<Forecast forecast={forecast} />);
+        forecast = new Forecast(
+            testData[0].forecasts[0].name,
+            testData[0].forecasts[0].amount,
+            testData[0].forecasts[0].balance,
+            testData[0].forecasts[0].categoryId
+        );
+        forecast.id = 1;
+        component = shallow(<ForecastItem forecast={forecast} />);
     });
 
     describe('Component structure', () => {
