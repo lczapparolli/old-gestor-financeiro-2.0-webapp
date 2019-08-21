@@ -12,8 +12,8 @@ function ClassNames(classes) {
     if (classes instanceof Array) {
         classNames = classes.join(' ');
     } else if (classes instanceof Object) {
-        for (const key in classes) {
-            if (classes.hasOwnProperty(key) && !!classes[key]) {
+        for (var key in classes) {
+            if (classes.hasOwnProperty.call(classes, key) && !!classes[key]) {
                 classNames += ' ' + key;
             }
         }
