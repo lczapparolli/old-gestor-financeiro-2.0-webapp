@@ -14,7 +14,7 @@ class Account {
     /**
      * @type {Number} Account id
      */
-    id = undefined;
+    id;
     
     /**
      * @type {String} Account name

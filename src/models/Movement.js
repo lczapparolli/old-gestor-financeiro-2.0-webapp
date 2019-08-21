@@ -13,42 +13,42 @@ class Movement {
     /**
      * @type {Number} Movement id
      */
-    id = undefined;
+    id;
 
     /**
      * @type {Number} Account id
      */
-    accountId = undefined;
+    accountId;
 
     /**
      * @type {Account} Account related to movement
      */
-    account = undefined;
+    account;
 
     /**
      * @type {Number} Forecast id
      */
-    forecastId = undefined;
+    forecastId;
 
     /**
      * @type {Forecast} Forecast related to movement
      */
-    forecast = undefined;
+    forecast;
 
     /**
      * @type {String} Movement description
      */
-    description = undefined;
+    description = '';
 
     /**
      * @type {Number} Movement amount
      */
-    value = undefined;
+    value = 0;
 
     /**
      * @type {Date} Movement date
      */
-    date = undefined;
+    date;
 
     //Constructor ---------------------------------------//
 

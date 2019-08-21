@@ -7,28 +7,28 @@ class Forecast {
     /**
      * @type {Number} id Forecast id
      */
-    id = undefined;
+    id;
     
     /**
      * @type {String} Forecast name
      */
-    name = undefined;
+    name = '';
     
     /**
      * @type {Number} Forecast value
      */
-    amount = undefined;
+    amount = 0;
     
     /**
      * @type {Number} Sum of movements values with this forecast
      */
-    balance = undefined;
+    balance = 0;
     
     
     /**
      * @type {Number} Id of corresponding category
      */
-    categoryId = undefined;
+    categoryId;
 
     //Constructor ---------------------------------------//
     /**

@@ -13,17 +13,17 @@ class ForecastCategory {
     /**
      * @type {Number} Category id
      */
-    id = undefined;
+    id;
 
     /**
      * @type {String} Category name
      */
-    name = undefined;
+    name = '';
 
     /**
      * @type {String} Category type. Must be one of `CATEGORY_TYPES`
      */
-    type = undefined;
+    type = '';
 
     //Constructor ---------------------------------------//
     /**

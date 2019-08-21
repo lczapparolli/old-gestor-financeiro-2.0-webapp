@@ -11,17 +11,17 @@ class GroupedAccounts {
     /**
      * @type {AccountGroup} Accounts of type 'checking'
      */
-    checking = null;
+    checking;
 
     /**
      * @type {AccountGroup} cc Accounts of type 'credit'
      */
-    credit = null;
+    credit;
 
     /**
      * @type {AccountGroup} invest Accounts of type 'savings'
      */
-    savings = null;
+    savings;
 
     //Constructor ---------------------------------------//
     /**
