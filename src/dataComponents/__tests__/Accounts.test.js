@@ -84,7 +84,9 @@ describe('AccountCategory component', () => {
             cExpect(component.find('Account').first()).to.have.prop('account', testData.accounts[0]);
         });
 
-        //TODO: Test total
+        it('Renders the total', () => {
+            cExpect(component.find('tr.CategoryTotal > .NumberField')).to.have.text(formatNumber(testData.sum, 'R$'));
+        })
     });
 });
 
