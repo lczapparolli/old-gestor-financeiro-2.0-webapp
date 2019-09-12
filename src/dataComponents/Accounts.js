@@ -11,6 +11,8 @@ import GridRow from '../components/GridRow';
 import GridCell from '../components/GridCell';
 //Helpers
 import formatNumber from '../helpers/FormatNumber';
+//Models
+import AccountModel from '../models/Account';
 
 /**
  * Component to list accounts with different types and sum the balance
@@ -95,7 +97,7 @@ AccountCategory.propTypes = {
     /** Category title */
     title: PropTypes.string.isRequired,
     /** Account list */
-    accounts: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.number, name: PropTypes.string, balance: PropTypes.number })).isRequired,
+    accounts: PropTypes.arrayOf(PropTypes.instanceOf(AccountModel)).isRequired,
     /** Sum of the accounts of the category */
     sum: PropTypes.number.isRequired
 };
@@ -114,14 +116,14 @@ function Account({ account }) {
     return (
         <tr className="Account">
             <td><Link to={accountLink} >{account.name}</Link></td>
-            <td className="NumberField">{formatNumber(account.balance, 'R$')}</td>
+            <td className="NumberField">{formatNumber(account.initialValue + account.balance, 'R$')}</td>
         </tr>
     );
 }
 
 Account.propTypes = {
     /** Account object with name and balance */
-    account: PropTypes.shape({ id: PropTypes.number, name: PropTypes.string, balance: PropTypes.number })
+    account: PropTypes.instanceOf(AccountModel)
 };
 
 export default Accounts;

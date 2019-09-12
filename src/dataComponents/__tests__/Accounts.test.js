@@ -5,6 +5,8 @@ import React from 'react';
 import { shallow } from 'enzyme';
 //Tested module
 import Accounts, { AccountCategory, Account } from '../Accounts';
+import formatNumber from '../../helpers/FormatNumber';
+import AccountModel, { CHECKING } from '../../models/Account';
 
 chai.use(chaiEnzyme());
 const cExpect = chai.expect;
@@ -12,12 +14,24 @@ const cExpect = chai.expect;
 //Test data
 const testData = {
     title: 'Category1',
-    accounts: [
-        { id:1, name: 'Account 1', balance: 0 },
-        { id:2, name: 'Account 2', balance: 0 }
-    ],
+    accounts: [],
     sum: 0
 };
+
+beforeAll(() => {
+    //Initialize accounts
+    let account1 = new AccountModel('Account 1', CHECKING, 10);
+    account1.id = 1;
+    account1.balance = -5;
+
+    let account2 = new AccountModel('Account 2', CHECKING, 20);
+    account2.id = 2;
+    account2.balance = -10;
+
+    testData.accounts.push(account1);
+    testData.accounts.push(account2);
+    testData.sum = 15;
+});
 
 describe('Accounts component', () => {
     let component;
@@ -69,6 +83,8 @@ describe('AccountCategory component', () => {
             cExpect(component.find('Account')).to.have.length(testData.accounts.length);
             cExpect(component.find('Account').first()).to.have.prop('account', testData.accounts[0]);
         });
+
+        //TODO: Test total
     });
 });
 
@@ -83,6 +99,11 @@ describe('Account component', () => {
         it('Renders two coluns', () =>{
             cExpect(component).to.have.descendants('tr');
             cExpect(component.find('td')).to.have.length(2);
+        });
+
+        it('Shows the initialValue + balance', () => {
+            let balance = testData.accounts[0].initialValue + testData.accounts[0].balance;
+            cExpect(component.find('.NumberField')).to.have.text(formatNumber(balance, 'R$'));
         });
 
         it('Renders a Link with account name', () => {

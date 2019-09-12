@@ -11,12 +11,12 @@ const cExpect = chai.expect;
 
 //Test data
 const accountsData = [
-    { name: 'Acc1', type: 'checking', balance: 10 },
-    { name: 'Acc2', type: 'checking', balance: 20 },
-    { name: 'CC1', type: 'credit', balance: 10 },
-    { name: 'CC2', type: 'credit', balance: 10 },
-    { name: 'Inv1', type: 'savings', balance: 0 },
-    { name: 'Inv2', type: 'savings', balance: 10 }
+    { name: 'Acc1', type: 'checking', initialValue: 10 },
+    { name: 'Acc2', type: 'checking', initialValue: 20 },
+    { name: 'CC1', type: 'credit', initialValue: 10 },
+    { name: 'CC2', type: 'credit', initialValue: 10 },
+    { name: 'Inv1', type: 'savings', initialValue: 0 },
+    { name: 'Inv2', type: 'savings', initialValue: 10 }
 ];
 
 describe('AccountsController', () => {
@@ -120,7 +120,8 @@ describe('AccountsController', () => {
             cExpect(accountList).to.have.length(1);
             cExpect(accountList[0]).to.have.property('name', accountsData[0].name);
             cExpect(accountList[0]).to.have.property('type', accountsData[0].type);
-            cExpect(accountList[0]).to.have.property('balance', accountsData[0].balance);
+            cExpect(accountList[0]).to.have.property('initialValue', accountsData[0].initialValue);
+            cExpect(accountList[0]).to.have.property('balance', 0);
             cExpect(accountList[0]).to.have.property('id');
         });
 
@@ -267,7 +268,7 @@ describe('AccountsController', () => {
         it('updates the balance of given account', async () => {
             //Data
             const amount = 20;
-            const newAccount = { name: 'Account test', balance: 10, type: CHECKING };
+            const newAccount = new Account('Account test', CHECKING, 10);
             //Insert an account
             const { id: insertedId } = await accountsController.saveAccount(newAccount);
             //Updates the balance
@@ -275,13 +276,13 @@ describe('AccountsController', () => {
             //Loads account
             const account = await accountsController.getById(insertedId);
             //Checks new balance
-            cExpect(account).to.have.property('balance', newAccount.balance + amount);
+            cExpect(account).to.have.property('balance', amount);
         });
 
         it('updates the balance of given account even when value is a string', async () => {
             //Data
             const amount = '-20';
-            const newAccount = { name: 'Account test', balance: 10, type: CHECKING };
+            const newAccount = new Account('Account test', CHECKING, 10);
             //Insert an account
             const { id: insertedId } = await accountsController.saveAccount(newAccount);
             //Updates the balance
@@ -289,13 +290,13 @@ describe('AccountsController', () => {
             //Loads account
             const account = await accountsController.getById(insertedId);
             //Checks new balance
-            cExpect(account).to.have.property('balance', newAccount.balance + convertToNumber(amount));
+            cExpect(account).to.have.property('balance', convertToNumber(amount));
         });
 
         it('does not change when `0` is passed', async () => {
             //Data
             const amount = 0;
-            const newAccount = { name: 'Account test', balance: 10, type: CHECKING };
+            const newAccount = new Account('Account test', CHECKING, 10);
             //Insert an account
             const { id: insertedId } = await accountsController.saveAccount(newAccount);
             //Updates the balance
@@ -303,7 +304,7 @@ describe('AccountsController', () => {
             //Loads account
             const account = await accountsController.getById(insertedId);
             //Checks new balance
-            cExpect(account).to.have.property('balance', newAccount.balance);
+            cExpect(account).to.have.property('balance', 0);
         });
     });
 });

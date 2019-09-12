@@ -18,7 +18,7 @@ const onSubmit = () => {};
 //Test data
 const testData = {
     name: { value: 'Account 1', error: '' },
-    balance: { value: '-100,01', error: '' },
+    initialValue: { value: '-100,01', error: '' },
     type: { value: 'credit', error: '' }
 };
 
@@ -29,7 +29,7 @@ describe('AccountForm component', () => {
         //Conditions
         cExpect(form).to.have.descendants('form');
         cExpect(form.find('InputField[name="name"]')).to.be.present();
-        cExpect(form.find('InputField[name="balance"]')).to.be.present();
+        cExpect(form.find('InputField[name="initialValue"]')).to.be.present();
         cExpect(form.find('SelectField[name="type"]')).to.be.present();
     });
 
@@ -38,7 +38,7 @@ describe('AccountForm component', () => {
         const form = shallow(<AccountForm account={account} onSubmit={onSubmit} />);
 
         cExpect(form.find('InputField[name="name"]')).to.have.prop('value', account.name);
-        cExpect(form.find('InputField[name="balance"]')).to.be.prop('value', formatNumber(account.balance));
+        cExpect(form.find('InputField[name="initialValue"]')).to.be.prop('value', formatNumber(account.initialValue));
         cExpect(form.find('SelectField[name="type"]')).to.be.prop('value', account.type);
     });
 
@@ -46,7 +46,7 @@ describe('AccountForm component', () => {
         const form = shallow(<AccountForm onSubmit={onSubmit} />);
 
         cExpect(form.find('InputField[name="name"]')).to.have.prop('value', '');
-        cExpect(form.find('InputField[name="balance"]')).to.be.prop('value', formatNumber(0));
+        cExpect(form.find('InputField[name="initialValue"]')).to.be.prop('value', formatNumber(0));
         cExpect(form.find('SelectField[name="type"]')).to.be.prop('value', '');
     });
 
@@ -58,7 +58,7 @@ describe('AccountForm component', () => {
 
         const form = shallow(<AccountForm onNameValidate={handleNameValidate} onSubmit={onSubmit} />);
         
-        form.setState({ name: testData.name, balance: testData.balance, type: testData.type });
+        form.setState({ name: testData.name, initialValue: testData.initialValue, type: testData.type });
         form.find('form').simulate('submit', { preventDefault() {} });
     });
 
@@ -67,14 +67,14 @@ describe('AccountForm component', () => {
         const onSubmit = data => {
             cExpect(data).to.be.an.instanceOf(Account);
             cExpect(data).to.have.property('name', testData.name.value);
-            cExpect(data).to.have.property('balance', convertToNumber(testData.balance.value));
+            cExpect(data).to.have.property('initialValue', convertToNumber(testData.initialValue.value));
             cExpect(data).to.have.property('type', testData.type.value);
             done();
         };
         //Initializing form
         const form = shallow(<AccountForm onSubmit={onSubmit} />);
 
-        form.setState({ name: testData.name, balance: testData.balance, type: testData.type });
+        form.setState({ name: testData.name, initialValue: testData.initialValue, type: testData.type });
         form.find('form').simulate('submit', { preventDefault() {} });
     });
 
@@ -86,25 +86,25 @@ describe('AccountForm component', () => {
         cExpect(form.instance().typeValidation('Invalid type')).to.be.not.empty;
     });
 
-    it('validates balance value', () => {
+    it('validates initialValue value', () => {
         //Initializing component
         const form = shallow(<AccountForm onSubmit={onSubmit} />);
 
         //Valid values
-        cExpect(form.instance().balanceValidation('')).to.be.empty;
-        cExpect(form.instance().balanceValidation('1')).to.be.empty;
-        cExpect(form.instance().balanceValidation('0,1')).to.be.empty;
-        cExpect(form.instance().balanceValidation('0,01')).to.be.empty;
-        cExpect(form.instance().balanceValidation('-0,01')).to.be.empty;
-        cExpect(form.instance().balanceValidation('-0,1')).to.be.empty;
-        cExpect(form.instance().balanceValidation('-1')).to.be.empty;
-        cExpect(form.instance().balanceValidation('1.000')).to.be.empty;
-        cExpect(form.instance().balanceValidation('-1.000')).to.be.empty;
-        cExpect(form.instance().balanceValidation('1.000,00')).to.be.empty;
-        cExpect(form.instance().balanceValidation('-1.000,00')).to.be.empty;
+        cExpect(form.instance().initialValueValidation('')).to.be.empty;
+        cExpect(form.instance().initialValueValidation('1')).to.be.empty;
+        cExpect(form.instance().initialValueValidation('0,1')).to.be.empty;
+        cExpect(form.instance().initialValueValidation('0,01')).to.be.empty;
+        cExpect(form.instance().initialValueValidation('-0,01')).to.be.empty;
+        cExpect(form.instance().initialValueValidation('-0,1')).to.be.empty;
+        cExpect(form.instance().initialValueValidation('-1')).to.be.empty;
+        cExpect(form.instance().initialValueValidation('1.000')).to.be.empty;
+        cExpect(form.instance().initialValueValidation('-1.000')).to.be.empty;
+        cExpect(form.instance().initialValueValidation('1.000,00')).to.be.empty;
+        cExpect(form.instance().initialValueValidation('-1.000,00')).to.be.empty;
         //Invalid values
-        cExpect(form.instance().balanceValidation('invalid value')).to.be.not.empty;
-        cExpect(form.instance().balanceValidation('1,000.00')).to.be.not.empty;
-        cExpect(form.instance().balanceValidation('1.1.1')).to.be.not.empty;
+        cExpect(form.instance().initialValueValidation('invalid value')).to.be.not.empty;
+        cExpect(form.instance().initialValueValidation('1,000.00')).to.be.not.empty;
+        cExpect(form.instance().initialValueValidation('1.1.1')).to.be.not.empty;
     });
 });

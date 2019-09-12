@@ -29,8 +29,8 @@ class AccountsController {
 
         groups = accountList.reduce((group, account) => {
             group[account.type].items.push(account);
-            group[account.type].sum += account.balance;
-            group.total += account.balance;
+            group[account.type].sum += account.initialValue + account.balance;
+            group.total += account.initialValue + account.balance;
             return group;
         }, groups);
 
@@ -144,11 +144,13 @@ class AccountsController {
         const result = new Account(
             account.name,
             account.type,
-            account.balance || 0
+            account.initialValue || 0
         );
 
-        if (account.id && account.id > 0)
+        if (account.id && account.id > 0) {
             result.id = account.id;
+            result.balance = account.balance;
+        }
         
         return result;
     }

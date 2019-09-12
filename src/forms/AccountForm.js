@@ -22,11 +22,11 @@ class AccountForm extends Component {
         const { account } = this.props;
         this.state = {
             name: { value: account.name, error: '' },
-            balance: { value: formatNumber(account.balance), error: '' },
+            initialValue: { value: formatNumber(account.initialValue), error: '' },
             type: { value: account.type, error: '' }
         };
         //Initializing formHelper
-        this.formHelper = new FormHelper(this, { type: this.typeValidation, balance: this.balanceValidation });
+        this.formHelper = new FormHelper(this, { type: this.typeValidation, initialValue: this.initialValueValidation });
         //Account types
         this.accountTypes = [
             { value: CHECKING, text: 'Account' },
@@ -42,7 +42,7 @@ class AccountForm extends Component {
             return '';
     }
 
-    balanceValidation = (value) => {
+    initialValueValidation = (value) => {
         if (value !== '') {
             if (!isNumeric(value))
                 return 'Invalid value';
@@ -53,14 +53,14 @@ class AccountForm extends Component {
     validate = async () => {
         const name = Object.assign({}, this.state.name);
         const type = Object.assign({}, this.state.type);
-        const balance = Object.assign({}, this.state.balance);
+        const initialValue = Object.assign({}, this.state.initialValue);
         
         name.error = await this.props.onNameValidate(name.value);
         type.error = this.typeValidation(type.value);
-        balance.error = this.balanceValidation(balance.value);
+        initialValue.error = this.initialValueValidation(initialValue.value);
         
-        this.setState({ name, type, balance });
-        return name.error === '' && type.error === '' && balance.error === '';
+        this.setState({ name, type, initialValue });
+        return name.error === '' && type.error === '' && initialValue.error === '';
     }
 
     handleSubmit = async (event) => {
@@ -69,14 +69,14 @@ class AccountForm extends Component {
             const account = new Account(
                 this.state.name.value,
                 this.state.type.value,
-                convertToNumber(this.state.balance.value),
+                convertToNumber(this.state.initialValue.value),
             );
             this.props.onSubmit(account);
         }
     }
 
     render () {
-        const { name, balance, type } = this.state;
+        const { name, initialValue, type } = this.state;
         return (
             <form onSubmit={this.handleSubmit}>
                 <GridRow sizeBreak={ScreenSizes.SCREEN_MEDIUM}>
@@ -92,11 +92,11 @@ class AccountForm extends Component {
                     </GridCell>
                     <GridCell>
                         <InputField
-                            name="balance"
-                            label="Initial balance"
+                            name="initialValue"
+                            label="Initial value"
                             formHelper={this.formHelper}
-                            error={balance.error}
-                            value={balance.value}
+                            error={initialValue.error}
+                            value={initialValue.value}
                             required
                         />
                     </GridCell>

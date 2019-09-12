@@ -25,9 +25,14 @@ class Account {
      * @type {String} Account type. Must be one of `ACCOUNT_TYPES`.
      */
     type = '';
+
+    /**
+     * @type {Number} Account initial balance
+     */
+    initialValue = 0;
     
     /**
-     * @type {Number} Account balance
+     * @type {Number} Sum of movements amount related to this account. Not set in object creation
      */
     balance = 0;
 
@@ -36,12 +41,12 @@ class Account {
      * Creates a new Account object. This constructor does not store the object into database.
      * @param {String} name Account name
      * @param {String} type The type of the account. Must be one of `ACCOUNT_TYPES`.
-     * @param {Number} balance The account balance
+     * @param {Number} initialValue The initial balance of the account
      */
-    constructor(name, type, balance) {
+    constructor(name, type, initialValue) {
         this.name = name;
         this.type = type;
-        this.balance = balance;
+        this.initialValue = initialValue;
     }
 }
 
