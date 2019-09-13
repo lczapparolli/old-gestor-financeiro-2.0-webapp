@@ -43,22 +43,34 @@ describe('AccountsController', () => {
             cExpect(result).to.have.property('savings').and.be.an('object');
             //Testing groups
             cExpect(result).to.have.nested.property('checking.items').and.be.an('array');
+            cExpect(result).to.have.nested.property('checking.initialSum').and.be.a('number');
             cExpect(result).to.have.nested.property('checking.sum').and.be.a('number');
+            
             cExpect(result).to.have.nested.property('credit.items').and.be.an('array');
+            cExpect(result).to.have.nested.property('credit.initialSum').and.be.a('number');
             cExpect(result).to.have.nested.property('credit.sum').and.be.a('number');
+            
             cExpect(result).to.have.nested.property('savings.items').and.be.an('array');
+            cExpect(result).to.have.nested.property('savings.initialSum').and.be.a('number');
             cExpect(result).to.have.nested.property('savings.sum').and.be.a('number');
         });
 
         it('returns empty arrays when no data is stored', async () => {
             const result = await accountsController.findAll();
             //Test condition
+            cExpect(result).to.have.property('initialTotal', 0);
             cExpect(result).to.have.property('total', 0);
+
             cExpect(result).to.have.nested.property('checking.items.length', 0);
+            cExpect(result).to.have.nested.property('checking.initialSum', 0);
             cExpect(result).to.have.nested.property('checking.sum', 0);
+
             cExpect(result).to.have.nested.property('credit.items.length', 0);
+            cExpect(result).to.have.nested.property('credit.initialSum', 0);
             cExpect(result).to.have.nested.property('credit.sum', 0);
+
             cExpect(result).to.have.nested.property('savings.items.length', 0);
+            cExpect(result).to.have.nested.property('savings.initialSum', 0);
             cExpect(result).to.have.nested.property('savings.sum', 0);
         });
 
@@ -70,13 +82,45 @@ describe('AccountsController', () => {
             //Load data
             const result = await accountsController.findAll();
             //Test condition
+            cExpect(result).to.have.property('initialTotal', 60);
             cExpect(result).to.have.property('total', 60);
+
             cExpect(result).to.have.nested.property('checking.items.length', 2);
+            cExpect(result).to.have.nested.property('checking.initialSum', 30);
             cExpect(result).to.have.nested.property('checking.sum', 30);
+            
             cExpect(result).to.have.nested.property('credit.items.length', 2);
+            cExpect(result).to.have.nested.property('credit.initialSum', 20);
             cExpect(result).to.have.nested.property('credit.sum', 20);
+            
             cExpect(result).to.have.nested.property('savings.items.length', 2);
+            cExpect(result).to.have.nested.property('savings.initialSum', 10);
             cExpect(result).to.have.nested.property('savings.sum', 10);
+        });
+
+        it('has different values of initialSum and sum fields', async () => {
+            //Insert all test data
+            await Promise.all(accountsData.map(async (account) => {
+                let inserted = await accountsController.saveAccount(account);
+                return accountsController.updateBalance(inserted.id, -5);
+            }));
+            //Load data
+            const result = await accountsController.findAll();
+            //Test condition
+            cExpect(result).to.have.property('initialTotal', 60);
+            cExpect(result).to.have.property('total', 30);
+
+            cExpect(result).to.have.nested.property('checking.items.length', 2);
+            cExpect(result).to.have.nested.property('checking.initialSum', 30);
+            cExpect(result).to.have.nested.property('checking.sum', 20);
+            
+            cExpect(result).to.have.nested.property('credit.items.length', 2);
+            cExpect(result).to.have.nested.property('credit.initialSum', 20);
+            cExpect(result).to.have.nested.property('credit.sum', 10);
+            
+            cExpect(result).to.have.nested.property('savings.items.length', 2);
+            cExpect(result).to.have.nested.property('savings.initialSum', 10);
+            cExpect(result).to.have.nested.property('savings.sum', 0);
         });
     });
 

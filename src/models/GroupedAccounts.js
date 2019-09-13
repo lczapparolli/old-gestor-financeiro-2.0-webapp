@@ -9,6 +9,11 @@ class GroupedAccounts {
     total = 0;
 
     /**
+     * @type {Number} Sum of the initial value of all accounts
+     */
+    initialTotal = 0;
+
+    /**
      * @type {AccountGroup} Accounts of type 'checking'
      */
     checking;
@@ -28,12 +33,14 @@ class GroupedAccounts {
      * Create a new instance of grouped accounts
      * @typedef {Object} GroupedAccounts
      * @property {Number} total Sum of the balance of all accounts 
+     * @property {Number} total Sum of the initial value of all accounts
      * @property {AccountGroup} checking Accounts of type 'checking'
      * @property {AccountGroup} credit Accounts of type 'credit'
      * @property {AccountGroup} savings Accounts of type 'savings'
      */
-    constructor(total, checking, credit, savings) {
+    constructor(total, initialTotal, checking, credit, savings) {
         this.total = total;
+        this.initialTotal = initialTotal;
         this.checking = checking;
         this.credit = credit;
         this.savings = savings;

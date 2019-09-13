@@ -22,14 +22,17 @@ class AccountsController {
     
         let groups = new GroupedAccounts(
             0, 
-            new AccountGroup(0, []), //checkings
-            new AccountGroup(0, []), //credit
-            new AccountGroup(0, [])  //savings
+            0,
+            new AccountGroup(0, 0, []), //checkings
+            new AccountGroup(0, 0, []), //credit
+            new AccountGroup(0, 0, [])  //savings
         );
 
         groups = accountList.reduce((group, account) => {
             group[account.type].items.push(account);
+            group[account.type].initialSum += account.initialValue;
             group[account.type].sum += account.initialValue + account.balance;
+            group.initialTotal += account.initialValue;
             group.total += account.initialValue + account.balance;
             return group;
         }, groups);
