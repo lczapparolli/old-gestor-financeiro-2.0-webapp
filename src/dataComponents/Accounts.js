@@ -51,17 +51,19 @@ class Accounts extends Component {
                             <thead>
                                 <tr>
                                     <th>Name</th>
+                                    <th className="NumberField">Initial value</th>
                                     <th className="NumberField">Balance</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <AccountCategory title="Accounts" accounts={groups.checking.items} sum={groups.checking.sum} />
-                                <AccountCategory title="Credit Cards" accounts={groups.credit.items} sum={groups.credit.sum} />
-                                <AccountCategory title="Investments" accounts={groups.savings.items} sum={groups.savings.sum} />
+                                <AccountCategory title="Accounts" group={groups.checking} />
+                                <AccountCategory title="Credit Cards" group={groups.credit} />
+                                <AccountCategory title="Investments" group={groups.savings} />
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th>Total</th>
+                                    <th className="NumberField">{formatNumber(groups.initialTotal, 'R$')}</th>
                                     <th className="NumberField">{formatNumber(groups.total, 'R$')}</th>
                                 </tr>
                             </tfoot>
@@ -76,8 +78,8 @@ class Accounts extends Component {
 /**
  * Show a account category and list the respective accounts with a sub-total
  */
-function AccountCategory({ title, accounts, sum }) {
-    const list = accounts.map((account, index) => <Account key={index} account={account} />);
+function AccountCategory({ title, group }) {
+    const list = group.items.map((account, index) => <Account key={index} account={account} />);
 
     return (
         <Fragment>
@@ -87,7 +89,8 @@ function AccountCategory({ title, accounts, sum }) {
             {list}
             <tr className="CategoryTotal">
                 <td>Sub-total</td>
-                <td className="NumberField">{formatNumber(sum, 'R$')}</td>
+                <td className="NumberField">{formatNumber(group.initialSum, 'R$')}</td>
+                <td className="NumberField">{formatNumber(group.sum, 'R$')}</td>
             </tr>
         </Fragment>
     );
@@ -96,10 +99,12 @@ function AccountCategory({ title, accounts, sum }) {
 AccountCategory.propTypes = {
     /** Category title */
     title: PropTypes.string.isRequired,
-    /** Account list */
-    accounts: PropTypes.arrayOf(PropTypes.instanceOf(AccountModel)).isRequired,
-    /** Sum of the accounts of the category */
-    sum: PropTypes.number.isRequired
+    /** Group of accounts with summed values */
+    group: PropTypes.shape({
+        items: PropTypes.arrayOf(PropTypes.instanceOf(AccountModel)).isRequired,
+        initialSum: PropTypes.number.isRequired,
+        sum: PropTypes.number.isRequired
+    }).isRequired
 };
 
 AccountCategory.defaultProps = {
@@ -116,6 +121,7 @@ function Account({ account }) {
     return (
         <tr className="Account">
             <td><Link to={accountLink} >{account.name}</Link></td>
+            <td className="NumberField">{formatNumber(account.initialValue, 'R$')}</td>
             <td className="NumberField">{formatNumber(account.initialValue + account.balance, 'R$')}</td>
         </tr>
     );
