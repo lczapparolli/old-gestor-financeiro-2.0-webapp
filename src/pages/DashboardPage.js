@@ -7,6 +7,7 @@ import loginController from '../controllers/LoginController';
 import Button from '../components/Button';
 import GridRow from '../components/GridRow';
 import GridCell from '../components/GridCell';
+import DateNavigator from '../components/DateNavigator';
 //Helpers
 import ScreenSizes from '../helpers/ScreenSizes';
 //Data components
@@ -15,6 +16,18 @@ import Forecasts from '../dataComponents/Forecasts';
 import Movements from '../dataComponents/Movements';
 
 class Dashboard extends Component {
+    constructor(props) {
+        super(props);
+        const today = new Date();
+        this.state = {
+            month: today.getMonth() + 1,
+            year: today.getFullYear()
+        };
+    }
+
+    handleDateChange = ({month, year}) => {
+        this.setState({month, year});
+    }
 
     handleLogoutClick = async () => {
         await loginController.logout();
@@ -28,6 +41,9 @@ class Dashboard extends Component {
                     <GridCell>
                         <h1>Dashboard</h1>
                     </GridCell>
+                </GridRow>
+                <GridRow>
+                    <DateNavigator month={this.state.month} year={this.state.year} onChange={this.handleDateChange} />
                 </GridRow>
                 <GridRow sizeBreak={ScreenSizes.SCREEN_SMALL} alignTop >
                     <GridCell>
