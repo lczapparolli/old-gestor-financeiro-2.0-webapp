@@ -58,8 +58,8 @@ class AccountsController {
         if (validationMessage !== '')
             throw new TypeError(validationMessage);
         account = this[extractFields](account);
-        account.id = await accounts.addAccount(account);
-        return account;
+        const id = await accounts.addAccount(account);
+        return Object.assign({ id }, account);
     }
 
     /**
