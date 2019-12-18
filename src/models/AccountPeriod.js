@@ -44,7 +44,7 @@ class AccountPeriod {
      * @param {Number} initialBalance Initial balance in period 
      */
     constructor(accountId, period, initialBalance) {
-        this.accountId = this.accountId;
+        this.accountId = accountId;
         this.period = period;
         this.initialBalance = initialBalance;
     }
