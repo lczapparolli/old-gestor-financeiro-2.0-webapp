@@ -4,6 +4,12 @@ import accounts from '../db/Accounts';
 
 class AccountsPeriodController {
 
+    /**
+     * Returns the initial and final balance related to the period
+     * @param {Number} accountId Id of the required account
+     * @param {Number} period Indentification of the required period
+     * @returns {Promise<AccountPeriod>} Returns the account data and balance related to the period
+     */
     async getByIdPeriod(accountId, period) {
         if (!accountId)
             throw new TypeError('Id is required');
