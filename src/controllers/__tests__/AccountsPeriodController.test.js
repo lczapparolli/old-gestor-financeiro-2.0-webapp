@@ -122,6 +122,10 @@ describe('AccountsPeriodController', () => {
             cExpect(accountsPeriod[0]).to.have.property('balance', newBalance);
         });
 
+        it('should trhow an error when a record with same account and period already exists', () => {
+            throw 'Not implemented';
+        });
+
     });
 
     describe('Update balance Action', () => {
@@ -189,11 +193,6 @@ describe('AccountsPeriodController', () => {
     });
 
     describe('Get by id and period Action', () => {
-        beforeEach(() => {
-            db.accounts.clear();
-            db.accounts_period.clear();
-        });
-
         it('have a getByIdPeriod function', () => {
             cExpect(accountsPeriodController).to.respondsTo('getByIdPeriod');
         });
@@ -206,28 +205,25 @@ describe('AccountsPeriodController', () => {
             cExpect(exception).to.have.property('message', 'Period is required');
         });
 
-        it('Returns the AccountPeriod with balance equals to the initial account balance', async () => {
-            const insertedAccount = await accountsController.saveAccount(accountsData[0]);
+        it('Returns `null` when accountPeriod is not found', async () => {
             const period = formatPeriod(12, 2019);
-            const accountPeriod = await accountsPeriodController.getByIdPeriod(insertedAccount.id, period);
+            const accountPeriod = await accountsPeriodController.getByIdPeriod(testAccount.id, period);
+
+            cExpect(accountPeriod).to.be.null;
+        });
+
+        it('Returns the AccountPeriod with balance equals to the initial account balance', async () => {
+            const period = formatPeriod(12, 2019);
+            const balance = 22.3;
+            await accountsPeriodController.saveAccountPeriod(new AccountPeriod(testAccount.id, period, balance));
+            const accountPeriod = await accountsPeriodController.getByIdPeriod(testAccount.id, period);
+
             cExpect(accountPeriod).to.be.not.null;
             cExpect(accountPeriod).to.be.an.instanceOf(AccountPeriod);
-            cExpect(accountPeriod).to.not.have.property('id');
-            cExpect(accountPeriod).to.have.property('accountId', insertedAccount.id);
-            cExpect(accountPeriod).to.have.property('initialBalance', accountsData[0].initialValue);
-            cExpect(accountPeriod).to.have.property('balance', accountsData[0].initialValue);
-        });
-
-        it('Returns the initial balance of the previous period when it exists', () => {
-            throw 'Not implemented';
-        });
-
-        it('changes initial and final value when previous period change its final balance', () => {
-            throw 'Not implemented';
-        });
-
-        it('changes initial and final value when account initial value changes', () => {
-            throw 'Not implemented';
+            cExpect(accountPeriod).to.have.property('id').greaterThan(0);
+            cExpect(accountPeriod).to.have.property('accountId', testAccount.id);
+            cExpect(accountPeriod).to.have.property('balance', balance);
+            cExpect(accountPeriod).to.have.property('period', period);
         });
     });
 

@@ -43,15 +43,12 @@ class AccountsPeriodController {
         if (!period)
             throw new TypeError('Period is required');
 
-        let result = await accountsPeriod.getByIdPeriod(accountId, period);
-        if (!result) {
-            result = new AccountPeriod(accountId, period, 0);
-            result.account = await accounts.getById(accountId);
-            result.initialBalance = result.account.initialValue;
-            result.balance = result.account.initialValue;
-        }
+        let result = await accountsPeriod.getByAccountPeriod(accountId, period);
 
-        return result;
+        if(result)
+            return result;
+        else
+            return null;
     }
 
     /**

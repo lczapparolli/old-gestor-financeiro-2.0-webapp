@@ -14,6 +14,16 @@ class AccountsPeriod {
     }
 
     /**
+     * Returns an accountPeriod related to account and period.
+     * @param {Number} accountId The id of the account
+     * @param {Number} period The period of the balance
+     * @returns {Promise<AccountPeriod>} Returns the correspondent accountPeriod object
+     */
+    getByAccountPeriod(accountId, period) {
+        return db.accounts_period.where({ accountId, period }).first();
+    }
+
+    /**
      * Returns an account with balance relative to a period
      * @param {Number} accountId The id of the account
      * @param {Number} period The period of the balance
@@ -27,6 +37,6 @@ class AccountsPeriod {
     }
 }
 
-db.accounts.mapToClass(AccountPeriod);
+db.accounts_period.mapToClass(AccountPeriod);
 
 export default new AccountsPeriod();

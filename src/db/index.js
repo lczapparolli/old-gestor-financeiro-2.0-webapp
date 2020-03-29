@@ -6,7 +6,7 @@ const db = new Dexie('GestorFinanceiro');
 db.version(1).stores({
     config: '',
     accounts: '++id,&name,type',
-    accounts_period: '++id,accountId,period',
+    accounts_period: '++id,accountId,period,[accountId+period]',
     forecasts_categories: '++id,&name,type',
     forecasts: '++id,categoryId,&name',
     movements: '++id,accountId,forecastId'
