@@ -28,6 +28,7 @@ describe('AccountsController', () => {
     describe('Add account action', () => {
         beforeEach(() => {
             db.accounts.clear();
+            db.accounts_period.clear();
         });
 
         it('have a saveAccount that returns a promise', () => {
@@ -91,6 +92,42 @@ describe('AccountsController', () => {
             const accountTest = accountsData[0];
             await accountsController.saveAccount(accountTest);
             cExpect(accountTest).to.not.have.property('id');
+        });
+
+        it('inserts a new record in account_period table', async () => {
+            //Insert an account
+            const insertedAccount = await accountsController.saveAccount(accountsData[0]);
+            //Loads the accounts_period data
+            const accountsPeriod = await db.accounts_period.toArray();
+
+            //Check if accountPeriod was inserted
+            cExpect(accountsPeriod).to.have.length(1);
+            cExpect(accountsPeriod[0]).to.have.property('accountId', insertedAccount.id);
+            //Balance should be the same as the initial value of the account
+            cExpect(accountsPeriod[0]).to.have.property('balance', insertedAccount.initialValue);
+            //Period should be 0
+            cExpect(accountsPeriod[0]).to.have.property('period', 0);
+        });
+
+        it('updates first accountPeriod record when initial value changes', async () => {
+            const newBalance = 25;
+            //Insert an account
+            const insertedAccount = await accountsController.saveAccount(accountsData[0]);
+            //Changes the initial value
+            insertedAccount.initialValue = newBalance;
+            //Update the account data
+            await accountsController.saveAccount(insertedAccount);
+
+            //Loads the accounts_period data
+            const accountsPeriod = await db.accounts_period.toArray();
+
+            //Check if a new accountPeriod was not inserted
+            cExpect(accountsPeriod).to.have.length(1);
+            cExpect(accountsPeriod[0]).to.have.property('accountId', insertedAccount.id);
+            //Balance should be the same as the initial value of the account
+            cExpect(accountsPeriod[0]).to.have.property('balance', newBalance);
+            //Period should be 0
+            cExpect(accountsPeriod[0]).to.have.property('period', 0);
         });
     });
 
