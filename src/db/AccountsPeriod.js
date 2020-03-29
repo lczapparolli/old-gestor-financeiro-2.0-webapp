@@ -10,7 +10,7 @@ class AccountsPeriod {
      * @returns {Promise<AccountPeriod>}
      */
     getByPeriod(accountId, period) {
-        return db.accounts_periods
+        return db.accounts_period
             .where('accountId').equals(accountId)
             .and((accountPeriod) => accountPeriod.period <= period)
             .first();
