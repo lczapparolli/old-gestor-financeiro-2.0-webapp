@@ -1,8 +1,6 @@
 import accounts from '../db/Accounts';
 import Account, { ACCOUNT_TYPES } from '../models/Account';
 import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
-import AccountGroup from '../models/AccountGroup';
-import GroupedAccounts from '../models/GroupedAccounts';
 
 //Symbols
 const validateAccount = Symbol('validateAccount');
@@ -68,22 +66,6 @@ class AccountsController {
             return result;
         else //Standartizing return
             return null;
-    }
-
-    /**
-     * Updates the balance of a given account, adding the `amount` to actual balance.
-     * @param {Number} id The id of account to be updated
-     * @param {*} amount The amount to be added to account balance
-     */
-    async updateBalance(id, amount) {
-        const account = await this.getById(id);
-        if (!account)
-            throw new TypeError('Account must exists');
-        if (amount === undefined || amount === null)
-            throw new TypeError('Amount is required');
-        account.balance += convertToNumber(amount);
-
-        await this.saveAccount(account);
     }
 
     //Private methods ---------------------------------------//
