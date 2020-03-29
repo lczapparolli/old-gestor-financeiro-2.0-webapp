@@ -30,11 +30,6 @@ class Account {
      * @type {Number} Account initial balance
      */
     initialValue = 0;
-    
-    /**
-     * @type {Number} Sum of movements amount related to this account. Not set in object creation
-     */
-    balance = 0;
 
     //Constructor ---------------------------------------//
     /**

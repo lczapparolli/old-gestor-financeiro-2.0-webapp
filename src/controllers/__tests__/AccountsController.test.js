@@ -67,7 +67,6 @@ describe('AccountsController', () => {
             cExpect(accountList[0]).to.have.property('name', accountsData[0].name);
             cExpect(accountList[0]).to.have.property('type', accountsData[0].type);
             cExpect(accountList[0]).to.have.property('initialValue', accountsData[0].initialValue);
-            cExpect(accountList[0]).to.have.property('balance', 0);
             cExpect(accountList[0]).to.have.property('id');
         });
 
