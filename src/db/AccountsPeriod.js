@@ -9,8 +9,11 @@ class AccountsPeriod {
      * @param {Number} period The period of the balance
      * @returns {Promise<AccountPeriod>}
      */
-    getByIdPeriod(accountId, period) {
-        return db.accounts_periods.where('[accountId+period]').equals([accountId, period]).first();
+    getByPeriod(accountId, period) {
+        return db.accounts_periods
+            .where('accountId').equals(accountId)
+            .and((accountPeriod) => accountPeriod.period <= period)
+            .first();
     }
 }
 

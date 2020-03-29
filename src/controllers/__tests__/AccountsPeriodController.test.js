@@ -22,6 +22,11 @@ const accountsData = [
 
 
 describe('AccountsPeriodController', () => {
+    beforeEach(() => {
+        db.accounts.clear();
+        db.accounts_periods.clear();
+    });
+
     describe('Update balance Action', () => {
 
         it('has a updateBalance method', () => {
@@ -46,6 +51,12 @@ describe('AccountsPeriodController', () => {
     });
 
     describe('Get all accounts by period action', () => {
+        beforeEach(async () => {
+            for (var account of accountsData) {
+                await accountsController.saveAccount(account);
+            }
+        });
+
         it('has a getByPeriod function', () => {
             cExpect(accountsPeriodController).to.respondsTo('getByPeriod');
         });
@@ -59,10 +70,23 @@ describe('AccountsPeriodController', () => {
 
         it('returns a list of accounts grouped by category', async () => {
             const period = formatPeriod(12, 2019);
+            //Getting accounts
             const accounts = await accountsPeriodController.getByPeriod(period);
+            //Test conditions
             cExpect(accounts).to.be.an.instanceOf(GroupedAccounts);
+            cExpect(accounts).to.have.property('total').equal(60);
+            cExpect(accounts).to.have.property('checking').and.be.an('object');
+            cExpect(accounts).to.have.property('credit').and.be.an('object');
+            cExpect(accounts).to.have.property('savings').and.be.an('object');
 
-            throw 'Not finished';
+            cExpect(accounts.checking).to.have.property('items').and.be.an('array');
+            cExpect(accounts.checking.items).to.have.length(2);
+
+            cExpect(accounts.credit).to.have.property('items').and.be.an('array');
+            cExpect(accounts.credit.items).to.have.length(2);
+
+            cExpect(accounts.savings).to.have.property('items').and.be.an('array');
+            cExpect(accounts.savings.items).to.have.length(2);
         });
 
     });

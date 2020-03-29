@@ -28,12 +28,7 @@ class AccountPeriod {
     period;
 
     /**
-     * @type {Number} Initial balance, equals to balance of previous period
-     */
-    initialBalance;
-
-    /**
-     * @type {Number} Final balance, summing all movements in period
+     * @type {Number} Period balance, summing all movements in period
      */
     balance;
 
@@ -41,12 +36,12 @@ class AccountPeriod {
      * Creates a new instance of an AccountPeriod object
      * @param {Number} accountId Related account id
      * @param {Number} period Related period 
-     * @param {Number} initialBalance Initial balance in period 
+     * @param {Number} balance Balance in the period
      */
-    constructor(accountId, period, initialBalance) {
+    constructor(accountId, period, balance) {
         this.accountId = accountId;
         this.period = period;
-        this.initialBalance = initialBalance;
+        this.balance = balance;
     }
 }
 
