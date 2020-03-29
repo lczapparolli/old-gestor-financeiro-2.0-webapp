@@ -7,6 +7,7 @@ import AccountPeriod from '../../models/AccountPeriod';
 import accountsController from '../AccountsController';
 import accountsPeriodController from '../AccountsPeriodController';
 import GroupedAccounts from '../../models/GroupedAccounts';
+import Account, { CHECKING } from '../../models/Account';
 
 const cExpect = chai.expect;
 
@@ -20,11 +21,107 @@ const accountsData = [
     { name: 'Inv2', type: 'savings', initialValue: 10 }
 ];
 
+let testAccount;
+
 
 describe('AccountsPeriodController', () => {
-    beforeEach(() => {
-        db.accounts.clear();
-        db.accounts_periods.clear();
+    beforeEach(async () => {
+        await db.accounts.clear();
+        await db.accounts_period.clear();
+
+        testAccount = await accountsController.saveAccount(new Account('Account test', CHECKING, 10));
+    });
+
+    describe('Save accountPeriod action', () => {
+        it('has a saveAccountPeriod method', () => {
+            cExpect(accountsPeriodController).to.respondsTo('saveAccountPeriod');
+        });
+
+        it('expects a accountPeriod with an accountId, a period and a balance', async () => {
+            let exception;
+
+            exception = await accountsPeriodController.saveAccountPeriod().catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'AccountPeriod is required');
+
+            exception = await accountsPeriodController.saveAccountPeriod({}).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Account id is required');
+            exception = await accountsPeriodController.saveAccountPeriod({ accountId: '' }).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Account id is required');
+            exception = await accountsPeriodController.saveAccountPeriod({ accountId: 0 }).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Account id is required');
+            exception = await accountsPeriodController.saveAccountPeriod({ accountId: 'invalid' }).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Account id must be a number');
+            exception = await accountsPeriodController.saveAccountPeriod({ accountId: 99 }).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Account must exists');
+
+            exception = await accountsPeriodController.saveAccountPeriod({ accountId: testAccount.id }).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Period is required');
+            exception = await accountsPeriodController.saveAccountPeriod({ accountId: testAccount.id, period: '' }).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Period is required');
+            exception = await accountsPeriodController.saveAccountPeriod({ accountId: testAccount.id, period: 'invalid' }).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Period must be a number');
+            //Period can be explicity 0
+
+            exception = await accountsPeriodController.saveAccountPeriod({ accountId: testAccount.id, period: 0 }).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Balance is required');
+            exception = await accountsPeriodController.saveAccountPeriod({ accountId: testAccount.id, period: 0, balance: '' }).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Balance is required');
+            exception = await accountsPeriodController.saveAccountPeriod({ accountId: testAccount.id, period: 0, balance: 'invalid' }).catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Balance must be a number');
+            //Balance can be explicity 0
+
+        });
+
+        it('inserts a new record in accountPeriod table', async () => {
+            //Test data
+            const accountPeriod = new AccountPeriod(testAccount.id, formatPeriod(3, 2020), 33.6);
+            //Insert into database
+            const inserted = await accountsPeriodController.saveAccountPeriod(accountPeriod);
+
+            //Returned have the same fields + id
+            cExpect(inserted).to.have.property('id').greaterThan(0);
+            cExpect(inserted).to.have.property('accountId', accountPeriod.accountId);
+            cExpect(inserted).to.have.property('period', accountPeriod.period);
+            cExpect(inserted).to.have.property('balance', accountPeriod.balance);
+            //Should not touch original object
+            cExpect(accountPeriod).to.not.have.property('id');
+           
+            //Check if the record is inserted
+            const accountsPeriod = await db.accounts_period.toArray();
+            cExpect(accountsPeriod).to.have.length(1);
+        });
+
+        it('does not store more fields than expected', async () => {
+            //Test data
+            const accountPeriod = new AccountPeriod(testAccount.id, formatPeriod(3, 2020), 33.6);
+            accountPeriod.newField = 'Test';
+            //Insert into database
+            await accountsPeriodController.saveAccountPeriod(accountPeriod);
+           
+            //Check if the record is inserted
+            const accountsPeriod = await db.accounts_period.toArray();
+            cExpect(accountsPeriod).to.have.length(1);
+            cExpect(accountsPeriod[0]).to.not.have.property('newField');
+        });
+
+        it('updates the data when a record with the same accountId and period already exists', async () => {
+            
+            //Test data
+            const accountPeriod = new AccountPeriod(testAccount.id, formatPeriod(3, 2020), 33.6);
+            const newBalance = 55.8;
+            //Insert into database
+            const inserted = await accountsPeriodController.saveAccountPeriod(accountPeriod);
+
+            //Changing data
+            inserted.balance = newBalance;
+            await accountsPeriodController.saveAccountPeriod(inserted);
+
+            //Check if the record was updated
+            const accountsPeriod = await db.accounts_period.toArray();
+            cExpect(accountsPeriod).to.have.length(1);
+            cExpect(accountsPeriod[0]).to.have.property('balance', newBalance);
+        });
+
     });
 
     describe('Update balance Action', () => {
@@ -94,7 +191,7 @@ describe('AccountsPeriodController', () => {
     describe('Get by id and period Action', () => {
         beforeEach(() => {
             db.accounts.clear();
-            db.accounts_periods.clear();
+            db.accounts_period.clear();
         });
 
         it('have a getByIdPeriod function', () => {
