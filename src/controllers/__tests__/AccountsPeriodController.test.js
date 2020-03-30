@@ -118,14 +118,37 @@ describe('AccountsPeriodController', () => {
 
             //Check if the record was updated
             const accountsPeriod = await db.accounts_period.toArray();
+            console.log(accountsPeriod);
             cExpect(accountsPeriod).to.have.length(1);
             cExpect(accountsPeriod[0]).to.have.property('balance', newBalance);
         });
 
-        it('should trhow an error when a record with same account and period already exists', () => {
-            throw 'Not implemented';
+        it('should update the accountPeriod by accountId and period', async () => {
+            //Test data
+            const period = formatPeriod(3, 2020);
+            //Inserting account period
+            const { id : insertedId } = await accountsPeriodController.saveAccountPeriod(new AccountPeriod(testAccount.id, period, 0));
+            //Inserting account period with same parameters
+            const newAccountPeriod = await accountsPeriodController.saveAccountPeriod(new AccountPeriod(testAccount.id, period, 0));
+
+            //Should return the same id
+            cExpect(newAccountPeriod).to.have.property('id', insertedId);
         });
 
+        it('validates if an accountPeriod tries to change accountId or period and it already exists', async () => {
+            //Test data
+            const period = formatPeriod(3, 2020);
+            const accountPeriod = new AccountPeriod(testAccount.id, period, 0);
+            //Inserting account period
+            const { id : insertedId } = await accountsPeriodController.saveAccountPeriod(accountPeriod);
+            //Forcing an id
+            accountPeriod.id = insertedId + 1;
+            //Inserting account period with same parameters
+            const exception = await accountsPeriodController.saveAccountPeriod(accountPeriod).catch(exception => exception);
+
+            //Should return the same id
+            cExpect(exception).to.have.property('message', 'Account/period pair already exists');
+        });
     });
 
     describe('Update balance Action', () => {

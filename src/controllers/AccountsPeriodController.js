@@ -1,5 +1,4 @@
 import accountsPeriod from '../db/AccountsPeriod';
-import accounts from '../db/Accounts';
 import AccountPeriod from '../models/AccountPeriod';
 import GroupedAccounts from '../models/GroupedAccounts';
 import AccountGroup from '../models/AccountGroup';
@@ -11,6 +10,7 @@ const validateAccountPeriod = Symbol('validateAccountPeriod');
 const validateAccountId = Symbol('validateAccountId');
 const validateNumber = Symbol('validateNumber');
 const extractFields = Symbol('extractFields');
+const validateAndReturnExistentId = Symbol('validateAndReturnExistentId');
 
 class AccountsPeriodController {
 
@@ -26,6 +26,8 @@ class AccountsPeriodController {
             throw new TypeError(validationMessage);
 
         const newAccountPeriod = this[extractFields](accountPeriod);
+        newAccountPeriod.id = await this[validateAndReturnExistentId](newAccountPeriod);
+
         newAccountPeriod.id = await accountsPeriod.saveAccountPeriod(newAccountPeriod);
 
         return newAccountPeriod;
@@ -175,6 +177,25 @@ class AccountsPeriodController {
             result.id = accountPeriod.id;
 
         return result;
+    }
+
+    /**
+     * Check if a record with same accountId and period exists and returns its ID.
+     * @param {AccountPeriod} accountPeriod The object which params should be verified
+     * @returns {Number} Returns the id of the existent accountPeriod or null if it does not exists
+     * @throws {TypeError} Throws an error if the ids diverge
+     */
+    async [validateAndReturnExistentId](accountPeriod) {
+        const existent = await this.getByIdPeriod(accountPeriod.accountId, accountPeriod.period);
+        
+        if (!existent) //If not exists, return undefined to a new record be inserted
+            return undefined;
+        else if (!accountPeriod.id) //If accountPeriod does not have an id, return the id of the existent
+            return existent.id;
+        else if (accountPeriod.id === existent.id) //If ids are equal, return the id
+            return accountPeriod.id;
+        else //Otherwise, throw an error
+            throw new TypeError('Account/period pair already exists');
     }
 
 }
