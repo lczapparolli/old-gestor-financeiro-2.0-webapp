@@ -2,10 +2,9 @@
 import chai from 'chai';
 import accounts from '../../db/Accounts';
 import db from '../../db';
-import { convertToNumber } from '../../helpers/ConvertToNumber';
 //Tested module
 import accountsController from '../AccountsController';
-import Account, { CHECKING } from '../../models/Account';
+import Account from '../../models/Account';
 
 const cExpect = chai.expect;
 
@@ -26,9 +25,9 @@ describe('AccountsController', () => {
     });
 
     describe('Add account action', () => {
-        beforeEach(() => {
-            db.accounts.clear();
-            db.accounts_period.clear();
+        beforeEach(async () => {
+            await db.accounts.clear();
+            await db.accounts_period.clear();
         });
 
         it('have a saveAccount that returns a promise', () => {
