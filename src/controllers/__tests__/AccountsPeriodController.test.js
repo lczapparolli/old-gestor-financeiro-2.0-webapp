@@ -220,22 +220,29 @@ describe('AccountsPeriodController', () => {
             cExpect(accountsPeriodController).to.respondsTo('getByIdPeriod');
         });
 
-        it('Expects an id and a period as parameter', async () => {
+        it('expects an id and a period as parameter', async () => {
             let exception = await accountsPeriodController.getByIdPeriod().catch(exception => exception);
             cExpect(exception).to.have.property('message', 'Id is required');
 
             exception = await accountsPeriodController.getByIdPeriod(1).catch(exception => exception);
             cExpect(exception).to.have.property('message', 'Period is required');
+
+            exception = await accountsPeriodController.getByIdPeriod(1, 'invalid').catch(exception => exception);
+            cExpect(exception).to.have.property('message', 'Period must be a number');
+            
+            //accept period as explicit 0
+            exception = await accountsPeriodController.getByIdPeriod(1, 0).catch(exception => exception);
+            cExpect(exception).to.be.null;
         });
 
-        it('Returns `null` when accountPeriod is not found', async () => {
+        it('returns `null` when accountPeriod is not found', async () => {
             const period = formatPeriod(12, 2019);
             const accountPeriod = await accountsPeriodController.getByIdPeriod(testAccount.id, period);
 
             cExpect(accountPeriod).to.be.null;
         });
 
-        it('Returns the AccountPeriod with balance equals to the initial account balance', async () => {
+        it('returns the AccountPeriod with balance equals to the initial account balance', async () => {
             const period = formatPeriod(12, 2019);
             const balance = 22.3;
             await accountsPeriodController.saveAccountPeriod(new AccountPeriod(testAccount.id, period, balance));

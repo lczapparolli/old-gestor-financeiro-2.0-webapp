@@ -42,8 +42,10 @@ class AccountsPeriodController {
     async getByIdPeriod(accountId, period) {
         if (!accountId)
             throw new TypeError('Id is required');
-        if (!period)
-            throw new TypeError('Period is required');
+        //if (!period)
+        const validation = this[validateNumber](period);
+        if (validation !== '')
+            throw new TypeError('Period ' + validation);
 
         let result = await accountsPeriod.getByAccountPeriod(accountId, period);
 
