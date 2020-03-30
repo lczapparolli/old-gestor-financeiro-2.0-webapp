@@ -1,10 +1,13 @@
 import accounts from '../db/Accounts';
 import Account, { ACCOUNT_TYPES } from '../models/Account';
+import accountsPeriodController from './AccountsPeriodController';
 import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
+import AccountPeriod from '../models/AccountPeriod';
 
 //Symbols
 const validateAccount = Symbol('validateAccount');
 const extractFields = Symbol('extractFields');
+const insertOrUpdateAccountPeriod = Symbol('insertOrUpdateAccountPeriod');
 
 /**
  * Controls the account data
@@ -30,6 +33,9 @@ class AccountsController {
             throw new TypeError(validationMessage);
         account = this[extractFields](account);
         const id = await accounts.addAccount(account);
+
+        await this[insertOrUpdateAccountPeriod](account);
+
         return Object.assign({ id }, account);
     }
 
@@ -111,6 +117,16 @@ class AccountsController {
         }
         
         return result;
+    }
+
+    /**
+     * Inserts or updates the account initial value with a period 0
+     * @param {Account} account - The account object which data will be updated
+     * @returns {Promise} - Returns a promise for the async task
+     */
+    [insertOrUpdateAccountPeriod](account) {
+        const accountPeriod = new AccountPeriod(account.id, 0, account.initialValue);
+        return accountsPeriodController.saveAccountPeriod(accountPeriod);
     }
 }
 
