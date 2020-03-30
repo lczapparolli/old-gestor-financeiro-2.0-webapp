@@ -118,7 +118,6 @@ describe('AccountsPeriodController', () => {
 
             //Check if the record was updated
             const accountsPeriod = await db.accounts_period.toArray();
-            console.log(accountsPeriod);
             cExpect(accountsPeriod).to.have.length(1);
             cExpect(accountsPeriod[0]).to.have.property('balance', newBalance);
         });
