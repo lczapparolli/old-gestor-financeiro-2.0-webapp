@@ -157,29 +157,6 @@ describe('AccountsPeriodController', () => {
         });
     });
 
-    describe('Update balance Action', () => {
-
-        it('has a updateBalance method', () => {
-            cExpect(accountsPeriodController).to.respondsTo('updateBalance');
-        });
-
-        it('expects an accountId, a period and a value', async () => {
-            throw 'Not implemented';
-        });
-
-        it('inserts a new record in AccountPeriod model when it does not exists', () => {
-            throw 'Not implemented';
-        });
-
-        it('updates de balance of an AccountPeriod model when it already exists', () => {
-            throw 'Not implemented';
-        });
-
-        it('updates the initialBalance of the account in the next period', () => {
-            throw 'Not implemented';
-        });
-    });
-
     describe('Get all accounts by period action', () => {
         beforeEach(async () => {
             for (var account of accountsData) {
