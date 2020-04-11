@@ -75,6 +75,12 @@ describe('AccountsPeriodController', () => {
         it('inserts a new record in accountPeriod table', async () => {
             //Test data
             const accountPeriod = new AccountPeriod(testAccount.id, formatPeriod(3, 2020), 33.6);
+
+            //Account inserts a record with period 0
+            let accountsPeriod = await db.accounts_period.toArray();
+            cExpect(accountsPeriod).to.have.length(1);
+            cExpect(accountsPeriod[0]).to.have.property('period', 0);
+
             //Insert into database
             const inserted = await accountsPeriodController.saveAccountPeriod(accountPeriod);
 
@@ -87,8 +93,9 @@ describe('AccountsPeriodController', () => {
             cExpect(accountPeriod).to.not.have.property('id');
            
             //Check if the record is inserted
-            const accountsPeriod = await db.accounts_period.toArray();
+            accountsPeriod = await db.accounts_period.where('period').above(0).toArray();
             cExpect(accountsPeriod).to.have.length(1);
+            cExpect(accountsPeriod[0]).to.have.property('period', accountPeriod.period);
         });
 
         it('does not store more fields than expected', async () => {
@@ -99,7 +106,7 @@ describe('AccountsPeriodController', () => {
             await accountsPeriodController.saveAccountPeriod(accountPeriod);
            
             //Check if the record is inserted
-            const accountsPeriod = await db.accounts_period.toArray();
+            const accountsPeriod = await db.accounts_period.where('period').above(0).toArray();
             cExpect(accountsPeriod).to.have.length(1);
             cExpect(accountsPeriod[0]).to.not.have.property('newField');
         });
@@ -117,7 +124,7 @@ describe('AccountsPeriodController', () => {
             await accountsPeriodController.saveAccountPeriod(inserted);
 
             //Check if the record was updated
-            const accountsPeriod = await db.accounts_period.toArray();
+            const accountsPeriod = await db.accounts_period.where('period').above(0).toArray();
             cExpect(accountsPeriod).to.have.length(1);
             cExpect(accountsPeriod[0]).to.have.property('balance', newBalance);
         });
