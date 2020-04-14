@@ -2,6 +2,7 @@ import accountsPeriod from '../db/AccountsPeriod';
 import AccountPeriod from '../models/AccountPeriod';
 import GroupedAccounts from '../models/GroupedAccounts';
 import AccountGroup from '../models/AccountGroup';
+import AccountPeriodGroup from '../models/AccountPeriodGroup';
 import accountsController from './AccountsController';
 import { isNumeric, convertToNumber } from '../helpers/ConvertToNumber';
 
@@ -59,27 +60,19 @@ class AccountsPeriodController {
      * Returns accounts grouped by type with initial and final balance related to the given period
      * @param {Number} period Identification of the requested period
      * @returns {Promise<GroupedAccounts>} Returns the grouped accounts with balance related to the period
+     * @throws {TypeError} Throan an error when an invalid period is provided
      */
     async getByPeriod(period) {
         if (!period)
             throw new TypeError('Period is required');
         
         const accounts = await accountsController.listAll();
-        
-        const promises = accounts.map(account => {
-            let prom = accountsPeriod.getByIdPeriod(account.id, period).then(p => {
-                if (!p) {
-                    p = new AccountPeriod(account.id, period, 0);
-                    p.initialBalance = account.initialValue;
-                    p.balance = account.initialValue;
-                }
-                p.account = account;
-                return p;
-            });
-            return prom;
-        });
-        
-        const accPeriod = await Promise.all(promises);
+        const accountsPeriods = await accountsPeriod.getByPeriod(period);
+        const accountsGroup = accounts.map(account => new AccountPeriodGroup(
+            account,
+            accountsPeriods.filter(ap => ap.accountId == account.id && ap.period < period).reduce((sum, ap) => sum += ap.balance, 0),
+            accountsPeriods.filter(ap => ap.accountId == account.id).reduce((sum, ap) => sum += ap.balance, 0)
+        ));
 
         let groups = new GroupedAccounts(
             0, 
@@ -89,15 +82,15 @@ class AccountsPeriodController {
             new AccountGroup(0, 0, [])  //savings
         );
 
-        groups = accPeriod.reduce((group, accountPeriod) => {
-            group[accountPeriod.account.type].items.push(accountPeriod);
-            group[accountPeriod.account.type].initialSum += accountPeriod.initialValue;
-            group[accountPeriod.account.type].sum += accountPeriod.initialValue + accountPeriod.balance;
-            group.initialTotal += accountPeriod.initialValue;
-            group.total += accountPeriod.initialValue + accountPeriod.balance;
+        groups = accountsGroup.reduce((group, account) => {
+            group[account.account.type].items.push(account);
+            group[account.account.type].initialSum += account.initialBalance;
+            group[account.account.type].sum += account.periodBalance;
+            group.initialTotal += account.initialBalance;
+            group.total += account.periodBalance;
             return group;
         }, groups);
-
+        
         return groups;
     }
 

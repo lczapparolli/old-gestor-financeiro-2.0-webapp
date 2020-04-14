@@ -159,8 +159,11 @@ describe('AccountsPeriodController', () => {
 
     describe('Get all accounts by period action', () => {
         beforeEach(async () => {
+            await db.accounts.clear();
+            await db.accounts_period.clear();
+
             for (var account of accountsData) {
-                await accountsController.saveAccount(account);
+                account.id = (await accountsController.saveAccount(account)).id;
             }
         });
 
@@ -181,21 +184,63 @@ describe('AccountsPeriodController', () => {
             const accounts = await accountsPeriodController.getByPeriod(period);
             //Test conditions
             cExpect(accounts).to.be.an.instanceOf(GroupedAccounts);
-            cExpect(accounts).to.have.property('total').equal(60);
             cExpect(accounts).to.have.property('checking').and.be.an('object');
             cExpect(accounts).to.have.property('credit').and.be.an('object');
             cExpect(accounts).to.have.property('savings').and.be.an('object');
+            cExpect(accounts).to.have.property('total').equal(60);
 
             cExpect(accounts.checking).to.have.property('items').and.be.an('array');
+            cExpect(accounts.checking).to.have.property('initialSum', 30);
             cExpect(accounts.checking.items).to.have.length(2);
 
             cExpect(accounts.credit).to.have.property('items').and.be.an('array');
+            cExpect(accounts.credit).to.have.property('initialSum', 20);
             cExpect(accounts.credit.items).to.have.length(2);
 
             cExpect(accounts.savings).to.have.property('items').and.be.an('array');
+            cExpect(accounts.savings).to.have.property('initialSum', 10);
             cExpect(accounts.savings.items).to.have.length(2);
         });
 
+        it('returns the initial and final balance of the period', async () => {
+            //Inserting periods data
+            await accountsPeriodController.saveAccountPeriod(new AccountPeriod(accountsData[0].id, formatPeriod(9, 2019), 5));
+            //Skip one month
+            await accountsPeriodController.saveAccountPeriod(new AccountPeriod(accountsData[0].id, formatPeriod(11, 2019), 10));
+            await accountsPeriodController.saveAccountPeriod(new AccountPeriod(accountsData[0].id, formatPeriod(12, 2019), 20.5));
+
+            //Loading the first inserted period
+            let accounts = await accountsPeriodController.getByPeriod(formatPeriod(9, 2019));
+            let account = accounts.checking.items.find(a => a.account.id == accountsData[0].id);
+            cExpect(accounts.checking).to.have.property('initialSum', 30);
+            cExpect(accounts.checking).to.have.property('sum', 35);
+            cExpect(account).to.have.property('initialBalance', 10);
+            cExpect(account).to.have.property('periodBalance', 15);
+
+            //Next period should have same initial values
+            accounts = await accountsPeriodController.getByPeriod(formatPeriod(10, 2019));
+            account = accounts.checking.items.find(a => a.account.id == accountsData[0].id);
+            cExpect(accounts.checking).to.have.property('initialSum', 35);
+            cExpect(accounts.checking).to.have.property('sum', 35);
+            cExpect(account).to.have.property('initialBalance', 15);
+            cExpect(account).to.have.property('periodBalance', 15);
+
+            //loading next month
+            accounts = await accountsPeriodController.getByPeriod(formatPeriod(11, 2019));
+            account = accounts.checking.items.find(a => a.account.id == accountsData[0].id);
+            cExpect(accounts.checking).to.have.property('initialSum', 35);
+            cExpect(accounts.checking).to.have.property('sum', 45);
+            cExpect(account).to.have.property('initialBalance', 15);
+            cExpect(account).to.have.property('periodBalance', 25);
+            
+            //loading next month
+            accounts = await accountsPeriodController.getByPeriod(formatPeriod(12, 2019));
+            account = accounts.checking.items.find(a => a.account.id == accountsData[0].id);
+            cExpect(accounts.checking).to.have.property('initialSum', 45);
+            cExpect(accounts.checking).to.have.property('sum', 65.5);
+            cExpect(account).to.have.property('initialBalance', 25);
+            cExpect(account).to.have.property('periodBalance', 45.5);
+        });
     });
 
     describe('Get by id and period Action', () => {

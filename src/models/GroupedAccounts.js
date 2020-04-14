@@ -1,3 +1,8 @@
+
+/**
+ * @typedef {import('./AccountGroup').default} AccountGroup
+ */
+
 /**
  * An object grouping accounts in three categories with sum of values
  */

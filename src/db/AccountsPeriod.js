@@ -24,16 +24,12 @@ class AccountsPeriod {
     }
 
     /**
-     * Returns an account with balance relative to a period
-     * @param {Number} accountId The id of the account
-     * @param {Number} period The period of the balance
-     * @returns {Promise<AccountPeriod>}
+     * Returns all records with period below or equal of given period.
+     * @param {Number} period The period to be searched
+     * @returns {Promise<Array<AccountPeriod>>} Returns all records found
      */
-    getByPeriod(accountId, period) {
-        return db.accounts_period
-            .where('accountId').equals(accountId)
-            .and((accountPeriod) => accountPeriod.period <= period)
-            .first();
+    getByPeriod(period) {
+        return db.accounts_period.where('period').belowOrEqual(period).toArray();
     }
 }
 
